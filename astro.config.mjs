@@ -1,10 +1,13 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  integrations: [tailwind()],
+  // Pindahkan Tailwind v4 ke dalam array plugins milik Vite
+  vite: {
+    plugins: [tailwindcss()],
+  },
 
-  // Konfigurasi i18n: routing otomatis /en/ dan /id/
+  // Konfigurasi i18n kamu tetap dipertahankan di sini
   i18n: {
     defaultLocale: 'id',          // Bahasa default = Indonesia
     locales: ['id', 'en'],
