@@ -1,0 +1,16 @@
+---
+export async function getStaticPaths() {
+  // Contoh jika kamu menggunakan Content Collections Astro:
+  // const posts = await getCollection('blog');
+  // return posts.map(post => ({ params: { slug: post.slug } }));
+
+  // Contoh hardcoded sederhana untuk tes build:
+  return [
+    { params: { slug: 'welcome' } },
+    { params: { slug: 'my-first-post' } },
+  ];
+}
+
+const { slug } = Astro.params;
+---
+<h1>Blog Post: {slug}</h1>
