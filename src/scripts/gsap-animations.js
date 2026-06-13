@@ -1,37 +1,43 @@
-// Pastikan GSAP dimuat — kita pakai CDN via script tag
-// Tambahkan di BaseLayout.astro sebelum script ini:
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-document.addEventListener('DOMContentLoaded', () => {
+// Ganti DOMContentLoaded dengan fungsi inisialisasi Astro
+function initAnimations() {
   if (typeof gsap === 'undefined') return;
+
+  // Bersihkan ScrollTrigger lama agar tidak menumpuk saat pindah halaman
+  if (typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.getAll().forEach(t => t.kill());
+  }
 
   gsap.registerPlugin(ScrollTrigger);
 
   // ===== HERO ANIMATIONS =====
-  const tl = gsap.timeline();
-
-  // Typed text animation
   const typedOutput = document.getElementById('typed-output');
   if (typedOutput) {
+    // Kosongkan dulu teksnya setiap kali inisialisasi dijalankan
+    typedOutput.textContent = ''; 
+
     const text = typedOutput.closest('.hero-typed')?.dataset.text
       || (document.documentElement.lang === 'id' ? 'Halo. Saya Anggara' : 'Hello. I\'m Anggara');
 
     let i = 0;
     const typeInterval = setInterval(() => {
+      // Proteksi jika user pindah halaman sebelum mengetik selesai
+      if (!document.getElementById('typed-output')) {
+        clearInterval(typeInterval);
+        return;
+      }
+      
       typedOutput.textContent += text[i];
       i++;
       if (i >= text.length) {
         clearInterval(typeInterval);
 
-        // Setelah typing selesai, tampilkan elemen lain
         gsap.to('#hero-tagline', { opacity: 1, y: 0, duration: 0.6, delay: 0.3 });
         gsap.to('#hero-cta',     { opacity: 1, y: 0, duration: 0.6, delay: 0.6 });
         gsap.to('#hero-stats',   { opacity: 1, y: 0, duration: 0.6, delay: 0.9,
           onComplete: startCountAnimations
         });
       }
-    }, 60); // kecepatan mengetik (ms per karakter)
+    }, 60);
   }
 
   // ===== COUNT ANIMATIONS =====
@@ -56,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ===== SCROLL REVEAL (untuk BentoCard) =====
+  // ===== SCROLL REVEAL (BentoCard) =====
   gsap.utils.toArray('.bento-card').forEach((card, i) => {
     gsap.fromTo(card,
       { opacity: 0, y: 30 },
@@ -64,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         opacity: 1,
         y: 0,
         duration: 0.5,
-        delay: (i % 3) * 0.1, // stagger per baris
+        delay: (i % 3) * 0.1,
         scrollTrigger: {
           trigger: card,
           start: 'top 85%',
@@ -88,4 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     );
   });
-});
+}
+
+// ===== EKSEKUSI JALUR AMAN ASTRO =====
+// Jalankan langsung saat pertama kali web dimuat
+document.addEventListener('DOMContentLoaded', initAnimations);
+
+// Jalankan ulang setiap kali sistem View Transitions Astro menukar halaman/bahasa
+document.addEventListener('astro:page-load', initAnimations);
