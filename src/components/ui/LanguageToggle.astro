@@ -1,0 +1,27 @@
+---
+const { currentLang, currentPath } = Astro.props;
+// Ganti prefix bahasa di URL
+const otherLang = currentLang === 'id' ? 'en' : 'id';
+const otherPath = currentPath.replace(`/${currentLang}/`, `/${otherLang}/`);
+---
+
+<div class="lang-toggle">
+  <span class={currentLang === 'id' ? 'active' : ''}>ID</span>
+  <span class="divider">/</span>
+  <a href={otherPath} class={currentLang === 'en' ? 'active' : ''}>EN</a>
+</div>
+
+<style>
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  .active { color: var(--text-primary); }
+  .divider { opacity: 0.4; }
+  a { transition: color 200ms ease; }
+  a:hover { color: var(--hover); }
+</style>

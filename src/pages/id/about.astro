@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import BentoCard from '../../components/ui/BentoCard.astro';
+---
+
+<BaseLayout title="Tentang" lang="id">
+  <div class="page-container">
+    <h1 class="page-title">Tentang</h1>
+
+    <div class="bento-grid">
+      <!-- Foto + Bio -->
+      <BentoCard size="sm">
+        <div class="about-photo">
+          <!-- Ganti src dengan foto aslimu -->
+          <img src="/images/foto-anggara.jpg" alt="Argy Anggara" />
+          <div class="status-badge-about">
+            <span class="dot"></span> Terbuka untuk Peluang
+          </div>
+        </div>
+      </BentoCard>
+
+      <BentoCard size="lg">
+        <h2>Siapa saya?</h2>
+        <p>
+          Saya Argy Anggara, mahasiswa Sistem Informasi semester 6 di UNINDRA
+          yang sedang serius mengejar karir di dunia data. Perjalanan saya dimulai
+          dari web development, lalu bertemu dengan data — dan saya tidak bisa berhenti.
+        </p>
+        <p>
+          Sehari-hari saya bekerja sebagai Coding Educator di PT DigiKidz Indonesia,
+          mengajar anak-anak cara berpikir secara komputasional. Mengajar mengajarkan saya
+          satu hal: kalau kamu tidak bisa menjelaskan sesuatu dengan sederhana,
+          berarti kamu belum benar-benar mengerti.
+        </p>
+        <p>
+          Prinsip itu yang saya bawa ke setiap proyek data — analisis yang bagus
+          bukan yang paling kompleks, tapi yang paling bisa dipahami.
+        </p>
+      </BentoCard>
+
+      <!-- Pull Quote -->
+      <BentoCard size="xl">
+        <blockquote class="pull-quote font-quote">
+          "Data tanpa narasi hanya angka. Narasi tanpa data hanya opini."
+        </blockquote>
+      </BentoCard>
+
+      <!-- Fun Facts -->
+      <BentoCard size="md">
+        <h3>Fun Facts</h3>
+        <ul class="fact-list">
+          <li>🎮 Developer Roblox sejak 2019 — game pertama saya punya 10k+ visits</li>
+          <li>📚 Sedang membaca <em>Thinking, Fast and Slow</em> — Daniel Kahneman</li>
+          <li>🖥️ Merakit PC sendiri. Selalu ada komponen yang ingin di-upgrade.</li>
+        </ul>
+      </BentoCard>
+
+      <!-- Currently -->
+      <BentoCard size="md">
+        <h3 class="font-mono" style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">/ saat ini</h3>
+        <p>📖 Mempelajari: MLOps & deployment model ke produksi</p>
+        <p>🔧 Membangun: sistem.gw — dashboard produktivitas pribadi</p>
+        <p>🎯 Target: internship Data Analyst sebelum akhir 2025</p>
+      </BentoCard>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .page-title {
+    font-family: var(--font-heading);
+    margin-bottom: 3rem;
+  }
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+  }
+  .about-photo img {
+    width: 100%;
+    border-radius: var(--radius);
+    display: block;
+  }
+  .about-photo { position: relative; }
+  .status-badge-about {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent-data);
+    margin-top: 0.75rem;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-data);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .pull-quote {
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-style: italic;
+    color: var(--text-primary);
+    text-align: center;
+    padding: 1rem;
+    border-left: none;
+    line-height: 1.5;
+  }
+  .fact-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+  }
+  h2 { margin-bottom: 1rem; }
+  h3 { margin-bottom: 0.75rem; }
+</style>

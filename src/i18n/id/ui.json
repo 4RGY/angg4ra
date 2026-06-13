@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "about":      "Tentang",
+    "projects":   "Proyek",
+    "skills":     "Skill",
+    "experience": "Pengalaman",
+    "blog":       "Blog",
+    "misc":       "Lain-lain",
+    "contact":    "Kontak"
+  },
+  "hero": {
+    "greeting":  "Halo. Saya Anggara",
+    "tagline":   "Saya mengubah data yang berantakan menjadi sesuatu yang layak dibaca.",
+    "cta_projects": "Lihat Proyek",
+    "cta_cv":    "Unduh CV",
+    "stat_gpa":     "IPK",
+    "stat_projects": "Proyek Selesai",
+    "stat_teaching": "Jam Mengajar"
+  },
+  "about": {
+    "title":        "Tentang Saya",
+    "status_badge": "Terbuka untuk Peluang",
+    "photo_real":   "Tampilkan foto asli",
+    "photo_illus":  "Tampilkan ilustrasi"
+  },
+  "projects": {
+    "title":     "Proyek",
+    "filter_all": "Semua",
+    "open":      "Buka proyek →"
+  },
+  "contact": {
+    "title":       "Kontak",
+    "placeholder_name":    "> Nama Anda...",
+    "placeholder_email":   "> Email Anda...",
+    "placeholder_message": "> Pesan Anda...",
+    "submit":      "Kirim Pesan",
+    "reply_note":  "Saya biasanya membalas dalam 24 hingga 48 jam."
+  }
+}

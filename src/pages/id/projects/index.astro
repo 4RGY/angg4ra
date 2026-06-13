@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../../../components/layout/BaseLayout.astro';
+import BentoCard from '../../../components/ui/BentoCard.astro';
+import StatusBadge from '../../../components/ui/StatusBadge.astro';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+const featured = allProjects.find(p => p.data.featured);
+const rest = allProjects.filter(p => !p.data.featured);
+---
+
+<BaseLayout title="Proyek" lang="id">
+  <div class="page-container">
+    <h1 class="page-title">Proyek</h1>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" id="filter-tabs">
+      {['Semua', 'Machine Learning', 'Analisis Data', 'Web', 'Mengajar'].map(cat => (
+        <button class={`filter-btn font-mono ${cat === 'Semua' ? 'active' : ''}`} data-filter={cat}>
+          {cat}
+        </button>
+      ))}
+    </div>
+
+    <!-- Proyek Unggulan -->
+    {featured && (
+      <div class="featured-project">
+        <BentoCard size="xl">
+          <StatusBadge status={featured.data.status} />
+          <h2 style="margin-top: 0.5rem">{featured.data.title}</h2>
+          <p>{featured.data.description}</p>
+          <div class="tags">
+            {featured.data.tags.map(tag => <span class="tag font-mono">{tag}</span>)}
+          </div>
+          {featured.data.metric && <p class="metric font-mono">{featured.data.metric}</p>}
+          <a href={`/id/projects/${featured.slug}`} class="btn-outline" style="margin-top: 1rem; display: inline-block">
+            Buka proyek →
+          </a>
+        </BentoCard>
+      </div>
+    )}
+
+    <!-- Grid Proyek -->
+    <div class="bento-grid projects-grid" id="projects-grid">
+      {rest.map(project => (
+        <BentoCard size="md" class="project-card" data-category={project.data.category}>
+          <StatusBadge status={project.data.status} />
+          <h3 style="margin: 0.5rem 0">{project.data.title}</h3>
+          <p style="font-size: 0.9rem">{project.data.description}</p>
+          <div class="tags">
+            {project.data.tags.slice(0, 3).map(tag => <span class="tag font-mono">{tag}</span>)}
+          </div>
+          <a href={`/id/projects/${project.slug}`} class="project-link font-mono">Buka proyek →</a>
+        </BentoCard>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+  .page-title { margin-bottom: 2rem; }
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .filter-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 200ms ease;
+    letter-spacing: 0.05em;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--text-primary);
+    background: rgba(107, 45, 62, 0.1);
+  }
+  .featured-project { margin-bottom: 2rem; }
+  .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  .tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+  .metric { color: var(--accent-data); margin-top: 0.5rem; font-size: 0.85rem; }
+  .project-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--accent-data);
+    transition: color 200ms ease;
+  }
+  .project-link:hover { color: var(--hover); }
+  .btn-outline {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.6rem 1.25rem;
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: all 250ms ease;
+  }
+  .btn-outline:hover { background-color: var(--accent); }
+</style>
+
+<script>
+  // Filter proyek
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+
+      // Update tombol aktif
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Filter kartu
+      projectCards.forEach(card => {
+        if (filter === 'Semua' || card.dataset.category === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

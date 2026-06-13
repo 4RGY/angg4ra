@@ -1,0 +1,35 @@
+---
+import Navbar from './Navbar.astro';
+import Footer from './Footer.astro';
+import '../../styles/global.css';
+
+const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portfolio Argy Anggara — Data Analyst & Data Scientist" />
+  <title>{title} — Argy Anggara</title>
+
+  <!-- Preconnect ke Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body>
+  <Navbar lang={lang} currentPath={Astro.url.pathname} />
+
+  <main>
+    <slot />
+  </main>
+
+  <Footer lang={lang} />
+
+  <!-- Script GSAP global -->
+    <script src="/src/scripts/gsap-animations.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+</body>
+</html>

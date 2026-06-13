@@ -1,0 +1,33 @@
+---
+// status: 'Selesai' | 'Sedang Berjalan' | 'Berkelanjutan'
+const { status } = Astro.props;
+
+const styles = {
+  'Selesai':          { dot: '#6A8F6E', label: 'Selesai' },
+  'Sedang Berjalan':  { dot: '#3A6B7A', label: 'Sedang Berjalan' },
+  'Berkelanjutan':    { dot: '#6B2D3E', label: 'Berkelanjutan' },
+}[status] || { dot: '#7A756A', label: status };
+---
+
+<span class="status-badge">
+  <span class="dot" style={`background: ${styles.dot}`}></span>
+  {styles.label}
+</span>
+
+<style>
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>

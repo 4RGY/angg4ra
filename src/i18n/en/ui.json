@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "about":      "About",
+    "projects":   "Projects",
+    "skills":     "Skills",
+    "experience": "Experience",
+    "blog":       "Blog",
+    "misc":       "Misc",
+    "contact":    "Contact"
+  },
+  "hero": {
+    "greeting":  "Hello. I'm Anggara",
+    "tagline":   "I turn messy data into something worth reading.",
+    "cta_projects": "View Projects",
+    "cta_cv":    "Download CV",
+    "stat_gpa":      "GPA",
+    "stat_projects": "Projects Done",
+    "stat_teaching": "Hours Teaching"
+  },
+  "about": {
+    "title":        "About",
+    "status_badge": "Open to Opportunities",
+    "photo_real":   "Show real photo",
+    "photo_illus":  "Show illustration"
+  },
+  "projects": {
+    "title":     "Projects",
+    "filter_all": "All",
+    "open":      "Open project →"
+  },
+  "contact": {
+    "title":       "Contact",
+    "placeholder_name":    "> Your name...",
+    "placeholder_email":   "> Your email...",
+    "placeholder_message": "> Your message...",
+    "submit":      "Send Message",
+    "reply_note":  "I usually reply within 24 to 48 hours."
+  }
+}

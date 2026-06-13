@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import BentoCard from '../../components/ui/BentoCard.astro';
+---
+
+<BaseLayout title="Kontak" lang="id">
+  <div class="page-container">
+    <h1 class="page-title">Kontak</h1>
+    <p style="color: var(--text-secondary); margin-bottom: 3rem; max-width: 500px">
+      Saya biasanya membalas dalam 24 hingga 48 jam.
+    </p>
+
+    <div class="bento-grid">
+      <!-- Form -->
+      <BentoCard size="lg" scanline={true}>
+        <div class="terminal-header font-mono">
+          <span style="color: var(--accent-data)">></span>
+          <span style="color: var(--text-secondary)"> compose_message</span>
+        </div>
+
+        <div class="contact-form" id="contact-form">
+          <div class="form-group">
+            <input type="text" id="name" placeholder="> Nama Anda..." class="terminal-input font-mono" required />
+          </div>
+          <div class="form-group">
+            <input type="email" id="email" placeholder="> Email Anda..." class="terminal-input font-mono" required />
+          </div>
+          <div class="form-group">
+            <select id="subject" class="terminal-input font-mono">
+              <option value="">› Pilih topik...</option>
+              <option value="collaboration">Kolaborasi</option>
+              <option value="internship">Internship / Pekerjaan</option>
+              <option value="question">Pertanyaan</option>
+              <option value="other">Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <textarea id="message" placeholder="> Pesan Anda..." class="terminal-input font-mono" rows="5" required></textarea>
+          </div>
+          <button type="button" class="btn-transmit font-mono" id="submit-btn" onclick="submitForm()">
+            transmit_ →
+          </button>
+        </div>
+      </BentoCard>
+
+      <!-- Info -->
+      <BentoCard size="sm">
+        <h3 class="font-mono" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 1.5rem">/ koneksi</h3>
+        <div class="contact-links">
+          <a href="https://github.com/username-kamu" target="_blank" rel="noopener" class="contact-link font-mono">
+            <span class="link-label">GitHub</span>
+            <span style="color: var(--text-secondary)">@username</span>
+          </a>
+          <a href="https://linkedin.com/in/username-kamu" target="_blank" rel="noopener" class="contact-link font-mono">
+            <span class="link-label">LinkedIn</span>
+            <span style="color: var(--text-secondary)">Argy Anggara</span>
+          </a>
+          <a href="mailto:email@kamu.com" class="contact-link font-mono">
+            <span class="link-label">Email</span>
+            <span style="color: var(--text-secondary)">email@kamu.com</span>
+          </a>
+        </div>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border)">
+          <p class="font-mono" style="font-size: 0.7rem; color: var(--text-secondary)">📍 Bekasi, Indonesia</p>
+        </div>
+      </BentoCard>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+  .page-title { margin-bottom: 1rem; }
+  .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+  .terminal-header { font-size: 0.8rem; margin-bottom: 1.5rem; }
+  .form-group { margin-bottom: 1rem; }
+  .terminal-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+    transition: border-color 200ms ease;
+    outline: none;
+    resize: vertical;
+  }
+  .terminal-input:focus { border-bottom-color: var(--accent-data); }
+  .terminal-input::placeholder { color: var(--text-secondary); }
+  select.terminal-input { appearance: none; cursor: pointer; }
+  .btn-transmit {
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 250ms ease;
+    letter-spacing: 0.05em;
+  }
+  .btn-transmit:hover { background: var(--accent); box-shadow: 0 0 20px rgba(107,45,62,0.3); }
+  .contact-links { display: flex; flex-direction: column; gap: 1.25rem; }
+  .contact-link { display: flex; flex-direction: column; gap: 0.15rem; text-decoration: none; }
+  .link-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); }
+  .contact-link span:last-child { color: var(--text-primary); font-size: 0.9rem; }
+  .contact-link:hover span:last-child { color: var(--accent-data); }
+</style>
+
+<script>
+  // Koneksi ke EmailJS — isi dengan ID akun EmailJS-mu
+  // Daftar gratis di emailjs.com
+  function submitForm() {
+    const name    = document.getElementById('name').value;
+    const email   = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+
+    if (!name || !email || !message) {
+      alert('Mohon isi semua field.');
+      return;
+    }
+
+    // TODO: ganti dengan EmailJS atau Formspree
+    // Contoh dengan Formspree:
+    // fetch('https://formspree.io/f/YOUR_ID', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ name, email, subject, message })
+    // })
+
+    alert('Pesan terkirim! (Sambungkan ke EmailJS/Formspree untuk fungsionalitas penuh)');
+  }
+</script>

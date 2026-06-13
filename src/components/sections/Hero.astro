@@ -1,0 +1,207 @@
+---
+const { lang = 'id' } = Astro.props;
+
+const t = lang === 'id' ? {
+  greeting:    'Halo. Saya Anggara',
+  tagline:     'Saya mengubah data yang berantakan menjadi sesuatu yang layak dibaca.',
+  cta_projects: 'Lihat Proyek',
+  cta_cv:      'Unduh CV',
+} : {
+  greeting:    'Hello. I\'m Anggara',
+  tagline:     'I turn messy data into something worth reading.',
+  cta_projects: 'View Projects',
+  cta_cv:      'Download CV',
+};
+---
+
+<section class="hero">
+  <!-- Background SVG line chart dekoratif -->
+  <div class="hero-bg-chart" aria-hidden="true">
+    <svg viewBox="0 0 800 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline
+        points="0,150 80,120 160,140 240,80 320,110 400,60 480,90 560,40 640,70 720,30 800,50"
+        fill="none"
+        stroke="#6B2D3E"
+        stroke-width="1.5"
+        stroke-opacity="0.2"
+      />
+      <polyline
+        points="0,180 80,160 160,170 240,130 320,150 400,100 480,130 560,90 640,110 720,70 800,85"
+        fill="none"
+        stroke="#3A6B7A"
+        stroke-width="1"
+        stroke-opacity="0.12"
+      />
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <!-- Typed text -->
+    <div class="hero-typed font-mono" id="typed-text">
+      <span class="prompt">› </span>
+      <span id="typed-output"></span>
+      <span class="cursor" id="cursor">_</span>
+    </div>
+
+    <!-- Tagline -->
+    <p class="hero-tagline font-quote" id="hero-tagline">
+      {t.tagline}
+    </p>
+
+    <!-- CTA Buttons -->
+    <div class="hero-cta" id="hero-cta">
+      <a href={`/${lang}/projects`} class="btn-outline">{t.cta_projects}</a>
+      <a href="/cv-anggara.pdf" target="_blank" class="btn-outline btn-secondary">{t.cta_cv}</a>
+    </div>
+
+    <!-- Stat Chips -->
+    <div class="hero-stats" id="hero-stats">
+      <div class="stat-chip">
+        <span class="stat-value font-mono" data-target="3.77">0</span>
+        <span class="stat-label">IPK</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-value font-mono" data-target="6">0</span>
+        <span class="stat-label">{lang === 'id' ? 'Proyek Selesai' : 'Projects Done'}</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-value font-mono" data-target="500">0</span>
+        <span class="stat-label">{lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching'}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" id="scroll-indicator" aria-hidden="true">
+    <span class="font-mono" style="font-size: 0.7rem; color: var(--text-secondary)">scroll</span>
+    <div class="arrow">↓</div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .hero-bg-chart {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 40%;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .hero-bg-chart svg { width: 100%; height: 100%; }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+  }
+
+  .hero-typed {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    min-height: 3rem;
+  }
+
+  .prompt { color: var(--accent-data); }
+  .cursor {
+    animation: blink 0.8s step-end infinite;
+    color: var(--accent-data);
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .hero-tagline {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+    opacity: 0;
+  }
+
+  .btn-outline {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.7rem 1.5rem;
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: all 250ms ease;
+    letter-spacing: 0.05em;
+  }
+  .btn-outline:hover {
+    background-color: var(--accent);
+    box-shadow: 0 0 20px rgba(107, 45, 62, 0.3);
+    color: var(--text-primary);
+  }
+  .btn-secondary { border-color: var(--border); }
+  .btn-secondary:hover { background-color: var(--bg-card); box-shadow: none; }
+
+  .hero-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    opacity: 0;
+  }
+
+  .stat-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .stat-value {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease 4s forwards;
+  }
+  .arrow {
+    color: var(--text-secondary);
+    animation: bounce 2s ease infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import LanguageToggle from '../ui/LanguageToggle.astro';
+
+const { lang = 'id', currentPath } = Astro.props;
+
+const navLinks = lang === 'id'
+  ? [
+      { href: `/${lang}/about`,      label: 'Tentang' },
+      { href: `/${lang}/projects`,   label: 'Proyek' },
+      { href: `/${lang}/skills`,     label: 'Skill' },
+      { href: `/${lang}/experience`, label: 'Pengalaman' },
+      { href: `/${lang}/blog`,       label: 'Blog' },
+      { href: `/${lang}/contact`,    label: 'Kontak' },
+    ]
+  : [
+      { href: `/${lang}/about`,      label: 'About' },
+      { href: `/${lang}/projects`,   label: 'Projects' },
+      { href: `/${lang}/skills`,     label: 'Skills' },
+      { href: `/${lang}/experience`, label: 'Experience' },
+      { href: `/${lang}/blog`,       label: 'Blog' },
+      { href: `/${lang}/contact`,    label: 'Contact' },
+    ];
+---
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <!-- Logo / Nama -->
+    <a href={`/${lang}/`} class="nav-logo">
+      <span class="font-mono text-data">argy</span><span class="font-mono text-secondary">.dev</span>
+    </a>
+
+    <!-- Links -->
+    <ul class="nav-links">
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class={currentPath === link.href ? 'active' : ''}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Language Toggle -->
+    <LanguageToggle currentLang={lang} currentPath={currentPath} />
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: rgba(10, 9, 8, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-logo {
+    font-size: 1rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 1.75rem;
+    margin-left: auto;
+  }
+
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: color 200ms ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--text-primary);
+  }
+
+  /* Mobile: sembunyikan link, tampilkan hanya logo */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+  }
+</style>
