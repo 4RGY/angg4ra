@@ -17,7 +17,6 @@ const skillCategories = [
       { name: 'Jupyter',      slug: 'jupyter' },
       { name: 'Kaggle',       slug: 'kaggle' },
     ],
-    // Tools tambahan yang tidak masuk icon grid utama
     extraTools: ['SHAP', 'Matplotlib', 'Seaborn', 'SQL']
   },
   {
@@ -47,7 +46,10 @@ const skillCategories = [
       { name: 'VS Code',      slug: 'v' },
       { name: 'FastAPI',      slug: 'fastapi' },
       { name: 'SQLite',       slug: 'sqlite' },
-      { name: 'Valorant',     slug: 'valorant'}
+      { name: 'Duolingo',     slug: 'duolingo' },
+      { name: 'Counter Strike',       slug: 'counterstrike' },
+      { name: 'Valorant',     slug: 'valorant'},
+      { name: 'Dota 2',       slug: 'dota2'}
     ],
     extraTools: ['Excel', 'Java (Swing)', 'Roblox Studio', 'Lua']
   },
@@ -58,30 +60,31 @@ const learningItems = [
   { name: 'Data Visualization lanjutan', note: 'D3.js' },
   { name: 'Statistical Modeling', note: 'Statsmodels, SciPy' },
 ];
+
+// Pisah manual untuk penempatan komponen grid
+const dataSkill = skillCategories.find(c => c.id === 'data');
+const webSkill = skillCategories.find(c => c.id === 'web');
+const toolsSkill = skillCategories.find(c => c.id === 'tools');
 ---
 
 <BaseLayout title="Skill" lang="id">
   <div class="page-container">
-    <header class="page-header">
-      <h1 class="page-title">Skill</h1>
-      <p class="page-desc">Alat dan teknologi yang saya gunakan — dari analisis data sampai membangun antarmuka.</p>
-    </header>
+    <h1 class="page-title">Skill</h1>
+    <p class="page-desc">Alat dan teknologi yang saya gunakan — dari analisis data sampai membangun antarmuka.</p>
 
     <div class="bento-grid">
-      <!-- Icon Grid Per Kategori -->
-      {skillCategories.map(group => (
+      {dataSkill && (
         <div class="card-md">
-          <BentoCard size="md">
-            <p class="section-label font-mono" style={`color: ${group.color}`}>
-              / {group.category}
+          <BentoCard size="md" scanline={true}>
+            <p class="section-label font-mono" style={`color: ${dataSkill.color}`}>
+              / {dataSkill.category}
             </p>
             <div class="icon-grid">
-              {group.featuredIcons.map(icon => (
+              {dataSkill.featuredIcons.map(icon => (
                 <div class="icon-item">
-                  <!-- Custom CSS Variable untuk hover color yang dinamis -->
-                  <div class="icon-wrap" style={`--hover-color: ${group.color}`}>
+                  <div class="icon-wrap" style={`--hover-color: ${dataSkill.color}`}>
                     <img
-                      src={`https://cdn.simpleicons.org/${icon.slug}/${group.hex}`}
+                      src={`https://cdn.simpleicons.org/${icon.slug}/${dataSkill.hex}`}
                       alt={icon.name}
                       width="28"
                       height="28"
@@ -94,15 +97,65 @@ const learningItems = [
             </div>
           </BentoCard>
         </div>
-      ))}
+      )}
 
-      <!-- Tabel Semua Tools & Teknologi (Otomatis Gabung dari Data di Atas) -->
+      {webSkill && (
+        <div class="card-md">
+          <BentoCard size="md" scanline={true}>
+            <p class="section-label font-mono" style={`color: ${webSkill.color}`}>
+              / {webSkill.category}
+            </p>
+            <div class="icon-grid">
+              {webSkill.featuredIcons.map(icon => (
+                <div class="icon-item">
+                  <div class="icon-wrap" style={`--hover-color: ${webSkill.color}`}>
+                    <img
+                      src={`https://cdn.simpleicons.org/${icon.slug}/${webSkill.hex}`}
+                      alt={icon.name}
+                      width="28"
+                      height="28"
+                      loading="lazy"
+                    />
+                  </div>
+                  <span class="icon-label font-mono">{icon.name}</span>
+                </div>
+              ))}
+            </div>
+          </BentoCard>
+        </div>
+      )}
+
+      {toolsSkill && (
+        <div class="card-xl">
+          <BentoCard size="xl" scanline={true}>
+            <p class="section-label font-mono" style={`color: ${toolsSkill.color}`}>
+              / {toolsSkill.category}
+            </p>
+            <div class="icon-grid wide-icon-grid">
+              {toolsSkill.featuredIcons.map(icon => (
+                <div class="icon-item">
+                  <div class="icon-wrap" style={`--hover-color: ${toolsSkill.color}`}>
+                    <img
+                      src={`https://cdn.simpleicons.org/${icon.slug}/${toolsSkill.hex}`}
+                      alt={icon.name}
+                      width="28"
+                      height="28"
+                      loading="lazy"
+                    />
+                  </div>
+                  <span class="icon-label font-mono">{icon.name}</span>
+                </div>
+              ))}
+            </div>
+          </BentoCard>
+        </div>
+      )}
+
       <div class="card-xl">
         <BentoCard size="xl">
           <p class="section-label font-mono">/ semua tools & teknologi</p>
           <div class="tools-table">
             {skillCategories.map(row => {
-              // Menggabungkan nama dari featuredIcons dan extraTools secara otomatis
               const allTools = [...row.featuredIcons.map(i => i.name === 'Tailwind' ? 'Tailwind CSS' : i.name), ...row.extraTools];
               
               return (
@@ -122,7 +175,6 @@ const learningItems = [
         </BentoCard>
       </div>
 
-      <!-- Sedang Dipelajari -->
       <div class="card-md">
         <BentoCard size="md">
           <p class="section-label font-mono">/ sedang dipelajari</p>
@@ -137,7 +189,6 @@ const learningItems = [
         </BentoCard>
       </div>
 
-      <!-- Cara Belajar -->
       <div class="card-md">
         <BentoCard size="md">
           <p class="section-label font-mono">/ cara saya belajar</p>
@@ -160,29 +211,26 @@ const learningItems = [
     margin: 0 auto;
     padding: 4rem 2rem;
   }
-  .page-header {
-    margin-bottom: 3rem;
-  }
   .page-title {
-    font-family: var(--font-heading);
-    margin-bottom: 0.75rem;
-    font-size: 2.5rem;
+    margin-bottom: 2rem;
   }
   .page-desc {
     color: var(--text-secondary);
     max-width: 560px;
     font-size: 1rem;
     line-height: 1.5;
+    margin-top: -1rem;
+    margin-bottom: 2.5rem;
   }
 
-  /* Bento Grid system */
+  /* Bento Grid Master System */
   .bento-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 1.5rem;
   }
-  .card-md  { grid-column: span 6; }
-  .card-xl  { grid-column: span 12; }
+  .card-md { grid-column: span 6; }
+  .card-xl { grid-column: span 12; }
 
   .section-label {
     font-size: 0.75rem;
@@ -192,12 +240,20 @@ const learningItems = [
     font-weight: 600;
   }
 
-  /* Icon Grid */
+  /* Icon Grid Standar (Kotak 3 Kolom) */
   .icon-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem 1rem;
   }
+
+  /* FIX: Grid untuk Tools yang manjang ke samping agar deketan */
+  .wide-icon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    justify-content: start;
+    gap: 1.5rem 1.25rem; /* Jarak horizontal (1.25rem) disetel biar pas dedekatan */
+  }
+
   .icon-item {
     display: flex;
     flex-direction: column;
@@ -213,19 +269,19 @@ const learningItems = [
     align-items: center;
     justify-content: center;
     background: var(--bg-main);
-    transition: border-color 250ms ease, transform 250ms ease, box-shadow 250ms ease;
+    transition: all 250ms ease;
   }
   .icon-wrap:hover {
-    border-color: var(--hover-color, var(--accent-data));
+    border-color: var(--hover-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 0 15px var(--hover-color);
   }
   .icon-wrap img {
     width: 26px;
     height: 26px;
     object-fit: contain;
     opacity: 0.8;
-    transition: opacity 250ms ease, transform 250ms ease;
+    transition: all 250ms ease;
   }
   .icon-wrap:hover img { 
     opacity: 1; 
@@ -272,16 +328,17 @@ const learningItems = [
     font-size: 0.8rem;
     padding: 0.35rem 0.85rem;
     border: 1px solid var(--border);
-    border-radius: 999px;
+    border-radius: 4px;
     color: var(--text-primary);
     background: transparent;
     letter-spacing: 0.02em;
-    transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
+    transition: all 200ms ease;
   }
   .tool-pill:hover {
-    border-color: var(--hover-color, var(--accent-data));
-    color: var(--hover-color, var(--accent-data));
-    background: rgba(255, 255, 255, 0.02); /* Sedikit feedback visual */
+    border-color: var(--hover-color);
+    color: var(--hover-color);
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: 0 0 10px var(--hover-color);
   }
 
   /* Learning List */
@@ -307,7 +364,7 @@ const learningItems = [
     color: var(--text-secondary);
   }
 
-  /* Quotes & Text Block */
+  /* Quotes */
   .learn-quote {
     font-size: 1.2rem;
     font-style: italic;
@@ -323,7 +380,7 @@ const learningItems = [
     line-height: 1.7;
   }
 
-  /* Responsive Breakpoints */
+  /* Breakpoint Responsif */
   @media (max-width: 992px) {
     .tools-row {
       grid-template-columns: 150px 1fr;
@@ -331,13 +388,17 @@ const learningItems = [
   }
 
   @media (max-width: 768px) {
-    .page-container { padding: 2.5rem 1.5rem; }
-    .card-md, .card-xl { grid-column: span 12; }
+    .page-container { padding: 4rem 1.5rem; }
+    .card-md { grid-column: span 12; }
     .tools-row { 
       grid-template-columns: 1fr; 
       gap: 0.75rem; 
       padding-bottom: 1rem;
     }
     .icon-grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem 0.75rem; }
+    .wide-icon-grid {
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 1.25rem 0.75rem;
+    }
   }
 </style>
