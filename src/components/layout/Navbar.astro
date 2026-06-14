@@ -23,6 +23,8 @@ const navLinks = lang === 'id'
 ---
 
 <nav class="navbar">
+  <div class="scroll-progress" id="scroll-progress"></div>
+
   <div class="nav-inner">
     <a href={`/${lang}/`} class="nav-logo">
       <span class="font-mono text-data">argy</span><span class="font-mono text-secondary">.dev</span>
@@ -48,9 +50,83 @@ const navLinks = lang === 'id'
       })}
     </ul>
 
-    <LanguageToggle currentLang={lang} currentPath={currentPath} />
+    <div class="nav-right">
+      <LanguageToggle currentLang={lang} currentPath={currentPath} />
+      <button class="hamburger font-mono" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span class="ham-line"></span>
+        <span class="ham-line"></span>
+        <span class="ham-line"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul class="mobile-links">
+      {navLinks.map(link => {
+        const cleanCurrentPath = currentPath.replace(/\/$/, '');
+        const cleanLinkHref = link.href.replace(/\/$/, '');
+        const isActive = cleanCurrentPath === cleanLinkHref;
+
+        return (
+          <li>
+            <a
+              href={link.href}
+              class={`mobile-link font-mono ${isActive ? 'active' : ''}`}
+            >
+              {link.label}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
   </div>
 </nav>
+
+<script>
+  // Scroll progress
+  const progressBar = document.getElementById('scroll-progress');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    if (progressBar) progressBar.style.width = `${pct}%`;
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // Hamburger toggle
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  hamburger?.addEventListener('click', () => {
+    const isOpen = mobileMenu?.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  // Tutup menu kalau klik link
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu?.classList.remove('open');
+      hamburger?.classList.remove('open');
+      hamburger?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Tutup menu kalau klik di luar
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (mobileMenu?.classList.contains('open') &&
+        !mobileMenu.contains(target) &&
+        !hamburger?.contains(target)) {
+      mobileMenu.classList.remove('open');
+      hamburger?.classList.remove('open');
+      hamburger?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+  });
+</script>
 
 <style is:global>
   .navbar {
@@ -61,6 +137,18 @@ const navLinks = lang === 'id'
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
+  }
+
+  /* Scroll progress bar */
+  .scroll-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-data) 100%);
+    transition: width 80ms linear;
+    z-index: 101;
   }
 
   .nav-inner {
@@ -80,13 +168,13 @@ const navLinks = lang === 'id'
   }
   .nav-logo:hover { opacity: 0.75; }
 
+  /* Desktop links */
   .nav-links {
     display: flex;
     list-style: none;
     gap: 1.75rem;
     margin-left: auto;
     padding: 0;
-    margin-right: 0;
   }
 
   .nav-item { position: relative; }
@@ -96,43 +184,135 @@ const navLinks = lang === 'id'
     color: var(--text-secondary);
     text-decoration: none;
     letter-spacing: 0.03em;
-    padding-bottom: 6px; /* Ditambah sedikit agar memberi jarak ke garis bawah */
+    padding-bottom: 6px; /* Ditambah sedikit untuk jarak ke underline */
     position: relative;
     transition: color 200ms ease;
     display: inline-block;
   }
 
-  /* Base style untuk pseudo-element underline */
   .nav-link::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 0;
-    height: 2px; /* Ditebalkan sedikit jadi 2px agar lebih solid */
+    width: 0%;
+    height: 2px; /* Diubah menjadi 2px agar lebih solid */
     background-color: var(--accent-data);
     border-radius: 999px;
     transition: width 250ms ease;
   }
 
-  /* Hover State */
-  .nav-link:hover {
-    color: var(--text-primary);
-  }
-  .nav-link:hover::after {
-    width: 100%;
-  }
+  .nav-link:hover { color: var(--text-primary); }
+  .nav-link:hover::after { width: 100%; }
 
-  /* Active State */
-  .nav-link.active {
-    color: var(--text-primary);
-  }
+  .nav-link.active { color: var(--text-primary); }
   .nav-link.active::after {
     width: 100%;
-    background-color: var(--accent, var(--accent-data));
+    background-color: var(--accent);
   }
 
+  /* Nav right: language toggle + hamburger */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+  }
+
+  /* Desktop: nav-right margin auto dihapus, nav-links yang push */
+  @media (min-width: 641px) {
+    .nav-links { margin-left: auto; }
+    .nav-right { margin-left: 1.5rem; }
+  }
+
+  /* Hamburger button */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 200ms ease;
+  }
+  .hamburger:hover { background: rgba(255,255,255,0.05); }
+
+  .ham-line {
+    display: block;
+    height: 1px;
+    background-color: var(--text-secondary);
+    border-radius: 999px;
+    transition: transform 250ms ease, opacity 250ms ease, width 250ms ease;
+    transform-origin: center;
+  }
+  .ham-line:nth-child(1) { width: 20px; }
+  .ham-line:nth-child(2) { width: 14px; }
+  .ham-line:nth-child(3) { width: 20px; }
+
+  /* Hamburger open state → X */
+  .hamburger.open .ham-line:nth-child(1) {
+    width: 18px;
+    transform: translateY(6px) rotate(45deg);
+  }
+  .hamburger.open .ham-line:nth-child(2) {
+    opacity: 0;
+    width: 0;
+  }
+  .hamburger.open .ham-line:nth-child(3) {
+    width: 18px;
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    display: none;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 300ms ease;
+    border-top: 1px solid transparent;
+  }
+  .mobile-menu.open {
+    max-height: 400px;
+    border-top-color: var(--border);
+  }
+
+  .mobile-links {
+    list-style: none;
+    padding: 1rem 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mobile-link {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.04em;
+    transition: color 200ms ease, padding-left 200ms ease;
+  }
+  .mobile-link:last-child { border-bottom: none; }
+  .mobile-link:hover {
+    color: var(--text-primary);
+    padding-left: 0.5rem;
+  }
+  .mobile-link.active {
+    color: var(--accent-data);
+  }
+
+  /* Mobile breakpoint */
   @media (max-width: 640px) {
     .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: block; }
+    .nav-right { margin-left: auto; }
   }
 </style>
