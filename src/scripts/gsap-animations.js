@@ -1,13 +1,11 @@
-// Ganti DOMContentLoaded dengan fungsi inisialisasi Astro
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
 function initAnimations() {
-  if (typeof gsap === 'undefined') return;
-
   // Bersihkan ScrollTrigger lama agar tidak menumpuk saat pindah halaman
-  if (typeof ScrollTrigger !== 'undefined') {
-    ScrollTrigger.getAll().forEach(t => t.kill());
-  }
-
-  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.getAll().forEach(t => t.kill());
 
 // ===== HERO ANIMATIONS =====
   const typedOutput = document.getElementById('typed-output');
