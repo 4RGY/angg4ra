@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+ 
+Sitemap: https://angg4ra.my.id/sitemap-index.xml
