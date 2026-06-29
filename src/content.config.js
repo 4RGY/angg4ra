@@ -9,10 +9,11 @@ const projectsCollection = defineCollection({
   schema: z.object({
     title:       z.string(),
     description: z.string(),
-    status:      z.enum(['Selesai', 'Sedang Berjalan', 'Berkelanjutan']),
+    status:      z.enum(['Selesai', 'Sedang Berjalan', 'Berkelanjutan', 'Completed', 'In Progress', 'Ongoing']),
     tags:        z.array(z.string()),
     category:    z.enum(['Machine Learning', 'Analisis Data', 'Web', 'Mengajar']),
-    metric:      z.string().optional(),  // contoh: "Akurasi 94%"
+    language:    z.enum(['id', 'en']).default('id'),
+    metric:      z.string().optional(),
     date:        z.string(),
     featured:    z.boolean().default(false),
     github:      z.string().optional(),

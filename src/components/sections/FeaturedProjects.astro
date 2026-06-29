@@ -4,7 +4,8 @@ import { getCollection } from 'astro:content';
 const { lang = 'id' } = Astro.props;
 
 const allProjects = await getCollection('projects');
-const sorted = allProjects.sort(
+const langProjects = allProjects.filter(p => p.data.language === lang);
+const sorted = langProjects.sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 
@@ -17,7 +18,7 @@ const ctaOpen = lang === 'id' ? 'Buka proyek' : 'Open project';
 const prefix = lang === 'id' ? '/id' : '/en';
 
 const statusColor = (s: string) => {
-  if (s === 'Selesai') return '#6A8F6E';
+  if (s === 'Selesai' || s === 'Completed') return '#6A8F6E';
   if (s === 'In Progress' || s === 'Sedang Berjalan') return '#3A6B7A';
   return '#6B2D3E';
 };
@@ -34,7 +35,7 @@ const statusColor = (s: string) => {
           <span class="marker-line"></span>
           <p class="marker-label font-mono">{label}</p>
         </div>
-        <p class="fp-sub">Eksplorasi data, web, dan segala sesuatu di antaranya.</p>
+        <p class="fp-sub">{lang === 'id' ? 'Eksplorasi data, web, dan segala sesuatu di antaranya.' : 'Exploring data, web, and everything in between.'}</p>
       </div>
       <a href={`${prefix}/projects`} class="cta-all font-mono">{ctaAll}</a>
     </div>

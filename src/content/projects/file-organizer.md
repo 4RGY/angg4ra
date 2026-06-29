@@ -7,6 +7,7 @@ category: "Web"
 metric: "Mengubah folder 'Download' yang kacau jadi 17 folder terstruktur dalam satu klik"
 date: "2024-09-12"
 featured: false
+language: "id"
 github: "https://github.com/4RGY/organize_files"
 ---
 

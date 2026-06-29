@@ -1,11 +1,14 @@
 ---
-// status: 'Selesai' | 'Sedang Berjalan' | 'Berkelanjutan'
+// status: 'Selesai' | 'Sedang Berjalan' | 'Berkelanjutan' | 'Completed' | 'In Progress' | 'Ongoing'
 const { status } = Astro.props;
 
 const styles = {
   'Selesai':          { dot: '#6A8F6E', label: 'Selesai' },
   'Sedang Berjalan':  { dot: '#3A6B7A', label: 'Sedang Berjalan' },
   'Berkelanjutan':    { dot: '#6B2D3E', label: 'Berkelanjutan' },
+  'Completed':        { dot: '#6A8F6E', label: 'Completed' },
+  'In Progress':      { dot: '#3A6B7A', label: 'In Progress' },
+  'Ongoing':          { dot: '#6B2D3E', label: 'Ongoing' },
 }[status] || { dot: '#7A756A', label: status };
 ---
 

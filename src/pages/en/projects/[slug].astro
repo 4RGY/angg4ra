@@ -1,41 +1,61 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../components/layout/BaseLayout.astro';
+import StatusBadge from '../../../components/ui/StatusBadge.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts
-    .filter(post => post.data.language === 'en')
-    .map(post => ({
-      params: { slug: post.id },
-      props: { post },
+  const projects = await getCollection('projects');
+  return projects
+    .filter(project => project.data.language === 'en')
+    .map(project => ({
+      params: { slug: project.id },
+      props: { project },
     }));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
-const { title, date, tags, readingTime, excerpt } = post.data;
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, description, status, tags, metric, github, demo, date } = project.data;
 ---
 
 <BaseLayout title={title} lang="en">
   <div class="page-container">
 
-    <a href="/en/blog" class="back-link font-mono">← Back to Blog</a>
+    <!-- Back link -->
+    <a href="/en/projects" class="back-link font-mono">← Back to Projects</a>
 
-    <header class="post-header">
-      <div class="post-meta font-mono">
-        <span>{date}</span>
-        <span class="separator">·</span>
-        <span>{readingTime} min read</span>
-      </div>
-      <h1>{title}</h1>
-      <p class="post-excerpt">{excerpt}</p>
+    <!-- Header -->
+    <div class="project-header">
+      <StatusBadge status={status} />
+      <h1 style="margin-top: 0.75rem">{title}</h1>
+      <p class="project-desc">{description}</p>
+
+      {metric && (
+        <div class="metric-badge font-mono">{metric}</div>
+      )}
+
       <div class="tags">
         {tags.map(tag => <span class="tag font-mono">{tag}</span>)}
       </div>
-    </header>
 
-    <div class="post-body">
+      <div class="project-links">
+        {github && (
+          <a href={github} target="_blank" rel="noopener" class="btn-outline font-mono">
+            GitHub →
+          </a>
+        )}
+        {demo && (
+          <a href={demo} target="_blank" rel="noopener" class="btn-outline btn-secondary font-mono">
+            Demo →
+          </a>
+        )}
+      </div>
+
+      <p class="project-date font-mono">{date}</p>
+    </div>
+
+    <!-- Markdown content -->
+    <div class="project-body">
       <Content />
     </div>
 
@@ -44,10 +64,11 @@ const { title, date, tags, readingTime, excerpt } = post.data;
 
 <style>
   .page-container {
-    max-width: 680px;
+    max-width: 780px;
     margin: 0 auto;
     padding: 4rem 2rem;
   }
+
   .back-link {
     font-size: 0.8rem;
     color: var(--text-secondary);
@@ -57,27 +78,28 @@ const { title, date, tags, readingTime, excerpt } = post.data;
   }
   .back-link:hover { color: var(--text-primary); }
 
-  .post-header {
+  .project-header {
     margin-bottom: 3rem;
     padding-bottom: 2rem;
     border-bottom: 1px solid var(--border);
   }
-  .post-meta {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
-  }
-  .separator { opacity: 0.4; }
-  .post-excerpt {
-    font-size: 1.05rem;
-    font-style: italic;
-    color: var(--text-secondary);
+
+  .project-desc {
+    font-size: 1.1rem;
     margin-top: 0.75rem;
+    color: var(--text-secondary);
   }
+
+  .metric-badge {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--accent-data);
+    border: 1px solid var(--accent-data);
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+  }
+
   .tags {
     display: flex;
     gap: 0.4rem;
@@ -92,30 +114,73 @@ const { title, date, tags, readingTime, excerpt } = post.data;
     color: var(--text-secondary);
   }
 
-  /* Markdown body */
-  .post-body :global(h2) { margin-top: 2.5rem; margin-bottom: 0.75rem; }
-  .post-body :global(h3) { margin-top: 2rem; margin-bottom: 0.5rem; }
-  .post-body :global(p) { margin-bottom: 1.25rem; color: var(--text-secondary); line-height: 1.8; }
-  .post-body :global(ul),
-  .post-body :global(ol) {
+  .project-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .btn-outline {
+    font-size: 0.8rem;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    border-radius: var(--radius);
+    transition: all 250ms ease;
+    text-decoration: none;
+  }
+  .btn-outline:hover { background-color: var(--accent); color: var(--text-primary); }
+  .btn-secondary { border-color: var(--border); }
+  .btn-secondary:hover { background-color: var(--bg-card); box-shadow: none; }
+
+  .project-date {
+    margin-top: 1.25rem;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+  }
+
+  /* Markdown body styling */
+  .project-body :global(h2) {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .project-body :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .project-body :global(p) {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+  }
+  .project-body :global(ul),
+  .project-body :global(ol) {
     padding-left: 1.5rem;
     color: var(--text-secondary);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
   }
-  .post-body :global(li::marker) { color: var(--accent-data); }
-  .post-body :global(strong) { color: var(--text-primary); font-weight: 600; }
-  .post-body :global(em) { font-style: italic; }
-  .post-body :global(code) {
+  .project-body :global(li::marker) {
+    color: var(--accent-data);
+  }
+  .project-body :global(strong) {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  .project-body :global(em) {
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+  .project-body :global(code) {
     background: var(--bg-card);
     border: 1px solid var(--border);
     padding: 0.1rem 0.4rem;
     border-radius: 4px;
     font-size: 0.85em;
   }
-  .post-body :global(pre) {
+  .project-body :global(pre) {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -123,18 +188,11 @@ const { title, date, tags, readingTime, excerpt } = post.data;
     overflow-x: auto;
     margin-bottom: 1.5rem;
   }
-  .post-body :global(blockquote) {
+  .project-body :global(blockquote) {
     border-left: 3px solid var(--accent);
-    padding-left: 1.25rem;
+    padding-left: 1rem;
     color: var(--text-secondary);
     font-style: italic;
     margin: 1.5rem 0;
-    font-family: var(--font-quote);
-    font-size: 1.1rem;
-  }
-  .post-body :global(hr) {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 2.5rem 0;
   }
 </style>

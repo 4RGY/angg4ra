@@ -7,6 +7,7 @@ category: "Machine Learning"
 metric: "Akurasi terbaik: 94.2% (Random Forest)"
 date: "2024-11-15"
 featured: true
+language: "id"
 # github: "https://github.com/4RGY/jakarta-ispu"
 ---
 

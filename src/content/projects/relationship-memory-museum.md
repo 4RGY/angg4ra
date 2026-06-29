@@ -7,6 +7,7 @@ category: "Web"
 metric: "Proyek personal paling ambisius secara visual dan emosional"
 date: "2026-06-20"
 featured: false
+language: "id"
 # demo: "https://memory-museum.pages.dev"
 ---
 
