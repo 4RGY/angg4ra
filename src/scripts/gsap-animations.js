@@ -10,71 +10,28 @@ function initAnimations() {
 // ===== HERO ANIMATIONS =====
   const typedOutput = document.getElementById('typed-output');
   if (typedOutput) {
-    // Kosongkan dulu teksnya setiap kali inisialisasi dijalankan
-    typedOutput.textContent = ''; 
-
-    // Menggunakan ID pembungkus agar seleksi elemen presisi di server produksi
     const typedContainer = document.getElementById('typed-text');
-    const text = typedContainer?.dataset.text 
+    const text = typedContainer?.dataset.text
       || (document.documentElement.lang === 'id' ? 'Halo. Saya Anggara' : 'Hello. I\'m Anggara');
 
-    let i = 0;
-    const typeInterval = setInterval(() => {
-      // Proteksi jika user pindah halaman sebelum mengetik selesai
-      if (!document.getElementById('typed-output')) {
-        clearInterval(typeInterval);
-        return;
-      }
-      
-      // Amankan agar tidak memunculkan karakter 'undefined' jika teks gagal dimuat
-      if (text && text[i]) {
-        typedOutput.textContent += text[i];
-      }
-      
-      i++;
-      if (i >= text.length) {
-        clearInterval(typeInterval);
-
-        gsap.to('#hero-tagline', { opacity: 1, y: 0, duration: 0.6, delay: 0.3 });
-        gsap.to('#hero-cta',     { opacity: 1, y: 0, duration: 0.6, delay: 0.6 });
-        gsap.to('#hero-stats',   { opacity: 1, y: 0, duration: 0.6, delay: 0.9,
-          onComplete: startCountAnimations
-        });
-      }
-    }, 60);
+    // The complete greeting is server-rendered so content remains readable
+    // when animation initialization fails.
+    typedOutput.textContent = text;
   }
 
-  // ===== COUNT ANIMATIONS =====
-  function startCountAnimations() {
-    document.querySelectorAll('.stat-value').forEach(el => {
-      const target = parseFloat(el.dataset.target);
-      const isDecimal = el.dataset.target.includes('.');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) return;
 
-      gsap.fromTo(el,
-        { textContent: 0 },
-        {
-          textContent: target,
-          duration: 1.5,
-          ease: 'power2.out',
-          snap: { textContent: isDecimal ? 0.01 : 1 },
-          onUpdate() {
-            const val = parseFloat(el.textContent);
-            el.textContent = isDecimal ? val.toFixed(2) : Math.round(val);
-          }
-        }
-      );
-    });
-  }
-
-  // ===== SCROLL REVEAL (BentoCard) =====
+  // Keep content visible by default. Animation may enhance position, but a
+  // failed/late ScrollTrigger must never leave readable content transparent.
   gsap.utils.toArray('.bento-card').forEach((card, i) => {
     gsap.fromTo(card,
-      { opacity: 0, y: 30 },
+      { y: 18 },
       {
-        opacity: 1,
         y: 0,
-        duration: 0.5,
+        duration: 0.4,
         delay: (i % 3) * 0.1,
+        clearProps: 'transform',
         scrollTrigger: {
           trigger: card,
           start: 'top 85%',
@@ -100,9 +57,8 @@ function initAnimations() {
   });
 }
 
-// ===== EKSEKUSI JALUR AMAN ASTRO =====
-// Jalankan langsung saat pertama kali web dimuat
-document.addEventListener('DOMContentLoaded', initAnimations);
-
-// Jalankan ulang setiap kali sistem View Transitions Astro menukar halaman/bahasa
-document.addEventListener('astro:page-load', initAnimations);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAnimations, { once: true });
+} else {
+  initAnimations();
+}

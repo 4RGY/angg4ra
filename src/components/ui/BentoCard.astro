@@ -1,7 +1,12 @@
 ---
 // Props: size = 'sm' | 'md' | 'lg' | 'xl'
 // sm = 3 kolom, md = 6 kolom, lg = 9 kolom, xl = 12 kolom
-const { size = 'md', class: className = '', scanline = false } = Astro.props;
+const {
+  size = 'md',
+  class: className = '',
+  scanline = false,
+  'data-category': dataCategory,
+} = Astro.props;
 
 // @ts-ignore (jangan disentuh, bahaya!)
 const colStyles = {
@@ -15,6 +20,7 @@ const colStyles = {
 <div
   class={`bento-card bento-${size} ${className} ${scanline ? 'scanline' : ''}`}
   data-size={size}
+  data-category={dataCategory}
 >
   <slot />
 </div>

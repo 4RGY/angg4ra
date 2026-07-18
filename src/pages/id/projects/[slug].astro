@@ -5,10 +5,12 @@ import StatusBadge from '../../../components/ui/StatusBadge.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return projects.map(project => ({
-    params: { slug: project.id },
-    props: { project },
-  }));
+  return projects
+    .filter(project => project.data.language === 'id')
+    .map(project => ({
+      params: { slug: project.id },
+      props: { project },
+    }));
 }
 
 const { project } = Astro.props;

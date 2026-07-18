@@ -1,6 +1,4 @@
-/* ===== IMPORT FONT ===== */
-/* Jika pakai Google Fonts (lebih mudah untuk mulai): */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap');
+/* Fonts are loaded once from BaseLayout.astro so preconnect remains effective. */
 
 /* ===== CSS VARIABLES (Design Tokens) ===== */
 :root {
@@ -78,9 +76,23 @@ a {
 }
 a:hover { color: var(--hover); }
 
+:where(a, button, [role='button'], input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent-data);
+  outline-offset: 3px;
+}
+
 code, pre {
   font-family: var(--font-mono);
   font-size: 0.875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ===== GRAIN OVERLAY ===== */

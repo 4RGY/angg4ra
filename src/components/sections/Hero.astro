@@ -151,7 +151,7 @@ const sections = lang === 'id'
   <div class="hero-content">
     <div class="hero-typed font-mono" id="typed-text" data-text={t.greeting}>
       <span class="prompt">&gt; </span>
-      <span id="typed-output"></span>
+      <span id="typed-output">{t.greeting}</span>
       <span class="cursor" id="cursor">_</span>
     </div>
 
@@ -164,11 +164,11 @@ const sections = lang === 'id'
 
     <div class="hero-stats" id="hero-stats">
       <div class="stat-chip">
-        <span class="stat-value font-mono" data-target="6">0</span>
+        <span class="stat-value font-mono" data-target="6">6</span>
         <span class="stat-label">{lang === 'id' ? 'Proyek Selesai' : 'Projects Done'}</span>
       </div>
       <div class="stat-chip">
-        <span class="stat-value font-mono" data-target="500">0</span>
+        <span class="stat-value font-mono" data-target="500">500</span>
         <span class="stat-label">{lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching'}</span>
       </div>
     </div>
@@ -269,7 +269,6 @@ const sections = lang === 'id'
     font-style: italic;
     color: var(--text-secondary);
     margin-bottom: 2.5rem;
-    opacity: 0;
   }
 
   .hero-cta {
@@ -277,7 +276,6 @@ const sections = lang === 'id'
     gap: 1rem;
     flex-wrap: wrap;
     margin-bottom: 3rem;
-    opacity: 0;
   }
 
   .btn-outline {
@@ -314,7 +312,6 @@ const sections = lang === 'id'
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
-    opacity: 0;
   }
   .stat-chip {
     display: flex;

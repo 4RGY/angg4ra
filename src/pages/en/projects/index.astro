@@ -16,14 +16,14 @@ const rest = projects.filter(p => !p.data.featured);
 
     <div class="filter-tabs" id="filter-tabs">
       {['All', 'Machine Learning', 'Analisis Data', 'Web', 'Mengajar'].map(cat => (
-        <button class={`filter-btn font-mono ${cat === 'All' ? 'active' : ''}`} data-filter={cat}>
+        <button class={`filter-btn font-mono ${cat === 'All' ? 'active' : ''}`} data-filter={cat} aria-pressed={cat === 'All'}>
           {cat}
         </button>
       ))}
     </div>
 
     {featured && (
-      <div class="featured-project">
+      <div class="featured-project project-filter-item" data-category={featured.data.category}>
         <BentoCard size="xl">
           <StatusBadge status={featured.data.status} />
           <h2 style="margin-top: 0.5rem">{featured.data.title}</h2>
@@ -41,7 +41,7 @@ const rest = projects.filter(p => !p.data.featured);
 
     <div class="bento-grid projects-grid" id="projects-grid">
       {rest.map(project => (
-        <BentoCard size="md" class="project-card" data-category={project.data.category}>
+        <BentoCard size="md" class="project-card project-filter-item" data-category={project.data.category}>
           <StatusBadge status={project.data.status} />
           <h3 style="margin: 0.5rem 0">{project.data.title}</h3>
           <p style="font-size: 0.9rem">{project.data.description}</p>
@@ -110,14 +110,18 @@ const rest = projects.filter(p => !p.data.featured);
 
 <script>
   const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-  const projectCards = document.querySelectorAll<HTMLElement>('.project-card');
+  const projectCards = document.querySelectorAll<HTMLElement>('.project-filter-item');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const filter = btn.dataset.filter;
 
-      filterBtns.forEach(b => b.classList.remove('active'));
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
 
       projectCards.forEach(card => {
         if (filter === 'All' || card.dataset.category === filter) {

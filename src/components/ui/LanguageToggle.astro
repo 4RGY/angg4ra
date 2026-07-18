@@ -1,14 +1,34 @@
 ---
 const { currentLang, currentPath } = Astro.props;
-// Ganti prefix bahasa di URL
 const otherLang = currentLang === 'id' ? 'en' : 'id';
-const otherPath = currentPath.replace(`/${currentLang}/`, `/${otherLang}/`);
+
+function localizedPath(path: string) {
+  const normalized = path.replace(/\/$/, '');
+  const detailMatch = normalized.match(/^\/(id|en)\/(projects|blog)\/([^/]+)$/);
+  if (detailMatch) {
+    const [, , section, slug] = detailMatch;
+    const localizedSlug = otherLang === 'en'
+      ? (slug.endsWith('-en') ? slug : `${slug}-en`)
+      : slug.replace(/-en$/, '');
+    return `/${otherLang}/${section}/${localizedSlug}/`;
+  }
+
+  const switched = normalized.replace(new RegExp(`^/${currentLang}(?=/|$)`), `/${otherLang}`);
+  const fallback = `/${otherLang}`;
+  return `${switched || fallback}/`;
+}
+
+const otherPath = localizedPath(currentPath);
 ---
 
-<div class="lang-toggle">
-  <span class={currentLang === 'id' ? 'active' : ''}>ID</span>
+<div class="lang-toggle" aria-label="Language selection">
+  {currentLang === 'id'
+    ? <span class="active" aria-current="page">ID</span>
+    : <a href={otherPath}>ID</a>}
   <span class="divider">/</span>
-  <a href={otherPath} class={currentLang === 'en' ? 'active' : ''}>EN</a>
+  {currentLang === 'en'
+    ? <span class="active" aria-current="page">EN</span>
+    : <a href={otherPath}>EN</a>}
 </div>
 
 <style>
