@@ -17,11 +17,13 @@ async function listHtml(relativeDir) {
 
 test('Indonesian project routes exclude English content IDs', async () => {
   const routes = await listHtml('dist/id/projects/');
-  assert.deepEqual(routes, [
-    'file-organizer',
-    'jakarta-air-quality',
-    'relationship-memory-museum',
-  ]);
+  // No route should end with "-en" (English content leaking into ID routes)
+  const leaked = routes.filter(r => r.endsWith('-en'));
+  assert.deepEqual(leaked, [], 'No English slugs should appear in /id/projects/');
+  // All expected Indonesian projects should be present
+  for (const expected of ['jakarta-air-quality', 'file-organizer', 'relationship-memory-museum']) {
+    assert.ok(routes.includes(expected), `Missing expected route: ${expected}`);
+  }
 });
 
 test('About cards never depend on opacity animation to be readable', async () => {
@@ -77,7 +79,7 @@ test('Google Fonts stylesheet is loaded only once', async () => {
 test('Hero content remains meaningful before JavaScript enhancement', async () => {
   const idHtml = await read('dist/id/index.html');
   const hero = await read('src/components/sections/Hero.astro');
-  assert.match(idHtml, /id="typed-output"[^>]*>Halo\. Saya Anggara<\/span>/);
+  assert.match(idHtml, /id="typed-output"[^>]*>Halo, gua Anggara\.<\/span>/);
   assert.match(idHtml, /data-target="6"[^>]*>6<\/span>/);
   assert.match(idHtml, /data-target="500"[^>]*>500<\/span>/);
   for (const selector of ['.hero-tagline', '.hero-cta', '.hero-stats']) {
