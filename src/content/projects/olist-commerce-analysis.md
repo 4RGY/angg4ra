@@ -6,7 +6,7 @@ tags: ["Python", "Jupyter", "Pandas", "pytest", "Analisis Data"]
 category: "Analisis Data"
 metric: "96.478 order → rekomendasi prioritas monitoring pengiriman & cohort repeat-purchase"
 date: "2026-06-12"
-featured: true
+featured: false
 language: "id"
 github: "https://github.com/4RGY/olist-commerce-analysis"
 ---

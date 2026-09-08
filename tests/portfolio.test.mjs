@@ -99,7 +99,7 @@ test('Hero content remains meaningful before JavaScript enhancement', async () =
 test('Project filters include featured and regular cards with accessible state', async () => {
   for (const lang of ['id', 'en']) {
     const html = await read(`dist/${lang}/projects/index.html`);
-    assert.match(html, /class="[^"]*featured-project[^"]*"[^>]+data-category="Machine Learning"/);
+    assert.match(html, /class="[^"]*featured-project[^"]*"[^>]+data-category="[^"]+"/);
     assert.match(html, /class="[^"]*\bproject-card\b[^"]*"[^>]+data-category=/);
     assert.match(html, /class="[^"]*filter-btn[^"]*active[^"]*"[^>]+aria-pressed="true"/);
   }

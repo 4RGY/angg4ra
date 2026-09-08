@@ -7,7 +7,7 @@ import { getCollection } from 'astro:content';
 const allProjects = await getCollection('projects');
 const projects = allProjects.filter(p => p.data.language === 'en');
 const featured = projects.find(p => p.data.featured);
-const rest = projects.filter(p => !p.data.featured);
+const rest = projects.filter(p => p !== featured);
 ---
 
 <BaseLayout title="Projects" lang="en">

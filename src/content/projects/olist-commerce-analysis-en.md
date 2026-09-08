@@ -6,7 +6,7 @@ tags: ["Python", "Jupyter", "Pandas", "pytest", "Data Analysis"]
 category: "Analisis Data"
 metric: "96,478 orders → recommendations for delivery monitoring & repeat-purchase cohorts"
 date: "2026-06-12"
-featured: true
+featured: false
 language: "en"
 github: "https://github.com/4RGY/olist-commerce-analysis"
 ---
