@@ -19,9 +19,11 @@ test('Indonesian project routes exclude English content IDs', async () => {
   const routes = await listHtml('dist/id/projects/');
   assert.deepEqual(routes, [
     'analisis-gempa-indonesia',
+    'eyetails-erp',
     'file-organizer',
     'jadwal-kuliah',
     'jakarta-air-quality',
+    'koperargy',
     'olist-commerce-analysis',
     'pendidikan-indonesia',
     'relationship-memory-museum',
@@ -83,8 +85,8 @@ test('Google Fonts stylesheet is loaded only once', async () => {
 test('Hero content remains meaningful before JavaScript enhancement', async () => {
   const idHtml = await read('dist/id/index.html');
   const hero = await read('src/components/sections/Hero.astro');
-  assert.match(idHtml, /id="typed-output"[^>]*>Halo\. Saya Anggara<\/span>/);
-  assert.match(idHtml, /data-target="9"[^>]*>9<\/span>/);
+  assert.match(idHtml, /id="typed-output"[^>]*>Halo, gua Anggara\.<\/span>/);
+  assert.match(idHtml, /data-target="11"[^>]*>11<\/span>/);
   assert.match(idHtml, /data-target="500"[^>]*>500<\/span>/);
   for (const selector of ['.hero-tagline', '.hero-cta', '.hero-stats']) {
     const escaped = selector.replace('.', '\\.');
