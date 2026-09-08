@@ -1,0 +1,9 @@
+# Cloudflare Pages config — static Astro site
+# Deploy dengan: npx wrangler pages deploy dist --project-name angg4ra
+name = "angg4ra"
+compatibility_date = "2026-06-01"
+pages_build_output_dir = "./dist"
+
+# Custom domain utama (set di dashboard: Workers & Pages > angg4ra > Custom domains)
+#   - angg4ra.my.id
+#   - angg4ra.pages.dev (otomatis setelah project dibuat)
