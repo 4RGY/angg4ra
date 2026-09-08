@@ -308,12 +308,12 @@ const BOOKS = [
 
 // ── STRINGS / CONNECTIONS ─────────────────────────────────────
 const CONNECTIONS = [
-  { from: "pin-0", to: "pin-1", color: "#6B2D3E", dash: false },
-  { from: "pin-1", to: "pin-2", color: "#6B2D3E", dash: false },
-  { from: "pin-1", to: "pin-3", color: "#3A6B7A", dash: false },
+  { from: "pin-0", to: "pin-1", color: "#56c8e8", dash: false },
+  { from: "pin-1", to: "pin-2", color: "#56c8e8", dash: false },
+  { from: "pin-1", to: "pin-3", color: "#4aa8c9", dash: false },
   { from: "pin-2", to: "pin-5", color: "#4A7A52", dash: true  },
   { from: "pin-0", to: "pin-4", color: "#7A5A3A", dash: true  },
-  { from: "pin-3", to: "pin-4", color: "#3A6B7A", dash: true  },
+  { from: "pin-3", to: "pin-4", color: "#4aa8c9", dash: true  },
 ];
 
 // ── NOTE DETAIL DATA ──────────────────────────────────────────
@@ -1056,7 +1056,7 @@ document.addEventListener("DOMContentLoaded", init);
 .ftab.active {
   border-color: var(--accent);
   color: var(--text-primary);
-  background: rgba(107,45,62,0.12);
+  background: rgba(86,200,232,0.12);
 }
 
 .shelf-container {
@@ -1233,7 +1233,7 @@ document.addEventListener("DOMContentLoaded", init);
   line-height: 1.75; font-style: italic;
   max-width: 580px; margin: 0;
   padding-left: 1.25rem;
-  border-left: 2px solid rgba(107,45,62,0.4);
+  border-left: 2px solid rgba(86,200,232,0.4);
   position: relative;
 }
 
@@ -1245,7 +1245,7 @@ document.addEventListener("DOMContentLoaded", init);
   position: absolute;
   width: 320px; height: 320px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(107,45,62,0.18) 0%, rgba(58,122,139,0.08) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(86,200,232,0.18) 0%, rgba(58,122,139,0.08) 45%, transparent 70%);
   pointer-events: none;
   z-index: 1;
   opacity: 0;

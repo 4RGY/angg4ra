@@ -18,9 +18,9 @@ const ctaOpen = lang === 'id' ? 'Buka proyek' : 'Open project';
 const prefix = lang === 'id' ? '/id' : '/en';
 
 const statusColor = (s: string) => {
-  if (s === 'Selesai' || s === 'Completed') return '#6A8F6E';
-  if (s === 'In Progress' || s === 'Sedang Berjalan') return '#3A6B7A';
-  return '#6B2D3E';
+  if (s === 'Selesai' || s === 'Completed') return '#6b8fd4';
+  if (s === 'In Progress' || s === 'Sedang Berjalan') return '#4aa8c9';
+  return '#56c8e8';
 };
 ---
 
@@ -127,7 +127,7 @@ const statusColor = (s: string) => {
   border-radius: 50%;
   top: -20%; left: 50%;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(58,107,122,0.1) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(74,168,201,0.1) 0%, transparent 65%);
   filter: blur(80px);
   pointer-events: none; z-index: 0;
 }
@@ -171,13 +171,13 @@ const statusColor = (s: string) => {
   transition: border-color 250ms, background 250ms, transform 250ms;
 }
 .featured-card:hover {
-  border-color: rgba(107,45,62,0.4);
-  background: rgba(107,45,62,0.04);
+  border-color: rgba(86,200,232,0.4);
+  background: rgba(86,200,232,0.04);
   transform: translateY(-2px);
 }
 .fc-glow {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 0% 50%, rgba(107,45,62,0.1) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 0% 50%, rgba(86,200,232,0.1) 0%, transparent 60%);
   pointer-events: none;
   opacity: 0;
   transition: opacity 300ms;
@@ -252,12 +252,12 @@ const statusColor = (s: string) => {
 .rest-card::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 0% 0%, rgba(58,107,122,0.07) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 0% 0%, rgba(74,168,201,0.07) 0%, transparent 60%);
   opacity: 0; transition: opacity 250ms;
 }
 .rest-card:hover {
-  border-color: rgba(58,107,122,0.3);
-  background: rgba(58,107,122,0.03);
+  border-color: rgba(74,168,201,0.3);
+  background: rgba(74,168,201,0.03);
   transform: translateY(-2px);
 }
 .rest-card:hover::before { opacity: 1; }

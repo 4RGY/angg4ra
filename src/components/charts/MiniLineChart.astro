@@ -17,22 +17,22 @@ interface Props {
     <defs>
       <!-- Gradient fade kiri-kanan -->
       <linearGradient id="fade-lr" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%"   stop-color="#0A0908" stop-opacity="1"/>
-        <stop offset="15%"  stop-color="#0A0908" stop-opacity="0"/>
-        <stop offset="85%"  stop-color="#0A0908" stop-opacity="0"/>
-        <stop offset="100%" stop-color="#0A0908" stop-opacity="1"/>
+        <stop offset="0%"   stop-color="#0b1220" stop-opacity="1"/>
+        <stop offset="15%"  stop-color="#0b1220" stop-opacity="0"/>
+        <stop offset="85%"  stop-color="#0b1220" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0b1220" stop-opacity="1"/>
       </linearGradient>
 
       <!-- Gradient fill area bawah garis utama -->
       <linearGradient id="fill-main" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#6B2D3E" stop-opacity="0.12"/>
-        <stop offset="100%" stop-color="#6B2D3E" stop-opacity="0"/>
+        <stop offset="0%"   stop-color="#56c8e8" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#56c8e8" stop-opacity="0"/>
       </linearGradient>
 
       <!-- Gradient fill area bawah garis kedua -->
       <linearGradient id="fill-sci" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"   stop-color="#3A6B7A" stop-opacity="0.08"/>
-        <stop offset="100%" stop-color="#3A6B7A" stop-opacity="0"/>
+        <stop offset="0%"   stop-color="#4aa8c9" stop-opacity="0.08"/>
+        <stop offset="100%" stop-color="#4aa8c9" stop-opacity="0"/>
       </linearGradient>
 
       <!-- Clip path biar draw animation bisa dipakai -->
@@ -67,7 +67,7 @@ interface Props {
         class="chart-path"
         d="M0,195 C60,188 120,182 180,175 C240,168 300,160 360,170 C420,180 480,172 540,158 C600,144 660,136 720,145 C780,154 840,148 900,140"
         fill="none"
-        stroke="#3A6B7A"
+        stroke="#4aa8c9"
         stroke-width="1"
         stroke-opacity="0.2"
       />
@@ -84,7 +84,7 @@ interface Props {
         class="chart-path"
         d="M0,170 C60,158 120,148 180,138 C240,128 300,142 360,132 C420,122 480,108 540,118 C600,128 660,112 720,100 C780,88 840,95 900,88"
         fill="none"
-        stroke="#3A6B7A"
+        stroke="#4aa8c9"
         stroke-width="1.2"
         stroke-opacity="0.35"
         stroke-dasharray="6 3"
@@ -103,7 +103,7 @@ interface Props {
         class="chart-path chart-main"
         d="M0,145 C60,130 120,118 180,95 C240,72 300,88 360,68 C420,48 480,62 540,45 C600,28 660,40 720,25 C780,10 840,18 900,12"
         fill="none"
-        stroke="#6B2D3E"
+        stroke="#56c8e8"
         stroke-width="1.8"
         stroke-opacity="0.55"
         stroke-linecap="round"
@@ -111,14 +111,14 @@ interface Props {
       />
 
       <!-- Dots pada titik data garis utama -->
-      <circle class="chart-dot" cx="180" cy="95"  r="3" fill="#6B2D3E" fill-opacity="0.7"/>
-      <circle class="chart-dot" cx="360" cy="68"  r="3" fill="#6B2D3E" fill-opacity="0.7"/>
-      <circle class="chart-dot" cx="540" cy="45"  r="3" fill="#6B2D3E" fill-opacity="0.7"/>
-      <circle class="chart-dot" cx="720" cy="25"  r="3" fill="#6B2D3E" fill-opacity="0.7"/>
+      <circle class="chart-dot" cx="180" cy="95"  r="3" fill="#56c8e8" fill-opacity="0.7"/>
+      <circle class="chart-dot" cx="360" cy="68"  r="3" fill="#56c8e8" fill-opacity="0.7"/>
+      <circle class="chart-dot" cx="540" cy="45"  r="3" fill="#56c8e8" fill-opacity="0.7"/>
+      <circle class="chart-dot" cx="720" cy="25"  r="3" fill="#56c8e8" fill-opacity="0.7"/>
 
       <!-- Dot aktif (ujung kanan) dengan pulse -->
-      <circle class="dot-pulse-outer" cx="900" cy="12" r="6" fill="#6B2D3E" fill-opacity="0.2"/>
-      <circle class="dot-pulse-inner" cx="900" cy="12" r="3" fill="#6B2D3E" fill-opacity="0.85"/>
+      <circle class="dot-pulse-outer" cx="900" cy="12" r="6" fill="#56c8e8" fill-opacity="0.2"/>
+      <circle class="dot-pulse-inner" cx="900" cy="12" r="3" fill="#56c8e8" fill-opacity="0.85"/>
 
       <!-- Label sumbu Y — kecil, subtle -->
       <text x="8"  y="52"  class="chart-label">HIGH</text>

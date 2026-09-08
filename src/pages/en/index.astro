@@ -11,7 +11,7 @@ const experiences = [
     location: 'Cibubur, East Jakarta',
     period: 'Jan 2024 — Present',
     type: 'Part-time',
-    color: '#6A8F6E',
+    color: '#6b8fd4',
     points: [
       'Teaching programming fundamentals, computational thinking, and computer logic to students.',
       'Compiling structured per-session learning reports for each student.',
@@ -25,7 +25,7 @@ const experiences = [
     location: 'Remote',
     period: '2023 — 2024',
     type: 'Freelance',
-    color: '#3A6B7A',
+    color: '#4aa8c9',
     points: [
       'Built profile and portfolio websites for individual clients.',
       'Developed landing pages using vanilla HTML, CSS, and JavaScript.',
@@ -38,7 +38,7 @@ const experiences = [
     location: 'Indonesia',
     period: '2025',
     type: 'Achievement',
-    color: '#6B2D3E',
+    color: '#56c8e8',
     points: [
       'Successfully registered a software copyright/patent for a village tourism website with registration number EC00202500538.',
       'Project developed as a digital promotion solution for a local tourism village.',
@@ -64,7 +64,7 @@ const education = [
     institution: 'Universitas Indraprasta PGRI (UNINDRA)',
     period: '2023 - Present',
     gpa: '3.77',
-    color: '#3A6B7A',
+    color: '#4aa8c9',
     highlights: [
       'Focused on data analysis, machine learning, and database management.',
       'Actively collaborating in group projects to design digital solutions.',
@@ -76,7 +76,7 @@ const education = [
     institution: 'Software Engineering',
     period: '2020 — 2023',
     gpa: null,
-    color: '#6A8F6E',
+    color: '#6b8fd4',
     highlights: [
       'Where the rabbit hole of code began.',
       'Fundamentals of programming, databases, and application development.',
@@ -202,11 +202,11 @@ const dataToolsLoop = [...dataTools, ...dataTools, ...dataTools];
             <p class="card-eyebrow font-mono">/ numbers</p>
             <div class="mini-stats">
               <div class="mini-stat">
-                <span class="ms-val font-mono" style="color:#3A6B7A">8+</span>
+                <span class="ms-val font-mono" style="color:#4aa8c9">8+</span>
                 <span class="ms-lbl font-mono">Projects</span>
               </div>
               <div class="mini-stat">
-                <span class="ms-val font-mono" style="color:#6B2D3E">12</span>
+                <span class="ms-val font-mono" style="color:#56c8e8">12</span>
                 <span class="ms-lbl font-mono">Certifications</span>
               </div>
             </div>
@@ -283,10 +283,10 @@ const dataToolsLoop = [...dataTools, ...dataTools, ...dataTools];
       <!-- Stats strip -->
       <div class="stats-strip">
         {[
-          { val: '1+',   lbl: 'Years Teaching', color: '#6A8F6E' },
-          { val: '500+', lbl: 'Teaching Hours',  color: '#6B2D3E' },
-          { val: '8+',   lbl: 'Projects',        color: '#6A8F6E' },
-          { val: '12',   lbl: 'Certifications',  color: '#3A6B7A' },
+          { val: '1+',   lbl: 'Years Teaching', color: '#6b8fd4' },
+          { val: '500+', lbl: 'Teaching Hours',  color: '#56c8e8' },
+          { val: '8+',   lbl: 'Projects',        color: '#6b8fd4' },
+          { val: '12',   lbl: 'Certifications',  color: '#4aa8c9' },
         ].map(s => (
           <div class="stat-item">
             <span class="stat-val font-mono" style={`color:${s.color}`}>{s.val}</span>
@@ -451,11 +451,11 @@ document.addEventListener('mousemove', (e: MouseEvent) => {
 }
 .glow-red {
   width: 600px; height: 600px; top: -10%; left: -15%;
-  background: radial-gradient(circle, rgba(107,45,62,0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(86,200,232,0.18) 0%, transparent 70%);
 }
 .glow-teal {
   width: 500px; height: 500px; top: 10%; right: -10%;
-  background: radial-gradient(circle, rgba(58,107,122,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(74,168,201,0.15) 0%, transparent 70%);
 }
 
 /* ── BENTO GRID ──────────────────────────────────────────── */
@@ -476,7 +476,7 @@ document.addEventListener('mousemove', (e: MouseEvent) => {
 }
 .photo-glow {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 110%, rgba(107,45,62,0.2) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 50% 110%, rgba(86,200,232,0.2) 0%, transparent 65%);
   pointer-events: none;
 }
 .bio-text { font-size: 0.93rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 0.85rem; }
@@ -493,9 +493,9 @@ document.addEventListener('mousemove', (e: MouseEvent) => {
 .status-list { display: flex; flex-direction: column; gap: 0.7rem; }
 .status-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: var(--text-secondary); }
 .s-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; animation: pdot 2s ease infinite; }
-.s-green { background: #6A8F6E; }
-.s-teal  { background: #3A6B7A; }
-.s-red   { background: #6B2D3E; }
+.s-green { background: #6b8fd4; }
+.s-teal  { background: #4aa8c9; }
+.s-red   { background: #56c8e8; }
 @keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 .current-list { display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.88rem; color: var(--text-secondary); }
@@ -676,11 +676,11 @@ document.addEventListener('mousemove', (e: MouseEvent) => {
 .open-row {
   display: flex; align-items: center; gap: 0.5rem;
   padding: 0.75rem 0.5rem;
-  font-size: 0.68rem; color: #6A8F6E; letter-spacing: 0.06em;
+  font-size: 0.68rem; color: #6b8fd4; letter-spacing: 0.06em;
 }
 .open-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: #6A8F6E; flex-shrink: 0;
+  background: #6b8fd4; flex-shrink: 0;
   animation: pdot 2s ease infinite;
 }
 
@@ -714,7 +714,7 @@ document.addEventListener('mousemove', (e: MouseEvent) => {
 .cert-row:last-child { border-bottom: none; }
 .cert-name { font-size: 0.82rem; color: var(--text-primary); line-height: 1.4; margin-bottom: 0.25rem; }
 .cert-meta { display: flex; justify-content: space-between; }
-.cert-issuer { font-size: 0.62rem; color: #6A8F6E; }
+.cert-issuer { font-size: 0.62rem; color: #6b8fd4; }
 .cert-year { font-size: 0.62rem; color: rgba(255,255,255,0.2); }
 
 @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }

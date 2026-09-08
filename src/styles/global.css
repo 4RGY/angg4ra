@@ -1,31 +1,80 @@
-/* Fonts are loaded once from BaseLayout.astro so preconnect remains effective. */
+@import "tailwindcss";
 
-/* ===== CSS VARIABLES (Design Tokens) ===== */
+@custom-variant dark (&:is(.dark *));
+@source "../**/*.{astro,js,jsx,ts,tsx,md,mdx}";
+
+/* =====================================================================
+   OCEAN BLUEPRINT — Design Tokens
+   Palet terinspirasi blueprint teknik: deep navy, cyan es, slate biru.
+   Light mode = "kertas blueprint" (biru pucat), Dark mode = "meja malam".
+   ===================================================================== */
+
 :root {
-  /* Warna */
-  --bg-main:        #0A0908;
-  --bg-card:        #111009;
-  --border:         #1E1C14;
-  --text-primary:   #E2D9C8;
-  --text-secondary: #7A756A;
-  --accent:         #6B2D3E;
-  --accent-data:    #6A8F6E;
-  --accent-sci:     #3A6B7A;
-  --hover:          #EDE5D5;
+  /* ── Surface ── */
+  --bg-main:        #0b1220;   /* deep navy */
+  --bg-card:        #101a2c;   /* kartu sedikit lebih terang */
+  --bg-elevated:    #16223a;
+  --border:         rgba(148, 184, 212, 0.16);   /* cyan-slate halus */
 
-  /* Tipografi */
-  --font-heading:   'Playfair Display', Georgia, serif;
-  --font-body:      'Lora', Georgia, serif;
-  --font-mono:      'JetBrains Mono', 'Courier New', monospace;
-  --font-quote:     'Cormorant Garamond', Georgia, serif;
+  /* ── Teks ── */
+  --text-primary:   #e6eef7;
+  --text-secondary: #8ba3bd;
+  --text-muted:     #5c7288;
 
-  /* Spacing */
+  /* ── Aksen (single accent + pendukung) ── */
+  --accent:         #56c8e8;   /* cyan es — aksen utama */
+  --accent-data:    #4aa8c9;   /* cyan data */
+  --accent-sci:     #6b8fd4;   /* biru slate */
+  --hover:          #9be3f5;
+
+  /* ── Tipografi (Geist + mono sistem) ── */
+  --font-heading:   'Geist Variable', 'Inter', system-ui, sans-serif;
+  --font-body:      'Geist Variable', 'Inter', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+  --font-quote:     'Geist Variable', 'Inter', system-ui, sans-serif;
+
+  /* ── Spacing & radius ── */
   --gap:            1.5rem;
-  --radius:         0.5rem;
+  --radius:         0.75rem;
   --radius-lg:      1rem;
+
+  /* ── Shadcn-compatible aliases (kalau ada komponen yg tersisa) ── */
+  --background:       var(--bg-main);
+  --foreground:       var(--text-primary);
+  --card:             var(--bg-card);
+  --card-foreground:  var(--text-primary);
+  --popover:          var(--bg-card);
+  --popover-foreground: var(--text-primary);
+  --primary:          var(--accent);
+  --primary-foreground: #0b1220;
+  --secondary:        var(--bg-elevated);
+  --secondary-foreground: var(--text-primary);
+  --muted:            var(--bg-elevated);
+  --muted-foreground: var(--text-secondary);
+  --accent-foreground: #0b1220;
+  --destructive:      #e06c75;
+  --input:            var(--border);
+  --ring:             var(--accent);
 }
 
-/* ===== RESET & BASE ===== */
+/* Dark mode = tema utama (default), jadi .dark hanya menyamakan */
+.dark {
+  --bg-main:        #0b1220;
+  --bg-card:        #101a2c;
+  --bg-elevated:    #16223a;
+  --border:         rgba(148, 184, 212, 0.16);
+  --text-primary:   #e6eef7;
+  --text-secondary: #8ba3bd;
+  --text-muted:     #5c7288;
+  --accent:         #56c8e8;
+  --accent-data:    #4aa8c9;
+  --accent-sci:     #6b8fd4;
+  --hover:          #9be3f5;
+}
+
+/* =====================================================================
+   RESET & BASE
+   ===================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -34,10 +83,7 @@
 
 html {
   scroll-behavior: smooth;
-}
-
-@media (min-width: 1280px) {
-  html { zoom: 1.25; }
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -47,19 +93,23 @@ body {
   font-size: 1rem;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* ===== SELEKSI TEKS (override biru browser) ===== */
 ::selection {
-  background-color: #4A1E2A;
-  color: #E2D9C8;
+  background-color: var(--accent);
+  color: #0b1220;
 }
 
-/* ===== TIPOGRAFI ===== */
+/* =====================================================================
+   TIPOGRAFI
+   ===================================================================== */
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
   color: var(--text-primary);
   line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
@@ -77,8 +127,9 @@ a {
 a:hover { color: var(--hover); }
 
 :where(a, button, [role='button'], input, textarea, select):focus-visible {
-  outline: 2px solid var(--accent-data);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
+  border-radius: 4px;
 }
 
 code, pre {
@@ -95,24 +146,55 @@ code, pre {
   }
 }
 
-/* ===== GRAIN OVERLAY ===== */
-/* Lapisan grain halus di seluruh background */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 999;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-}
-
-/* ===== UTILITY CLASSES ===== */
+/* =====================================================================
+   UTILITY CLASSES
+   ===================================================================== */
 .font-mono    { font-family: var(--font-mono); }
 .font-heading { font-family: var(--font-heading); }
 .font-quote   { font-family: var(--font-quote); }
 .text-primary   { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-muted); }
 .text-accent    { color: var(--accent); }
 .text-data      { color: var(--accent-data); }
+
+/* =====================================================================
+   TAILWIND THEME MAPPING (v4)
+   Memetakan token kita ke utilitas Tailwind tanpa shadcn.
+   ===================================================================== */
+@theme inline {
+  --font-sans:       var(--font-body);
+  --font-mono:       var(--font-mono);
+  --color-background:       var(--bg-main);
+  --color-foreground:       var(--text-primary);
+  --color-card:             var(--bg-card);
+  --color-card-foreground:  var(--text-primary);
+  --color-popover:          var(--bg-card);
+  --color-popover-foreground: var(--text-primary);
+  --color-primary:          var(--accent);
+  --color-primary-foreground: #0b1220;
+  --color-secondary:        var(--bg-elevated);
+  --color-secondary-foreground: var(--text-primary);
+  --color-muted:            var(--bg-elevated);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent:           var(--accent);
+  --color-accent-foreground: #0b1220;
+  --color-destructive:      #e06c75;
+  --color-border:           var(--border);
+  --color-input:            var(--border);
+  --color-ring:             var(--accent);
+  --radius-sm:        calc(var(--radius) * 0.6);
+  --radius-md:        calc(var(--radius) * 0.8);
+  --radius-lg:        var(--radius);
+  --radius-xl:        calc(var(--radius) * 1.4);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+  }
+}

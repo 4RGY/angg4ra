@@ -18,9 +18,15 @@ async function listHtml(relativeDir) {
 test('Indonesian project routes exclude English content IDs', async () => {
   const routes = await listHtml('dist/id/projects/');
   assert.deepEqual(routes, [
+    'analisis-gempa-indonesia',
     'file-organizer',
+    'jadwal-kuliah',
     'jakarta-air-quality',
+    'olist-commerce-analysis',
+    'pendidikan-indonesia',
     'relationship-memory-museum',
+    'student-archive-system',
+    'transjakarta-analysis',
   ]);
 });
 
@@ -78,7 +84,7 @@ test('Hero content remains meaningful before JavaScript enhancement', async () =
   const idHtml = await read('dist/id/index.html');
   const hero = await read('src/components/sections/Hero.astro');
   assert.match(idHtml, /id="typed-output"[^>]*>Halo\. Saya Anggara<\/span>/);
-  assert.match(idHtml, /data-target="6"[^>]*>6<\/span>/);
+  assert.match(idHtml, /data-target="9"[^>]*>9<\/span>/);
   assert.match(idHtml, /data-target="500"[^>]*>500<\/span>/);
   for (const selector of ['.hero-tagline', '.hero-cta', '.hero-stats']) {
     const escaped = selector.replace('.', '\\.');

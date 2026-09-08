@@ -2,6 +2,7 @@
 import Navbar from './Navbar.astro';
 import Footer from './Footer.astro';
 import '../../styles/global.css';
+import '@fontsource-variable/geist';
 
 const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
 ---
@@ -21,8 +22,8 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
   <link rel="icon" type="image/svg+xml" href="/anggara-dev-favicon.svg" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Load font stylesheet (INI yang kurang!) -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
+  <!-- Load font: JetBrains Mono (Geist dimuat via @fontsource di global.css) -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style is:global>
     /* ── TERMINAL EASTER EGG — MODAL ────────────────────── */
@@ -120,7 +121,7 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
       white-space: pre-wrap;
       word-break: break-word;
     }
-    .t-boot { color: rgba(106, 143, 110, 0.85); }
+    .t-boot { color: rgba(107, 143, 212, 0.85); }
     .t-cmd  { color: rgba(255, 255, 255, 0.88); }
     .t-err  { color: rgba(180, 80, 80, 0.9); }
     .t-dir  { color: #4A8FA0; }
@@ -136,7 +137,7 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
     }
     #terminal-prompt {
       font-size: 0.775rem;
-      color: #6A8F6E;
+      color: #6b8fd4;
       white-space: nowrap;
       flex-shrink: 0;
       margin-right: 0;
@@ -149,7 +150,7 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
       font-size: 0.775rem;
       color: rgba(255, 255, 255, 0.88);
       font-family: 'JetBrains Mono', monospace;
-      caret-color: #6A8F6E;
+      caret-color: #6b8fd4;
     }
 
     /* Mobile adjustments */
