@@ -35,7 +35,8 @@ export async function initIcebergScene(container) {
   const THREE = await import('three');
   const { WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, MeshStandardMaterial,
           Points, PointsMaterial, BufferGeometry, BufferAttribute, Fog, AmbientLight,
-          DirectionalLight, PointLight, Color, Vector2, Vector3, Box3, MathUtils } = THREE;
+          DirectionalLight, PointLight, Color, Vector2, Vector3, Box3, MathUtils,
+          PlaneGeometry, MeshBasicMaterial, CanvasTexture, SRGBColorSpace, BackSide } = THREE;
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
   let renderer = null;
@@ -202,6 +203,38 @@ export async function initIcebergScene(container) {
     loaded.ocean = { water, under, oceanMaxY };
   }
 
+  /* ── Waterline plane — full-width, TEGAS memotong horizon.
+     Langit (di atas) vs laut (di bawah) → batas jelas, iceberg & kapal
+     keliatan "terpotong" pas di permukaan. */
+  const OCEAN_PLANE_Y = 0.25; // sedikit di atas 0 biar ombak-ombak kecil nutupin pangkal
+  const oceanPlaneGeo = new PlaneGeometry(160, 120);
+  const oceanPlaneMat = new MeshStandardMaterial({
+    color: new Color('#0c2034'),
+    roughness: 0.2,
+    metalness: 0.55,
+    transparent: true,
+    opacity: 0.92,
+  });
+  const oceanPlane = new Mesh(oceanPlaneGeo, oceanPlaneMat);
+  oceanPlane.rotation.x = -Math.PI / 2;
+  oceanPlane.position.y = OCEAN_PLANE_Y;
+  scene.add(oceanPlane);
+  const oceanPlaneRef = { mesh: oceanPlane, mat: oceanPlaneMat, geo: oceanPlaneGeo };
+
+  /* Horizon accent — garis tipis terang tepat di waterline,
+     biar batas langit/laut makin kebaca walau warna mirip. */
+  const horizonGeo = new PlaneGeometry(160, 0.045);
+  const horizonMat = new MeshBasicMaterial({
+    color: new Color('#2a5a80'),
+    transparent: true,
+    opacity: 0.5,
+    depthWrite: false,
+  });
+  const horizonLine = new Mesh(horizonGeo, horizonMat);
+  horizonLine.rotation.x = -Math.PI / 2;
+  horizonLine.position.y = OCEAN_PLANE_Y + 0.02;
+  scene.add(horizonLine);
+
   /* ── Salju ── */
   const COUNT = 500;
   const snowGeo = new BufferGeometry();
@@ -227,8 +260,8 @@ export async function initIcebergScene(container) {
 
   /* ── Palette theme ── */
   const OCEAN_COLORS = {
-    dark:  { water: '#0e2438', under: '#050d18' },
-    light: { water: '#4a90b8', under: '#2a6a8a' },
+    dark:  { water: '#0e2438', under: '#050d18', plane: '#0c2034', horizon: '#2a5a80' },
+    light: { water: '#4a90b8', under: '#2a6a8a', plane: '#3d7fa3', horizon: '#9ecfdf' },
   };
   function applyPalette() {
     const p = isDark() ? PAL.dark : PAL.light;
@@ -252,6 +285,8 @@ export async function initIcebergScene(container) {
         if (o.isMesh && o.material) o.material.color.set(oc.under);
       });
     }
+    oceanPlaneMat.color.set(oc.plane);
+    horizonMat.color.set(oc.horizon);
   }
   applyPalette();
   const themeObserver = new MutationObserver(() => applyPalette());
@@ -318,10 +353,11 @@ export async function initIcebergScene(container) {
     }
     snowGeo.attributes.position.needsUpdate = true;
 
-    /* Ocean: gelombang halus naik-turun pelan */
+    /* Ocean: gelombang halus — jaga waterline tetap di ~0, jangan
+       keangkat tinggi (bikin wave naik ke atas horizon) */
     if (loaded.ocean) {
-      const wave = Math.sin(t * 0.4) * 0.12;
-      loaded.ocean.water.position.y = 0.35 + wave;
+      const wave = Math.sin(t * 0.4) * 0.06;
+      loaded.ocean.water.position.y = 0.06 + wave;
       loaded.ocean.under.position.y = -6 + wave * 0.5;
     }
 
@@ -345,8 +381,10 @@ export async function initIcebergScene(container) {
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('resize', onResize);
     document.removeEventListener('visibilitychange', onVisibility);
-    [snowGeo].forEach((g) => g.dispose());
+    [snowGeo, oceanPlaneGeo, horizonGeo].forEach((g) => g.dispose());
     snowMat.dispose();
+    oceanPlaneMat.dispose();
+    horizonMat.dispose();
     if (oceanMesh) {
       oceanMesh.traverse((o) => {
         if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); }

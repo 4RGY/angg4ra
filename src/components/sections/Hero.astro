@@ -75,34 +75,37 @@ const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
   .hero {
     position: relative;
     min-height: 100svh;
+    width: 100%;
+    max-width: none;
     display: flex;
     align-items: center;
     padding: 6rem 2rem 4rem;
-    max-width: 1200px;
-    margin: 0 auto;
     overflow: hidden;
     isolation: isolate;
   }
 
-  /* Scrim: gradien halus kiri→kanan biar teks kontras di atas scene */
+  /* Konten tetap di kolom ~1200px meski scene full-bleed */
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin-left: max(2rem, calc((100vw - 1200px) / 2 + 2rem));
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Scrim: gradien halus kiri→kanan biar teks kontras di atas scene,
+     TAPI jangan nutupin scene kanan (iceberg) — hanya di area teks */
   .hero-scrim {
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
     background:
-      linear-gradient(90deg, var(--bg-main) 0%, color-mix(in srgb, var(--bg-main) 62%, transparent) 55%, transparent 100%),
-      linear-gradient(0deg, var(--bg-main) 0%, transparent 22%, transparent 78%, var(--bg-main) 100%);
-    opacity: 0.82;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 1;
-    max-width: 640px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+      linear-gradient(90deg, var(--bg-main) 0%, color-mix(in srgb, var(--bg-main) 70%, transparent) 34%, transparent 58%),
+      linear-gradient(0deg, var(--bg-main) 0%, transparent 20%, transparent 80%, var(--bg-main) 100%);
+    opacity: 0.85;
   }
 
   .hero-eyebrow {
