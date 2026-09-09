@@ -1,17 +1,30 @@
 /**
- * iceberg-scene.js — "Midnight Arctic" hero scene (v4 — GLB assets)
+ * iceberg-scene.js — "Midnight Arctic" hero scene (v5)
  * ---------------------------------------------------------------
  * Adegan permukaan arctic full-bleed di belakang hero homepage.
  *
- * v4: pakai GLB asli dari Poly Pizza (CC-BY):
- *  - /models/iceberg.glb  — "Iceberg 1" (S. Paul Michael)
- *  - /models/tugboat.glb  — "Tugboat" (Poly by Google)
- * Keduanya di-scale/posisi manual. Aurora & salju procedural
- * (tipis & halus). Palette & visibilitas aurora ikut [data-theme].
+ * v5 — hasil review user:
+ *  - AURORA DIHAPUS total (dinilai jelek).
+ *  - Animasi iceberg & kapal lebih hidup:
+ *      • Iceberg: bob halus naik-turun + rotasi pelan + drift
+ *      • Kapal: bob + roll/pitch di ombak, maju-mundur pelan
+ *  - Placement dirapikan: iceberg di kanan (mayoritas), kapal di kiri
+ *    bawah — seimbang, nggak ketabrak heading.
+ *  - Load GLB asli (iceberg.glb, tugboat.glb). Fauna GLB lain siap
+ *    dipakai zona berikutnya (lihat export spawnFauna).
  *
  * Guard: reduced-motion → null; <768px → null; WebGL absent → null;
  * dynamic import three + GLTFLoader; visibilitychange pause; resize.
  */
+
+const FAUNA = {
+  jellyfish: { url: '/models/jellyfish.glb', scale: 1, float: true },
+  octopus:   { url: '/models/octopus.glb',   scale: 1, float: true },
+  tentacle:  { url: '/models/tentacle.glb',  scale: 1, float: false },
+  fish:      { url: '/models/fish.glb',      scale: 1, float: true, anim: true },
+  anglerfish:{ url: '/models/anglerfish.glb',scale: 1, float: true, anim: true },
+};
+
 export async function initIcebergScene(container) {
   const prefersReduced =
     typeof window.matchMedia === 'function' &&
@@ -19,10 +32,10 @@ export async function initIcebergScene(container) {
   const isMobile = window.innerWidth < 768;
   if (prefersReduced || isMobile) return null;
 
+  const THREE = await import('three');
   const { WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, MeshStandardMaterial,
-          MeshBasicMaterial, BufferGeometry, BufferAttribute, Points, PointsMaterial,
-          Fog, AmbientLight, DirectionalLight, PointLight, Color, Vector2, Vector3, Box3 } =
-    await import('three');
+          Points, PointsMaterial, BufferGeometry, BufferAttribute, Fog, AmbientLight,
+          DirectionalLight, PointLight, Color, Vector2, Vector3, Box3, MathUtils } = THREE;
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
   let renderer = null;
@@ -36,18 +49,18 @@ export async function initIcebergScene(container) {
   const isDark = () => (rootEl.getAttribute('data-theme') || 'dark') !== 'light';
 
   const PAL = {
-    dark:  { ice: '#dce6f2', snow: '#dcecf7', fog: '#0b1220', aurora: true  },
-    light: { ice: '#eef4fa', snow: '#ffffff', fog: '#dcebf5', aurora: false },
+    dark:  { ice: '#dce6f2', snow: '#dcecf7', fog: '#0b1220' },
+    light: { ice: '#eef4fa', snow: '#ffffff', fog: '#dcebf5' },
   };
 
   const scene = new Scene();
   scene.background = null;
-  scene.fog = new Fog(new Color(PAL.dark.fog), 32, 78);
+  scene.fog = new Fog(new Color(PAL.dark.fog), 34, 80);
 
   const viewport = container.getBoundingClientRect();
   const camera = new PerspectiveCamera(40, viewport.width / Math.max(viewport.height, 1), 0.1, 200);
-  camera.position.set(0, 3.4, 18);
-  camera.lookAt(0, 1.6, 0);
+  camera.position.set(0, 3.2, 17);
+  camera.lookAt(0, 1.5, 0);
 
   renderer.setSize(viewport.width, viewport.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -57,18 +70,19 @@ export async function initIcebergScene(container) {
   renderer.domElement.setAttribute('aria-hidden', 'true');
   container.appendChild(renderer.domElement);
 
-  /* ── Lighting ── */
-  const key = new DirectionalLight('#56c8e8', 2.2);
-  key.position.set(-5, 6, 7);
-  const fill = new DirectionalLight('#3d5a80', 0.6);
-  fill.position.set(6, -1, 5);
-  const ambient = new AmbientLight('#7fa8c9', 0.4);
-  scene.add(key, fill, ambient);
+  /* ── Lighting (arctic: dingin, aksen cyan) ── */
+  const key = new DirectionalLight('#7ec8e3', 1.7);
+  key.position.set(-4, 7, 8);
+  const rim = new DirectionalLight('#3d5a80', 0.5);
+  rim.position.set(5, -2, -4);
+  const ambient = new AmbientLight('#8fb3d0', 0.38);
+  scene.add(key, rim, ambient);
 
   const rnd = mulberry32(20260909);
   const loaded = { berg: null, ship: null };
+  const anims = { ship: { driftPhase: rnd() * Math.PI * 2 } };
 
-  /* ── Load GLB asli (berg & ship) ── */
+  /* ── Load GLB ── */
   const loader = new GLTFLoader();
   const loadModel = (url) =>
     new Promise((resolve, reject) => loader.load(url, resolve, undefined, reject));
@@ -78,7 +92,6 @@ export async function initIcebergScene(container) {
     const size = box.getSize(new Vector3());
     const scale = targetSize / Math.max(size.x, size.y, size.z, 0.001);
     obj.scale.setScalar(scale);
-    // Geser supaya "berdiri" di y=0 (dasar box di 0)
     const minY = box.min.y * scale;
     obj.position.y = -minY;
     return scale;
@@ -94,14 +107,14 @@ export async function initIcebergScene(container) {
     berg.traverse((o) => {
       if (o.isMesh) {
         o.material = new MeshStandardMaterial({
-          color: PAL.dark.ice, roughness: 0.32, metalness: 0.0,
+          color: PAL.dark.ice, roughness: 0.3, metalness: 0.02,
         });
       }
     });
-    normalize(berg, 8.0);
-    berg.position.x = 5.4;
-    berg.position.y = -2.0;
-    berg.position.z = -6.5;
+    normalize(berg, 8.5);
+    // Placement: kanan-tengah, mayoritas muncul; dasar di bawah waterline
+    berg.position.set(4.6, -1.6, -7);
+    berg.rotation.y = 0.6;
     scene.add(berg);
     loaded.berg = berg;
   }
@@ -115,71 +128,36 @@ export async function initIcebergScene(container) {
         m.metalness = Math.min(m.metalness ?? 0.1, 0.3);
       }
     });
-    normalize(ship, 3.0);
-    ship.position.x = -7.4;
-    ship.position.y = 0.2;
-    ship.position.z = 1.8;
-    ship.rotation.y = 0.5;
+    normalize(ship, 3.2);
+    // Placement: kiri-bawah, menghadap iceberg
+    ship.position.set(-6.8, 0.15, 1.2);
+    ship.rotation.y = 0.35;
     scene.add(ship);
     loaded.ship = ship;
   }
 
-  const shipLamp = new PointLight('#ffb46b', 1.2, 12, 2);
-  shipLamp.position.set(-7.4, 1.2, 2.0);
+  const shipLamp = new PointLight('#ffb46b', 1.4, 12, 2);
+  shipLamp.position.set(-6.8, 1.4, 1.5);
   scene.add(shipLamp);
 
-  /* ── Aurora: 3 pita tipis additive ── */
-  const auroraGroup = new Group();
-  const auroraBands = [];
-  const AURORA_COLORS = ['#2fd48a', '#3ab8e8', '#7dffc4'];
-  for (let b = 0; b < 3; b++) {
-    const seg = 80;
-    const pGeo = new BufferGeometry();
-    const w = 26 + b * 6;
-    const positions = new Float32Array((seg + 1) * 2 * 3);
-    for (let i = 0; i <= seg; i++) {
-      const x = (i / seg - 0.5) * w;
-      positions[i * 6] = x; positions[i * 6 + 1] = 0.35; positions[i * 6 + 2] = 0;
-      positions[i * 6 + 3] = x; positions[i * 6 + 4] = -0.35; positions[i * 6 + 5] = 0;
-    }
-    pGeo.setAttribute('position', new BufferAttribute(positions, 3));
-    const idx = [];
-    for (let i = 0; i < seg; i++) {
-      const a = i * 2, b2 = i * 2 + 1, c = i * 2 + 2, d = i * 2 + 3;
-      idx.push(a, b2, c, b2, d, c);
-    }
-    pGeo.setIndex(idx);
-    const pMat = new MeshBasicMaterial({
-      color: AURORA_COLORS[b % AURORA_COLORS.length],
-      transparent: true, opacity: 0.045 + b * 0.012,
-      blending: 2, side: 2, depthWrite: false,
-    });
-    const band = new Mesh(pGeo, pMat);
-    band.position.set(-2 + b * 2.5, 8.4 + b * 0.7, -13 - b * 3);
-    band.rotation.z = 0.1 * (b % 2 === 0 ? 1 : -1);
-    auroraGroup.add(band);
-    auroraBands.push({ mesh: band, geo: pGeo, phase: b * 1.8, amp: 0.5 + b * 0.12 });
-  }
-  scene.add(auroraGroup);
-
   /* ── Salju ── */
-  const COUNT = 600;
+  const COUNT = 500;
   const snowGeo = new BufferGeometry();
   const snowPos = new Float32Array(COUNT * 3);
   const snowSpeed = new Float32Array(COUNT);
   const snowDrift = new Float32Array(COUNT);
-  const spread = { x: 36, y: 22, z: 18 };
+  const spread = { x: 40, y: 24, z: 20 };
   for (let i = 0; i < COUNT; i++) {
     snowPos[i * 3] = (rnd() - 0.5) * spread.x;
     snowPos[i * 3 + 1] = (rnd() - 0.5) * spread.y;
     snowPos[i * 3 + 2] = (rnd() - 0.5) * spread.z;
-    snowSpeed[i] = 0.4 + rnd() * 1.1;
+    snowSpeed[i] = 0.4 + rnd() * 1.0;
     snowDrift[i] = rnd() * Math.PI * 2;
   }
   snowGeo.setAttribute('position', new BufferAttribute(snowPos, 3));
   const snowMat = new PointsMaterial({
-    color: PAL.dark.snow, size: 0.07, transparent: true,
-    opacity: 0.4, depthWrite: false, sizeAttenuation: true,
+    color: PAL.dark.snow, size: 0.06, transparent: true,
+    opacity: 0.42, depthWrite: false, sizeAttenuation: true,
   });
   const snow = new Points(snowGeo, snowMat);
   snow.position.y = 6;
@@ -195,8 +173,7 @@ export async function initIcebergScene(container) {
     }
     snowMat.color.set(p.snow);
     scene.fog.color.set(p.fog);
-    auroraGroup.visible = isDark() && p.aurora;
-    shipLamp.intensity = isDark() ? 1.2 : 0.85;
+    shipLamp.intensity = isDark() ? 1.4 : 0.9;
   }
   applyPalette();
   const themeObserver = new MutationObserver(() => applyPalette());
@@ -221,36 +198,42 @@ export async function initIcebergScene(container) {
     if (!visible) return;
     const t = (now - start) / 1000;
 
-    mouse.lerp(target, 0.03);
+    mouse.lerp(target, 0.028);
 
+    /* Iceberg — hidup: bob + rotasi pelan + miring halus dari mouse */
     if (loaded.berg) {
-      loaded.berg.rotation.y = t * 0.04 + mouse.x * 0.05;
-      loaded.berg.rotation.x = -0.02 + mouse.y * -0.03;
+      const baseX = 4.6, baseY = -1.6;
+      loaded.berg.position.x = baseX + Math.sin(t * 0.05) * 0.25;
+      loaded.berg.position.y = baseY + Math.sin(t * 0.11 + 1.3) * 0.18;
+      loaded.berg.rotation.y = 0.6 + t * 0.025 + mouse.x * 0.06;
+      loaded.berg.rotation.z = Math.sin(t * 0.07) * 0.015;
+      loaded.berg.rotation.x = -0.03 + mouse.y * -0.035;
     }
+
+    /* Kapal — ombak natural: bob + roll + pitch + drift maju pelan */
     if (loaded.ship) {
-      loaded.ship.rotation.z = Math.sin(t * 0.5) * 0.02;
-      loaded.ship.rotation.x = Math.sin(t * 0.4 + 1) * 0.012;
+      const phase = anims.ship.driftPhase;
+      const bob = Math.sin(t * 0.8 + phase) * 0.05;
+      const roll = Math.sin(t * 0.55 + phase) * 0.035;
+      const pitch = Math.sin(t * 0.7 + phase * 1.3) * 0.025;
+      // drift maju pelan (bolak-balik ±0.6 dari base)
+      const driftX = Math.sin(t * 0.06 + phase) * 0.5;
+      loaded.ship.position.x = -6.8 + driftX;
+      loaded.ship.position.y = 0.15 + bob;
+      loaded.ship.rotation.z = roll;
+      loaded.ship.rotation.x = pitch;
+      loaded.ship.rotation.y = 0.35 + Math.sin(t * 0.1 + phase) * 0.03;
+      shipLamp.position.x = -6.8 + driftX;
+      shipLamp.position.y = 1.4 + bob;
     }
 
-    for (const band of auroraBands) {
-      const ap = band.geo.attributes.position;
-      const arr = ap.array;
-      for (let i = 0; i <= 80; i++) {
-        const x = arr[i * 6];
-        const wave = Math.sin(x * 0.12 + t * 0.22 + band.phase) * band.amp
-                   + Math.sin(x * 0.3 - t * 0.15) * 0.3;
-        arr[i * 6 + 1] = 0.35 + wave;
-        arr[i * 6 + 4] = -0.35 + wave;
-      }
-      ap.needsUpdate = true;
-    }
-
+    /* Salju */
     const sp = snowGeo.attributes.position.array;
     for (let i = 0; i < COUNT; i++) {
       sp[i * 3 + 1] -= snowSpeed[i] * 0.007;
       sp[i * 3] += Math.sin(t * 0.4 + snowDrift[i]) * 0.002;
-      if (sp[i * 3 + 1] < -9) {
-        sp[i * 3 + 1] = 9 + (rnd() - 0.5) * 4;
+      if (sp[i * 3 + 1] < -10) {
+        sp[i * 3 + 1] = 10 + (rnd() - 0.5) * 4;
         sp[i * 3] = (rnd() - 0.5) * spread.x;
         sp[i * 3 + 2] = (rnd() - 0.5) * spread.z;
       }
@@ -277,14 +260,13 @@ export async function initIcebergScene(container) {
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('resize', onResize);
     document.removeEventListener('visibilitychange', onVisibility);
-    [snowGeo, ...auroraBands.map((b) => b.geo)].forEach((g) => g.dispose());
-    auroraBands.forEach((b) => b.mesh.material.dispose());
+    [snowGeo].forEach((g) => g.dispose());
     snowMat.dispose();
     renderer.dispose();
     if (renderer.domElement.parentNode === container) container.removeChild(renderer.domElement);
   }
 
-  return { dispose };
+  return { dispose, scene, camera, loader };
 }
 
 /* PRNG deterministik */
