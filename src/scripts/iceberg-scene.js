@@ -36,7 +36,7 @@ export async function initIcebergScene(container) {
   const { WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, MeshStandardMaterial,
           Points, PointsMaterial, BufferGeometry, BufferAttribute, Fog, AmbientLight,
           DirectionalLight, PointLight, Color, Vector2, Vector3, Box3, MathUtils,
-          PlaneGeometry, MeshBasicMaterial, CanvasTexture, SRGBColorSpace, BackSide } = THREE;
+          PlaneGeometry, DoubleSide } = THREE;
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
   let renderer = null;
@@ -98,10 +98,9 @@ export async function initIcebergScene(container) {
     return scale;
   };
 
-  const [bergGltf, shipGltf, oceanGltf] = await Promise.allSettled([
+  const [bergGltf, shipGltf] = await Promise.allSettled([
     loadModel('/models/iceberg.glb'),
     loadModel('/models/tugboat.glb'),
-    loadModel('/models/ocean.glb'),
   ]);
 
   if (bergGltf.status === 'fulfilled') {
@@ -143,97 +142,75 @@ export async function initIcebergScene(container) {
   scene.add(shipLamp);
 
   /* ══════════════════════════════════════════════════════════
-     OCEAN — waterline & dasar laut
-     ocean.glb = permukaan laut bergelombang (2000×2000 unit).
-     Dipakai ganda:
-      1) Sebagai permukaan air (waterline) yang "memotong" iceberg
-         & kapal — biar mereka keliatan MENGAPUNG, bukan melayang.
-      2) Di-copy jadi dasar laut transparan di bawah (kedalaman).
+     OCEAN — permukaan air CUSTOM (bukan ocean.glb!)
+     ocean.glb ternyata kotak 2000-unit → render order kacau,
+     kapal keliatan melayang. Ganti PlaneGeometry tipis full-width
+     yang digelombangin per-vertex (sin/cos).
+     Transparan + vertexColors GRADASI: horizon (jauh) terang,
+     makin dekat/dalam makin gelap → bawah iceberg (90% massa)
+     kebaca tembus air.
   ══════════════════════════════════════════════════════════ */
-  let oceanMesh = null;
-  let oceanUnder = null;
-  const OCEAN_TOP_Y = 0.0;   // waterline (bagian atas iceberg tenggelam sampe sini)
+  const WATER_Y = 0.32;          // waterline rata-rata (sedikit di atas pangkal kapal)
+  const WAVE_AMP = 0.09;         // amplitudo ombak
 
-  if (oceanGltf.status === 'fulfilled') {
-    const oceanScene = oceanGltf.value.scene;
+  const oceanGeo = new PlaneGeometry(180, 100, 140, 60);
+  oceanGeo.rotateX(-Math.PI / 2); // bidang XZ
+  const oceanBase = oceanGeo.attributes.position.array.slice(); // posisi diam (y=0)
 
-    // Normalisasi: target span ± 60 unit (scene kita -12..12)
-    const box = new Box3().setFromObject(oceanScene);
-    const size = box.getSize(new Vector3());
-    const span = Math.max(size.x, size.z);
-    const scale = 140 / span;
-    oceanScene.scale.setScalar(scale);
-
-    // ── 1) Permukaan air (waterline) ──
-    const water = oceanScene.clone(true);
-    // Geser supaya puncak gelombang ocean di sekitar y=0
-    const oceanMaxY = box.max.y * scale;
-    // Posisikan ocean sehingga puncaknya ~ di 0.2 (biar ada ombak kecil di atas waterline)
-    water.position.y = OCEAN_TOP_Y - oceanMaxY + 0.35;
-    water.traverse((o) => {
-      if (o.isMesh && o.material) {
-        const m = Array.isArray(o.material) ? o.material[0] : o.material;
-        m.color = new Color('#0e2438');
-        m.roughness = 0.25;
-        m.metalness = 0.4;
-        m.transparent = true;
-        m.opacity = 0.88;
-        m.depthWrite = false;
-      }
-    });
-    scene.add(water);
-    oceanMesh = water;
-
-    // ── 2) Dasar laut (di bawah, lebih gelap, buram) ──
-    const under = oceanScene.clone(true);
-    under.position.y = -6;
-    under.traverse((o) => {
-      if (o.isMesh && o.material) {
-        const m = Array.isArray(o.material) ? o.material[0] : o.material;
-        m.color = new Color('#050d18');
-        m.roughness = 0.9;
-        m.metalness = 0;
-        m.transparent = true;
-        m.opacity = 0.5;
-        m.depthWrite = false;
-      }
-    });
-    scene.add(under);
-    oceanUnder = under;
-    loaded.ocean = { water, under, oceanMaxY };
+  // Rentang z buat gradasi (zMin = terjauh/horizon, zMax = dekat kamera)
+  let oZMin = Infinity, oZMax = -Infinity;
+  for (let i = 2; i < oceanBase.length; i += 3) {
+    if (oceanBase[i] < oZMin) oZMin = oceanBase[i];
+    if (oceanBase[i] > oZMax) oZMax = oceanBase[i];
   }
 
-  /* ── Waterline plane — full-width, TEGAS memotong horizon.
-     Langit (di atas) vs laut (di bawah) → batas jelas, iceberg & kapal
-     keliatan "terpotong" pas di permukaan. */
-  const OCEAN_PLANE_Y = 0.25; // sedikit di atas 0 biar ombak-ombak kecil nutupin pangkal
-  const oceanPlaneGeo = new PlaneGeometry(160, 120);
-  const oceanPlaneMat = new MeshStandardMaterial({
-    color: new Color('#0c2034'),
-    roughness: 0.2,
-    metalness: 0.55,
-    transparent: true,
-    opacity: 0.92,
-  });
-  const oceanPlane = new Mesh(oceanPlaneGeo, oceanPlaneMat);
-  oceanPlane.rotation.x = -Math.PI / 2;
-  oceanPlane.position.y = OCEAN_PLANE_Y;
-  scene.add(oceanPlane);
-  const oceanPlaneRef = { mesh: oceanPlane, mat: oceanPlaneMat, geo: oceanPlaneGeo };
+  // Warna per-vertex (diisi paintOcean — gradasi per tema)
+  const oceanCols = new Float32Array(oceanBase.length);
+  oceanGeo.setAttribute('color', new BufferAttribute(oceanCols, 3));
 
-  /* Horizon accent — garis tipis terang tepat di waterline,
-     biar batas langit/laut makin kebaca walau warna mirip. */
-  const horizonGeo = new PlaneGeometry(160, 0.045);
-  const horizonMat = new MeshBasicMaterial({
-    color: new Color('#2a5a80'),
+  const oceanMat = new MeshStandardMaterial({
+    color: new Color('#ffffff'), // vertexColors menimpa diffuse → putih biar murni
+    vertexColors: true,
     transparent: true,
-    opacity: 0.5,
-    depthWrite: false,
+    roughness: 0.25,
+    metalness: 0.35,
+    depthWrite: false, // biar iceberg/kapal bawah air tembus (mengapung beneran)
+    side: DoubleSide,
+    fog: false, // gradasi air jangan di-fog (fog gelap nutupin gradasi horizon)
   });
-  const horizonLine = new Mesh(horizonGeo, horizonMat);
-  horizonLine.rotation.x = -Math.PI / 2;
-  horizonLine.position.y = OCEAN_PLANE_Y + 0.02;
-  scene.add(horizonLine);
+  const oceanWater = new Mesh(oceanGeo, oceanMat);
+  oceanWater.position.y = WATER_Y;
+  scene.add(oceanWater);
+  loaded.ocean = { mesh: oceanWater, geo: oceanGeo, base: oceanBase, mat: oceanMat, zMin: oZMin, zMax: oZMax };
+
+  /** Cat ulang gradasi air per tema: horizon terang → dalam/dekat gelap. */
+  function paintOcean(dark) {
+    const o = loaded.ocean;
+    if (!o) return;
+    // [r,g,b] 0-255 — far (horizon) → mid → near (foreground/dalam)
+    const far  = dark ? [76, 138, 190] : [186, 228, 240];
+    const mid  = dark ? [22, 54, 88]   : [96, 162, 200];
+    const near = dark ? [3, 9, 20]     : [16, 52, 78];
+    o.mat.opacity = dark ? 0.42 : 0.34;
+    const cols = o.geo.attributes.color.array;
+    const range = o.zMax - o.zMin;
+    for (let i = 0, j = 0; i < o.base.length; i += 3, j += 3) {
+      const t = (o.base[i + 2] - o.zMin) / range; // 0 = horizon, 1 = dekat kamera
+      const c = t < 0.35
+        ? lerpRGB(far, mid, t / 0.35)
+        : t < 0.7
+          ? lerpRGB(mid, near, (t - 0.35) / 0.35)
+          : near;
+      cols[j]     = c[0] / 255;
+      cols[j + 1] = c[1] / 255;
+      cols[j + 2] = c[2] / 255;
+    }
+    o.geo.attributes.color.needsUpdate = true;
+  }
+  function lerpRGB(a, b, f) {
+    f = Math.max(0, Math.min(1, f));
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+  }
 
   /* ── Salju ── */
   const COUNT = 500;
@@ -259,10 +236,6 @@ export async function initIcebergScene(container) {
   scene.add(snow);
 
   /* ── Palette theme ── */
-  const OCEAN_COLORS = {
-    dark:  { water: '#0e2438', under: '#050d18', plane: '#0c2034', horizon: '#2a5a80' },
-    light: { water: '#4a90b8', under: '#2a6a8a', plane: '#3d7fa3', horizon: '#9ecfdf' },
-  };
   function applyPalette() {
     const p = isDark() ? PAL.dark : PAL.light;
     if (loaded.berg) {
@@ -274,19 +247,7 @@ export async function initIcebergScene(container) {
     scene.fog.color.set(p.fog);
     shipLamp.intensity = isDark() ? 1.4 : 0.9;
 
-    const oc = isDark() ? OCEAN_COLORS.dark : OCEAN_COLORS.light;
-    if (oceanMesh) {
-      oceanMesh.traverse((o) => {
-        if (o.isMesh && o.material) o.material.color.set(oc.water);
-      });
-    }
-    if (oceanUnder) {
-      oceanUnder.traverse((o) => {
-        if (o.isMesh && o.material) o.material.color.set(oc.under);
-      });
-    }
-    oceanPlaneMat.color.set(oc.plane);
-    horizonMat.color.set(oc.horizon);
+    paintOcean(isDark());
   }
   applyPalette();
   const themeObserver = new MutationObserver(() => applyPalette());
@@ -353,12 +314,24 @@ export async function initIcebergScene(container) {
     }
     snowGeo.attributes.position.needsUpdate = true;
 
-    /* Ocean: gelombang halus — jaga waterline tetap di ~0, jangan
-       keangkat tinggi (bikin wave naik ke atas horizon) */
+    /* Ocean: gelombang halus per-vertex (sin/cos) di sekitar waterline.
+       Kapal & iceberg di bawah WATER_Y ketutup beneran (depthWrite ON)
+       → kesan mengapung, bukan melayang. */
     if (loaded.ocean) {
-      const wave = Math.sin(t * 0.4) * 0.06;
-      loaded.ocean.water.position.y = 0.06 + wave;
-      loaded.ocean.under.position.y = -6 + wave * 0.5;
+      const o = loaded.ocean;
+      const pos = o.geo.attributes.position.array;
+      const n = pos.length / 3;
+      for (let i = 0; i < n; i++) {
+        const x = o.base[i * 3];
+        const z = o.base[i * 3 + 2];
+        const y =
+          Math.sin(x * 0.35 + t * 0.9) * WAVE_AMP * 0.6 +
+          Math.sin(z * 0.5 + t * 0.7 + 2.1) * WAVE_AMP * 0.7 +
+          Math.sin((x + z) * 0.16 + t * 0.5) * WAVE_AMP * 0.5;
+        pos[i * 3 + 1] = y;
+      }
+      o.geo.attributes.position.needsUpdate = true;
+      o.geo.computeVertexNormals();
     }
 
     renderer.render(scene, camera);
@@ -381,19 +354,11 @@ export async function initIcebergScene(container) {
     window.removeEventListener('pointermove', onPointerMove);
     window.removeEventListener('resize', onResize);
     document.removeEventListener('visibilitychange', onVisibility);
-    [snowGeo, oceanPlaneGeo, horizonGeo].forEach((g) => g.dispose());
+    [snowGeo].forEach((g) => g.dispose());
     snowMat.dispose();
-    oceanPlaneMat.dispose();
-    horizonMat.dispose();
-    if (oceanMesh) {
-      oceanMesh.traverse((o) => {
-        if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); }
-      });
-    }
-    if (oceanUnder) {
-      oceanUnder.traverse((o) => {
-        if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); }
-      });
+    if (loaded.ocean) {
+      loaded.ocean.geo.dispose();
+      loaded.ocean.mat.dispose();
     }
     renderer.dispose();
     if (renderer.domElement.parentNode === container) container.removeChild(renderer.domElement);
