@@ -1,0 +1,83 @@
+---
+const { lang = 'id' } = Astro.props;
+const label = lang === 'id'
+  ? { depth: 'kedalaman', surface: 'permukaan' }
+  : { depth: 'depth', surface: 'surface' };
+---
+
+<!-- Depth meter: penanda "scroll = menyelam", halus di sisi kiri -->
+<div class="depth-meter" id="depth-meter" aria-hidden="true">
+  <!-- Angka kedalaman aktif -->
+  <span class="depth-value font-mono" id="depth-value">0m</span>
+
+  <!-- Track vertikal -->
+  <div class="depth-track">
+    <div class="depth-fill" id="depth-fill"></div>
+  </div>
+
+  <!-- Label bawah -->
+  <span class="depth-label font-mono">{label.depth}</span>
+</div>
+
+<style>
+  .depth-meter {
+    position: fixed;
+    left: 1.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    pointer-events: none;
+    opacity: 0;
+    animation: depthFadeIn 1s ease 1s forwards;
+  }
+
+  .depth-value {
+    font-size: 0.64rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    transition: color 200ms ease;
+  }
+
+  .depth-track {
+    width: 1px;
+    height: 22vh;
+    max-height: 200px;
+    min-height: 90px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .depth-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(180deg, var(--accent), var(--accent-sci));
+    transition: height 120ms linear;
+  }
+
+  .depth-label {
+    font-size: 0.52rem;
+    color: var(--text-muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+
+  @keyframes depthFadeIn { to { opacity: 1; } }
+
+  @media (max-width: 900px) {
+    .depth-meter { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .depth-meter { animation: none; opacity: 1; }
+  }
+</style>

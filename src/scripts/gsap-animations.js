@@ -10,13 +10,8 @@ function initAnimations() {
 // ===== HERO ANIMATIONS =====
   const typedOutput = document.getElementById('typed-output');
   if (typedOutput) {
-    const typedContainer = document.getElementById('typed-text');
-    const text = typedContainer?.dataset.text
-      || (document.documentElement.lang === 'id' ? 'Halo. Saya Anggara' : 'Hello. I\'m Anggara');
-
-    // The complete greeting is server-rendered so content remains readable
-    // when animation initialization fails.
-    typedOutput.textContent = text;
+    // Teks sudah server-rendered di Hero.astro — JANGAN nimpa.
+    // Script ini cuma placeholder compatibility (TypedText lama sudah dibuang).
   }
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

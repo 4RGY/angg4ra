@@ -1,6 +1,7 @@
 ---
 import Navbar from './Navbar.astro';
 import Footer from './Footer.astro';
+import DepthMeter from '../sections/DepthMeter.astro';
 import '../../styles/global.css';
 import '@fontsource-variable/geist';
 
@@ -12,6 +13,18 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Set theme sebelum CSS render → anti-flash (FOUC). Script inline kecil & sinkron. -->
+  <script is:inline>
+    (function () {
+      try {
+        var stored = localStorage.getItem('arctic-theme');
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta name="google-site-verification" content="jOBM_TfElB7pgQ7ma9FPdplZoX7eLIxOUwMRnRUEAFs" />
   <meta name="google-site-verification" content="VUfGHUN7rWGBDneYgqbWO1bJaxJqS3ttOLBYUX-ni6o" />
   <meta name="description" content="Portfolio Argy Anggara | Data Analyst & Data Scientist" />
@@ -162,6 +175,7 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
 </head>
 <body>
   <Navbar lang={lang} currentPath={Astro.url.pathname} />
+  <DepthMeter lang={lang} />
 
   <main>
     <slot />
@@ -173,6 +187,7 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
   <script>
     import '../../scripts/gsap-animations.js';
     import '../../scripts/terminal.js';
+    import '../../scripts/depth-meter.js';
   </script>
 </body>
 </html>

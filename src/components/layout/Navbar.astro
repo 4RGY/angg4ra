@@ -49,6 +49,20 @@ const navLinks = lang === 'id'
     </ul>
 
     <div class="nav-right">
+      <button
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Ganti tema terang/gelap"
+        title="Ganti tema"
+      >
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"></path>
+        </svg>
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"></path>
+        </svg>
+      </button>
       <LanguageToggle currentLang={lang} currentPath={currentPath} />
       <button class="hamburger font-mono" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
         <span class="ham-line"></span>
@@ -81,6 +95,30 @@ const navLinks = lang === 'id'
 </nav>
 
 <script>
+  // Theme toggle — dark/light "siang & malam di laut"
+  const themeToggle = document.getElementById('theme-toggle');
+  const rootEl = document.documentElement;
+
+  function syncIcon(theme) {
+    if (!themeToggle) return;
+    const sun = themeToggle.querySelector('.icon-sun');
+    const moon = themeToggle.querySelector('.icon-moon');
+    if (!sun || !moon) return;
+    // Di dark: tampilkan ikon matahari (untuk switch ke light). Di light: sebaliknya.
+    sun.style.display = theme === 'dark' ? 'block' : 'none';
+    moon.style.display = theme === 'dark' ? 'none' : 'block';
+  }
+
+  syncIcon(rootEl.getAttribute('data-theme') || 'dark');
+
+  themeToggle?.addEventListener('click', () => {
+    const current = rootEl.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    rootEl.setAttribute('data-theme', next);
+    try { localStorage.setItem('arctic-theme', next); } catch (e) {}
+    syncIcon(next);
+  });
+
   // Scroll progress
   const progressBar = document.getElementById('scroll-progress');
   function updateProgress() {
@@ -131,11 +169,32 @@ const navLinks = lang === 'id'
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: rgba(10, 9, 8, 0.85);
+    background-color: var(--bg-glass);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
+
+  /* Theme toggle */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+  }
+  .theme-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .theme-toggle svg { display: block; }
 
   /* Scroll progress bar */
   .scroll-progress {

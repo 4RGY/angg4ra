@@ -4,17 +4,20 @@
 @source "../**/*.{astro,js,jsx,ts,tsx,md,mdx}";
 
 /* =====================================================================
-   OCEAN BLUEPRINT — Design Tokens
-   Palet terinspirasi blueprint teknik: deep navy, cyan es, slate biru.
-   Light mode = "kertas blueprint" (biru pucat), Dark mode = "meja malam".
+   MIDNIGHT ARCTIC — Design Tokens (dark + light)
+   Konsep: "siang & malam di laut arctic".
+   Dark  = menyelam malam (bioluminescence cyan, es menyala).
+   Light = arctic siang (langit pucat, es putih-biru, laut pirus).
+   Satu set token, dua suasana — cerita tetap sama.
    ===================================================================== */
 
 :root {
   /* ── Surface ── */
-  --bg-main:        #0b1220;   /* deep navy */
-  --bg-card:        #101a2c;   /* kartu sedikit lebih terang */
+  --bg-main:        #0b1220;   /* laut malam */
+  --bg-card:        #101a2c;   /* kedalaman samar */
   --bg-elevated:    #16223a;
-  --border:         rgba(148, 184, 212, 0.16);   /* cyan-slate halus */
+  --bg-glass:       rgba(10, 18, 32, 0.72);
+  --border:         rgba(148, 184, 212, 0.16);
 
   /* ── Teks ── */
   --text-primary:   #e6eef7;
@@ -22,12 +25,20 @@
   --text-muted:     #5c7288;
 
   /* ── Aksen (single accent + pendukung) ── */
-  --accent:         #56c8e8;   /* cyan es — aksen utama */
-  --accent-data:    #4aa8c9;   /* cyan data */
-  --accent-sci:     #6b8fd4;   /* biru slate */
+  --accent:         #56c8e8;   /* cyan es — bioluminescence */
+  --accent-data:    #4aa8c9;
+  --accent-sci:     #6b8fd4;
   --hover:          #9be3f5;
 
-  /* ── Tipografi (Geist + mono sistem) ── */
+  /* ── Status & misc ── */
+  --success:        #4ec9a5;
+  --warning:        #e8c36c;
+  --danger:         #e06c75;
+
+  /* ── Depth narrative ── */
+  --depth-waterline: rgba(86, 200, 232, 0.35);
+
+  /* ── Tipografi (Geist + mono) ── */
   --font-heading:   'Geist Variable', 'Inter', system-ui, sans-serif;
   --font-body:      'Geist Variable', 'Inter', system-ui, sans-serif;
   --font-mono:      'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
@@ -37,31 +48,38 @@
   --gap:            1.5rem;
   --radius:         0.75rem;
   --radius-lg:      1rem;
-
-  /* ── Shadcn-compatible aliases (kalau ada komponen yg tersisa) ── */
-  --background:       var(--bg-main);
-  --foreground:       var(--text-primary);
-  --card:             var(--bg-card);
-  --card-foreground:  var(--text-primary);
-  --popover:          var(--bg-card);
-  --popover-foreground: var(--text-primary);
-  --primary:          var(--accent);
-  --primary-foreground: #0b1220;
-  --secondary:        var(--bg-elevated);
-  --secondary-foreground: var(--text-primary);
-  --muted:            var(--bg-elevated);
-  --muted-foreground: var(--text-secondary);
-  --accent-foreground: #0b1220;
-  --destructive:      #e06c75;
-  --input:            var(--border);
-  --ring:             var(--accent);
 }
 
-/* Dark mode = tema utama (default), jadi .dark hanya menyamakan */
-.dark {
+/* Light mode = "arctic siang" — aktif via [data-theme="light"] di <html> */
+[data-theme='light'] {
+  --bg-main:        #eef4f9;   /* langit arctic pucat */
+  --bg-card:        #ffffff;
+  --bg-elevated:    #e2ecf4;
+  --bg-glass:       rgba(255, 255, 255, 0.75);
+  --border:         rgba(21, 48, 74, 0.14);
+
+  --text-primary:   #0e1c2c;
+  --text-secondary: #3d5a72;
+  --text-muted:     #6b8498;
+
+  --accent:         #0e7fa8;   /* cyan lebih dalam utk kontras di terang */
+  --accent-data:    #0a6b8f;
+  --accent-sci:     #4a6fa5;
+  --hover:          #0a5e7c;
+
+  --success:        #1f8a6d;
+  --warning:        #9c7417;
+  --danger:         #c0454e;
+
+  --depth-waterline: rgba(14, 127, 168, 0.4);
+}
+
+/* Dark mode default = tema utama — aktif via [data-theme='dark'] di <html> */
+[data-theme='dark'] {
   --bg-main:        #0b1220;
   --bg-card:        #101a2c;
   --bg-elevated:    #16223a;
+  --bg-glass:       rgba(10, 18, 32, 0.72);
   --border:         rgba(148, 184, 212, 0.16);
   --text-primary:   #e6eef7;
   --text-secondary: #8ba3bd;
@@ -70,6 +88,32 @@
   --accent-data:    #4aa8c9;
   --accent-sci:     #6b8fd4;
   --hover:          #9be3f5;
+  --success:        #4ec9a5;
+  --warning:        #e8c36c;
+  --danger:         #e06c75;
+  --depth-waterline: rgba(86, 200, 232, 0.35);
+}
+
+/* Shadcn-compatible aliases — konsisten di kedua mode */
+:root,
+[data-theme='dark'],
+[data-theme='light'] {
+  --background:       var(--bg-main);
+  --foreground:       var(--text-primary);
+  --card:             var(--bg-card);
+  --card-foreground:  var(--text-primary);
+  --popover:          var(--bg-card);
+  --popover-foreground: var(--text-primary);
+  --primary:          var(--accent);
+  --primary-foreground: var(--bg-main);
+  --secondary:        var(--bg-elevated);
+  --secondary-foreground: var(--text-primary);
+  --muted:            var(--bg-elevated);
+  --muted-foreground: var(--text-secondary);
+  --accent-foreground: var(--bg-main);
+  --destructive:      var(--danger);
+  --input:            var(--border);
+  --ring:             var(--accent);
 }
 
 /* =====================================================================
@@ -98,7 +142,7 @@ body {
 
 ::selection {
   background-color: var(--accent);
-  color: #0b1220;
+  color: var(--bg-main);
 }
 
 /* =====================================================================
@@ -172,14 +216,14 @@ code, pre {
   --color-popover:          var(--bg-card);
   --color-popover-foreground: var(--text-primary);
   --color-primary:          var(--accent);
-  --color-primary-foreground: #0b1220;
+  --color-primary-foreground: var(--bg-main);
   --color-secondary:        var(--bg-elevated);
   --color-secondary-foreground: var(--text-primary);
   --color-muted:            var(--bg-elevated);
   --color-muted-foreground: var(--text-secondary);
   --color-accent:           var(--accent);
-  --color-accent-foreground: #0b1220;
-  --color-destructive:      #e06c75;
+  --color-accent-foreground: var(--bg-main);
+  --color-destructive:      var(--danger);
   --color-border:           var(--border);
   --color-input:            var(--border);
   --color-ring:             var(--accent);

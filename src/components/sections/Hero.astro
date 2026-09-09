@@ -1,509 +1,264 @@
 ---
-import { getCollection } from 'astro:content';
 import IcebergCanvas from './IcebergCanvas.astro';
 
 const { lang = 'id' } = Astro.props;
 
 const t = lang === 'id' ? {
+  eyebrow:      'Ekspedisi Arktik · 0m — Permukaan',
   greeting:     'Halo, gua Anggara.',
   tagline:      'Nulis kode, ngulik data, ngajarin anak-anak coding, dan bikin hal-hal yang berguna.',
   cta_projects: 'Lihat Proyek',
   cta_cv:       'Unduh CV',
+  scroll:       'mulai menyelam',
 } : {
+  eyebrow:      'Arctic Expedition · 0m — Surface',
   greeting:     "Hey, I'm Anggara.",
   tagline:      'Writing code, digging into data, teaching kids to code, and building things that matter.',
   cta_projects: 'View Projects',
   cta_cv:       'Download CV',
+  scroll:       'start diving',
 };
 
-const sectionIcons = {
-  about:      '◈',
-  projects:   '◆',
-  skills:     '◇',
-  experience: '◉',
-  blog:       '◐',
-  contact:    '◎',
-} as const;
-
-// Ambil data untuk preview cards
-const allProjects = await getCollection('projects');
-const featuredProject = allProjects.find(p => p.data.featured) ?? allProjects[0];
-const allPosts = await getCollection('blog');
-const latestPost = allPosts
-  .filter(p => p.data.language === lang)
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())[0];
-
-const sections = lang === 'id'
-  ? [
-      {
-        key: 'about',
-        label: '/ Tentang',
-        href: `/${lang}/about`,
-        preview: 'Mahasiswa SI yang kebetulan juga ngajar coding ke anak-anak. Suka ngulik data sampai nemu ceritanya.',
-        tag: 'Bio',
-      },
-      {
-        key: 'projects',
-        label: '/ Proyek',
-        href: `/${lang}/projects`,
-        preview: featuredProject?.data.title ?? 'Proyek data, web, dan segala yang bikin penasaran.',
-        tag: featuredProject?.data.tags[0] ?? 'ML',
-        meta: featuredProject?.data.metric,
-      },
-      {
-        key: 'skills',
-        label: '/ Skill',
-        href: `/${lang}/skills`,
-        preview: 'Python · Pandas · Scikit-learn · SQL · FastAPI · React · Docker',
-        tag: 'Tech Stack',
-      },
-      {
-        key: 'experience',
-        label: '/ Pengalaman',
-        href: `/${lang}/experience`,
-        preview: 'Ngajar di DigiKidz, kuliah di UNINDRA, freelance di Kodein.dulu',
-        tag: '2024 — Sekarang',
-      },
-      {
-        key: 'blog',
-        label: '/ Blog',
-        href: `/${lang}/blog`,
-        preview: latestPost?.data.title ?? 'Catatan jujur soal ngoding, data, dan proses belajar yang berantakan.',
-        tag: latestPost ? `${latestPost.data.readingTime} menit baca` : 'Tulisan',
-      },
-      {
-        key: 'contact',
-        label: '/ Kontak',
-        href: `/${lang}/contact`,
-        preview: 'Mau kolaborasi, ngobrol soal data, atau cuma nanya-nanya? Gas.',
-        tag: 'Bekasi, ID',
-      },
-    ]
-  : [
-      {
-        key: 'about',
-        label: '/ About',
-        href: `/${lang}/about`,
-        preview: 'CS student who also teaches kids to code. Loves digging into data until the story clicks.',
-        tag: 'Bio',
-      },
-      {
-        key: 'projects',
-        label: '/ Projects',
-        href: `/${lang}/projects`,
-        preview: featuredProject?.data.title ?? 'Data, web, and everything that sparks curiosity.',
-        tag: featuredProject?.data.tags[0] ?? 'ML',
-        meta: featuredProject?.data.metric,
-      },
-      {
-        key: 'skills',
-        label: '/ Skills',
-        href: `/${lang}/skills`,
-        preview: 'Python · Pandas · Scikit-learn · SQL · FastAPI · React · Docker',
-        tag: 'Tech Stack',
-      },
-      {
-        key: 'experience',
-        label: '/ Experience',
-        href: `/${lang}/experience`,
-        preview: 'Teaching at DigiKidz, studying at UNINDRA, freelancing at Kodein.dulu',
-        tag: '2024 — Present',
-      },
-      {
-        key: 'blog',
-        label: '/ Blog',
-        href: `/${lang}/blog`,
-        preview: latestPost?.data.title ?? 'Honest notes on coding, data, and the messy process of learning.',
-        tag: latestPost ? `${latestPost.data.readingTime} min read` : 'Writing',
-      },
-      {
-        key: 'contact',
-        label: '/ Contact',
-        href: `/${lang}/contact`,
-        preview: 'Want to collab, talk data, or just say hi? Let\'s go.',
-        tag: 'Bekasi, ID',
-      },
-    ];
+const stat11 = lang === 'id' ? 'Proyek Selesai' : 'Projects Done';
+const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
 ---
 
-<section class="hero">
-  <!-- Midnight Arctic: gunung es + salju (three.js, ambience di belakang teks) -->
+<section class="hero" aria-label={lang === 'id' ? 'Perkenalan' : 'Introduction'}>
+  <!-- Midnight Arctic: iceberg + kapal ekspedisi + aurora + salju (three.js) -->
   <IcebergCanvas />
 
-  <!-- Background chart dekoratif -->
-  <div class="hero-bg-chart" aria-hidden="true">
-    <svg viewBox="0 0 800 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <polyline
-        points="0,150 80,120 160,140 240,80 320,110 400,60 480,90 560,40 640,70 720,30 800,50"
-        fill="none" stroke="#56c8e8" stroke-width="1.5" stroke-opacity="0.25"
-      />
-      <polyline
-        points="0,180 80,160 160,170 240,130 320,150 400,100 480,130 560,90 640,110 720,70 800,85"
-        fill="none" stroke="#4aa8c9" stroke-width="1" stroke-opacity="0.15"
-      />
-    </svg>
-  </div>
+  <!-- Scrim halus biar teks tetap terbaca di atas scene -->
+  <div class="hero-scrim" aria-hidden="true"></div>
 
-  <!-- Hero utama -->
+  <!-- Konten utama -->
   <div class="hero-content">
-    <div class="hero-typed font-mono" id="typed-text" data-text={t.greeting}>
-      <span class="prompt">&gt; </span>
-      <span id="typed-output">{t.greeting}</span>
-      <span class="cursor" id="cursor">_</span>
-    </div>
+    <p class="hero-eyebrow" id="hero-eyebrow">{t.eyebrow}</p>
 
-    <p class="hero-tagline font-quote" id="hero-tagline">{t.tagline}</p>
+    <h1 class="hero-title" id="hero-title">
+      <span class="title-line">
+        <span id="typed-output">{t.greeting}</span>
+      </span>
+    </h1>
+
+    <p class="hero-tagline" id="hero-tagline">{t.tagline}</p>
 
     <div class="hero-cta" id="hero-cta">
-      <a href={`/${lang}/projects`} class="btn-outline">{t.cta_projects}</a>
-      <a href="/cv-anggara.pdf" download="cv-anggara.pdf" class="btn-outline btn-secondary">{t.cta_cv}</a>
+      <a href={`/${lang}/projects`} class="btn-primary">{t.cta_projects}</a>
+      <a href="/cv-anggara.pdf" download="cv-anggara.pdf" class="btn-ghost">{t.cta_cv}</a>
     </div>
 
     <div class="hero-stats" id="hero-stats">
       <div class="stat-chip">
         <span class="stat-value font-mono" data-target="11">11</span>
-        <span class="stat-label">{lang === 'id' ? 'Proyek Selesai' : 'Projects Done'}</span>
+        <span class="stat-label">{stat11}</span>
       </div>
       <div class="stat-chip">
         <span class="stat-value font-mono" data-target="500">500</span>
-        <span class="stat-label">{lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching'}</span>
+        <span class="stat-label">{stat500}</span>
       </div>
     </div>
   </div>
 
   <!-- Scroll indicator -->
-  <div class="scroll-indicator" id="scroll-indicator" aria-hidden="true">
-    <span class="font-mono" style="font-size: 0.7rem; color: var(--text-secondary)">scroll</span>
-    <div class="arrow">↓</div>
-  </div>
+  <a href="#about" class="scroll-indicator" id="scroll-indicator" aria-label={t.scroll}>
+    <span>{t.scroll}</span>
+    <span class="depth-readout font-mono">0m</span>
+    <span class="arrow" aria-hidden="true">↓</span>
+  </a>
 </section>
 
-
 <style>
-  /* ── Hero ── */
+  /* ─────────────────────────────────────────────
+     HERO — "Permukaan" (0m)
+     Teks jadi raja; scene arctic mengisi sisa.
+  ───────────────────────────────────────────── */
   .hero {
     position: relative;
-    min-height: 100vh;
+    min-height: 100svh;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 4rem 2rem;
+    align-items: center;
+    padding: 6rem 2rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
-    overflow: hidden; /* scene 3D tidak boleh bocor ke section lain */
+    overflow: hidden;
+    isolation: isolate;
   }
 
-  .hero-bg-chart {
+  /* Scrim: gradien halus kiri→kanan biar teks kontras di atas scene */
+  .hero-scrim {
     position: absolute;
-    bottom: 0; left: 0;
-    width: 100%; height: 40%;
-    opacity: 0.5;
-    pointer-events: none;
+    inset: 0;
     z-index: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, var(--bg-main) 0%, color-mix(in srgb, var(--bg-main) 62%, transparent) 55%, transparent 100%),
+      linear-gradient(0deg, var(--bg-main) 0%, transparent 22%, transparent 78%, var(--bg-main) 100%);
+    opacity: 0.82;
   }
-  .hero-bg-chart svg { width: 100%; height: 100%; }
 
   .hero-content {
     position: relative;
     z-index: 1;
-    max-width: 700px;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
-  .hero-typed {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 26px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+
+  .hero-title {
+    font-size: clamp(2.6rem, 7vw, 5.2rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
     color: var(--text-primary);
-    margin-bottom: 1.5rem;
-    min-height: 3rem;
+    margin-bottom: 1.6rem;
+    text-wrap: balance;
   }
-  .prompt { color: var(--accent-data); }
-  .cursor {
-    animation: blink 0.8s step-end infinite;
-    color: var(--accent-data);
-  }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  .title-line { display: block; }
 
   .hero-tagline {
-    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-    font-style: italic;
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
     color: var(--text-secondary);
-    margin-bottom: 2.5rem;
+    line-height: 1.65;
+    max-width: 52ch;
+    margin-bottom: 2.4rem;
   }
 
   .hero-cta {
     display: flex;
-    gap: 1rem;
+    gap: 0.9rem;
     flex-wrap: wrap;
-    margin-bottom: 3rem;
+    margin-bottom: 3.2rem;
   }
 
-  .btn-outline {
+  .btn-primary {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    padding: 0.7rem 1.5rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    padding: 0.78rem 1.7rem;
+    background: var(--accent);
+    color: #04121f;
     border: 1px solid var(--accent);
-    color: var(--text-primary);
+    border-radius: 999px;
     text-decoration: none;
-    border-radius: var(--radius);
-    transition: all 250ms ease;
-    letter-spacing: 0.05em;
-    position: relative;
-    overflow: hidden;
+    transition: background 220ms ease, transform 220ms ease, box-shadow 220ms ease;
   }
-  .btn-outline::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(86, 200, 232, 0.15), transparent 70%);
-    opacity: 0;
-    transition: opacity 250ms ease;
+  .btn-primary:hover {
+    background: var(--hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 32%, transparent);
   }
-  .btn-outline:hover::before { opacity: 1; }
-  .btn-outline:hover {
-    background-color: var(--accent);
-    box-shadow: 0 0 28px rgba(86, 200, 232, 0.35), 0 0 8px rgba(86, 200, 232, 0.2);
-  }
-  .btn-secondary { border-color: var(--border); }
-  .btn-secondary::before { background: none; }
-  .btn-secondary:hover { background-color: var(--bg-card); box-shadow: none; }
 
+  .btn-ghost {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    padding: 0.78rem 1.7rem;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    transform: translateY(-2px);
+  }
+
+  /* Stats — ringkas, bawah kiri */
   .hero-stats {
     display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+    gap: 2.4rem;
   }
   .stat-chip {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
+    border-left: 2px solid var(--accent);
+    padding-left: 0.85rem;
   }
   .stat-value {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
+    font-weight: 600;
     color: var(--text-primary);
-    font-weight: 500;
+    line-height: 1.1;
   }
   .stat-label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    letter-spacing: 0.05em;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
+  /* Scroll indicator — kiri bawah, jadi "depth marker" pertama */
   .scroll-indicator {
     position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 2.2rem;
+    left: 2rem;
+    z-index: 1;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.6rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-decoration: none;
     opacity: 0;
-    animation: fadeInUp 1s ease 4s forwards;
+    animation: fadeIn 1s ease 3.4s forwards;
+    transition: color 200ms ease;
+  }
+  .scroll-indicator:hover { color: var(--accent); }
+  .depth-readout {
+    color: var(--accent);
+    font-size: 0.66rem;
+    padding: 0.1rem 0.45rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
   }
   .arrow {
-    color: var(--text-secondary);
-    animation: bounce 2s ease infinite;
-  }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(6px); }
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-  }
-
-  /* ── Overview section ── */
-  .overview-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem 6rem;
-  }
-
-  .overview-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    padding: 1.5rem 1.5rem 1.25rem;
-    background: color-mix(in srgb, var(--bg-card) 75%, transparent);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-    border-radius: 14px;
-    text-decoration: none;
-    color: inherit;
-    overflow: hidden;
-    transition: border-color 280ms ease, transform 280ms ease, box-shadow 280ms ease, background 280ms ease;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: cardIn 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: var(--delay);
-    /* subtle top-inset shimmer */
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-  }
-
-  .overview-card:hover {
-    background: color-mix(in srgb, var(--bg-card) 90%, var(--accent) 6%);
-    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-    transform: translateY(-4px);
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.18),
-      0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
-      inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  }
-  .overview-card:hover .card-glow { opacity: 1; }
-  .overview-card:hover .card-arrow { transform: translateX(3px); }
-  .overview-card:hover .card-icon {
-    color: var(--accent-data);
-    text-shadow: 0 0 10px rgba(86, 200, 232, 0.6);
-  }
-  .overview-card:hover .card-accent-line { transform: scaleX(1); opacity: 1; }
-  .overview-card:hover .card-cta { color: var(--accent-data); }
-
-  /* top accent line — animates in on hover */
-  .card-accent-line {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-data) 100%);
-    transform: scaleX(0);
-    transform-origin: left;
-    opacity: 0;
-    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1), opacity 350ms ease;
-    border-radius: 14px 14px 0 0;
-  }
-
-  /* inner glow blob */
-  .card-glow {
-    position: absolute;
-    top: -50px;
-    left: -50px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(86, 200, 232, 0.2) 0%, transparent 70%);
-    filter: blur(25px);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 400ms ease;
-  }
-
-  @keyframes cardIn {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-label-group {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-  }
-
-  .card-icon {
-    font-size: 1rem;
-    color: color-mix(in srgb, var(--text-secondary) 70%, var(--accent-data));
-    transition: color 250ms ease, text-shadow 250ms ease;
-    line-height: 1;
-  }
-
-  .card-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent-data);
-    opacity: 0.9;
-  }
-
-  .card-tag {
-    font-size: 0.58rem;
-    color: color-mix(in srgb, var(--text-secondary) 50%, var(--text-primary));
-    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-    padding: 0.18rem 0.6rem;
-    border-radius: 999px;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-    background: color-mix(in srgb, var(--bg-card) 50%, transparent);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    flex-shrink: 0;
-  }
-
-  .card-preview {
-    font-size: 0.85rem;
-    color: color-mix(in srgb, var(--text-secondary) 40%, var(--text-primary));
-    line-height: 1.65;
-    flex: 1;
-    position: relative;
-    z-index: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .card-meta {
-    font-size: 0.68rem;
-    color: var(--accent-data);
-    opacity: 0.75;
-    position: relative;
-    z-index: 1;
-    display: block;
-    padding: 0.25rem 0.5rem;
-    border-left: 2px solid var(--accent);
-    background: color-mix(in srgb, var(--accent) 8%, transparent);
-    border-radius: 0 4px 4px 0;
-    letter-spacing: 0.02em;
-  }
-
-  .card-footer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    padding-top: 0.25rem;
-    border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
-    margin-top: auto;
-  }
-
-  .card-cta {
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-    color: color-mix(in srgb, var(--text-secondary) 30%, var(--text-primary));
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    transition: color 220ms ease;
-    text-transform: uppercase;
-  }
-
-  .card-arrow {
-    font-size: 0.85rem;
-    transition: transform 220ms ease;
     display: inline-block;
+    animation: driftDown 2.4s ease infinite;
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .overview-card { animation: none; opacity: 1; transform: none; }
+  @keyframes driftDown {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50%      { transform: translateY(5px); opacity: 1; }
   }
+  @keyframes fadeIn { to { opacity: 1; } }
 
+  /* Light mode: scrim & teks tetap kontras di atas es terang */
   @media (max-width: 768px) {
+    .hero { align-items: flex-end; padding: 5rem 1.4rem 4.5rem; }
+    .hero-scrim {
+      background:
+        linear-gradient(0deg, var(--bg-main) 2%, color-mix(in srgb, var(--bg-main) 55%, transparent) 45%, transparent 80%);
+      opacity: 0.9;
+    }
+    .hero-stats { gap: 1.6rem; }
+    .scroll-indicator { left: 1.4rem; bottom: 1.4rem; }
   }
-
-  @media (max-width: 480px) {
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-indicator { animation: none; opacity: 1; }
+    .arrow { animation: none; }
   }
 </style>
-
-<script>
-  // (cursor-following orb dihapus — tema Ocean Blueprint bersih, tanpa dekorasi berat)
-</script>
