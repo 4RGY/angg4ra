@@ -79,7 +79,7 @@ export async function initIcebergScene(container) {
   scene.add(key, rim, ambient);
 
   const rnd = mulberry32(20260909);
-  const loaded = { berg: null, ship: null };
+  const loaded = { berg: null, ship: null, ocean: null };
   const anims = { ship: { driftPhase: rnd() * Math.PI * 2 } };
 
   /* ── Load GLB ── */
@@ -97,9 +97,10 @@ export async function initIcebergScene(container) {
     return scale;
   };
 
-  const [bergGltf, shipGltf] = await Promise.allSettled([
+  const [bergGltf, shipGltf, oceanGltf] = await Promise.allSettled([
     loadModel('/models/iceberg.glb'),
     loadModel('/models/tugboat.glb'),
+    loadModel('/models/ocean.glb'),
   ]);
 
   if (bergGltf.status === 'fulfilled') {
@@ -140,6 +141,67 @@ export async function initIcebergScene(container) {
   shipLamp.position.set(-6.8, 1.4, 1.5);
   scene.add(shipLamp);
 
+  /* ══════════════════════════════════════════════════════════
+     OCEAN — waterline & dasar laut
+     ocean.glb = permukaan laut bergelombang (2000×2000 unit).
+     Dipakai ganda:
+      1) Sebagai permukaan air (waterline) yang "memotong" iceberg
+         & kapal — biar mereka keliatan MENGAPUNG, bukan melayang.
+      2) Di-copy jadi dasar laut transparan di bawah (kedalaman).
+  ══════════════════════════════════════════════════════════ */
+  let oceanMesh = null;
+  let oceanUnder = null;
+  const OCEAN_TOP_Y = 0.0;   // waterline (bagian atas iceberg tenggelam sampe sini)
+
+  if (oceanGltf.status === 'fulfilled') {
+    const oceanScene = oceanGltf.value.scene;
+
+    // Normalisasi: target span ± 60 unit (scene kita -12..12)
+    const box = new Box3().setFromObject(oceanScene);
+    const size = box.getSize(new Vector3());
+    const span = Math.max(size.x, size.z);
+    const scale = 140 / span;
+    oceanScene.scale.setScalar(scale);
+
+    // ── 1) Permukaan air (waterline) ──
+    const water = oceanScene.clone(true);
+    // Geser supaya puncak gelombang ocean di sekitar y=0
+    const oceanMaxY = box.max.y * scale;
+    // Posisikan ocean sehingga puncaknya ~ di 0.2 (biar ada ombak kecil di atas waterline)
+    water.position.y = OCEAN_TOP_Y - oceanMaxY + 0.35;
+    water.traverse((o) => {
+      if (o.isMesh && o.material) {
+        const m = Array.isArray(o.material) ? o.material[0] : o.material;
+        m.color = new Color('#0e2438');
+        m.roughness = 0.25;
+        m.metalness = 0.4;
+        m.transparent = true;
+        m.opacity = 0.88;
+        m.depthWrite = false;
+      }
+    });
+    scene.add(water);
+    oceanMesh = water;
+
+    // ── 2) Dasar laut (di bawah, lebih gelap, buram) ──
+    const under = oceanScene.clone(true);
+    under.position.y = -6;
+    under.traverse((o) => {
+      if (o.isMesh && o.material) {
+        const m = Array.isArray(o.material) ? o.material[0] : o.material;
+        m.color = new Color('#050d18');
+        m.roughness = 0.9;
+        m.metalness = 0;
+        m.transparent = true;
+        m.opacity = 0.5;
+        m.depthWrite = false;
+      }
+    });
+    scene.add(under);
+    oceanUnder = under;
+    loaded.ocean = { water, under, oceanMaxY };
+  }
+
   /* ── Salju ── */
   const COUNT = 500;
   const snowGeo = new BufferGeometry();
@@ -164,6 +226,10 @@ export async function initIcebergScene(container) {
   scene.add(snow);
 
   /* ── Palette theme ── */
+  const OCEAN_COLORS = {
+    dark:  { water: '#0e2438', under: '#050d18' },
+    light: { water: '#4a90b8', under: '#2a6a8a' },
+  };
   function applyPalette() {
     const p = isDark() ? PAL.dark : PAL.light;
     if (loaded.berg) {
@@ -174,6 +240,18 @@ export async function initIcebergScene(container) {
     snowMat.color.set(p.snow);
     scene.fog.color.set(p.fog);
     shipLamp.intensity = isDark() ? 1.4 : 0.9;
+
+    const oc = isDark() ? OCEAN_COLORS.dark : OCEAN_COLORS.light;
+    if (oceanMesh) {
+      oceanMesh.traverse((o) => {
+        if (o.isMesh && o.material) o.material.color.set(oc.water);
+      });
+    }
+    if (oceanUnder) {
+      oceanUnder.traverse((o) => {
+        if (o.isMesh && o.material) o.material.color.set(oc.under);
+      });
+    }
   }
   applyPalette();
   const themeObserver = new MutationObserver(() => applyPalette());
@@ -240,6 +318,13 @@ export async function initIcebergScene(container) {
     }
     snowGeo.attributes.position.needsUpdate = true;
 
+    /* Ocean: gelombang halus naik-turun pelan */
+    if (loaded.ocean) {
+      const wave = Math.sin(t * 0.4) * 0.12;
+      loaded.ocean.water.position.y = 0.35 + wave;
+      loaded.ocean.under.position.y = -6 + wave * 0.5;
+    }
+
     renderer.render(scene, camera);
   };
   rafId = requestAnimationFrame(tick);
@@ -262,6 +347,16 @@ export async function initIcebergScene(container) {
     document.removeEventListener('visibilitychange', onVisibility);
     [snowGeo].forEach((g) => g.dispose());
     snowMat.dispose();
+    if (oceanMesh) {
+      oceanMesh.traverse((o) => {
+        if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); }
+      });
+    }
+    if (oceanUnder) {
+      oceanUnder.traverse((o) => {
+        if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); }
+      });
+    }
     renderer.dispose();
     if (renderer.domElement.parentNode === container) container.removeChild(renderer.domElement);
   }
