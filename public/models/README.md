@@ -5,6 +5,10 @@
   Source: https://poly.pizza/m/edgjUwbVVtl
 - **tugboat.glb** — "Tugboat" by Poly by Google (via Poly Pizza). CC-BY 4.0. ~528 tris.
   Source: https://poly.pizza/m/eEbXA8_6MeJ
+- **seagull.glb** — "Flying seagull" by Poly by Google (via Poly Pizza). CC-BY 4.0. ~410 tris.
+  Source: https://poly.pizza/m/6Tpj_vcWP3f
+- **cloud2.glb** — "Cumulus Clouds 5" by S. Paul Michael (via Poly Pizza). CC-BY 4.0. ~10.4k tris (54 mesh).
+  Source: https://poly.pizza/m/25RmW99gwuv
 
 ## Lingkungan
 - **ocean.glb** — "Ocean" by Poly by Google (via Poly Pizza). CC-BY 4.0. ~800 tris.

@@ -34,9 +34,10 @@ export async function initIcebergScene(container) {
 
   const THREE = await import('three');
   const { WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, MeshStandardMaterial,
+          MeshBasicMaterial, Sprite, SpriteMaterial, CanvasTexture,
           Points, PointsMaterial, BufferGeometry, BufferAttribute, Fog, AmbientLight,
           DirectionalLight, PointLight, Color, Vector2, Vector3, Box3, MathUtils,
-          PlaneGeometry, DoubleSide } = THREE;
+          PlaneGeometry, CircleGeometry, DoubleSide, AdditiveBlending } = THREE;
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
   let renderer = null;
@@ -98,9 +99,11 @@ export async function initIcebergScene(container) {
     return scale;
   };
 
-  const [bergGltf, shipGltf] = await Promise.allSettled([
+  const [bergGltf, shipGltf, gullGltf, cloudGltf] = await Promise.allSettled([
     loadModel('/models/iceberg.glb'),
     loadModel('/models/tugboat.glb'),
+    loadModel('/models/seagull.glb'),
+    loadModel('/models/cloud2.glb'),
   ]);
 
   if (bergGltf.status === 'fulfilled') {
@@ -135,6 +138,32 @@ export async function initIcebergScene(container) {
     ship.rotation.y = 0.35;
     scene.add(ship);
     loaded.ship = ship;
+  }
+
+  /* ── Burung camar: 3 ekor, orbit pelan di langit ── */
+  const gulls = [];
+  if (gullGltf.status === 'fulfilled') {
+    const gullSrc = gullGltf.value.scene;
+    // pakai material asli model (camar putih) — biar kontras di langit
+    gullSrc.traverse((o) => {
+      if (o.isMesh && o.material) {
+        const m = Array.isArray(o.material) ? o.material[0] : o.material;
+        m.roughness = 0.8;
+        m.metalness = 0;
+      }
+    });
+    for (let i = 0; i < 3; i++) {
+      const g = gullSrc.clone(true);
+      const s = 0.15 + rnd() * 0.15;  // kecil banget — kesan sangat jauh
+      g.scale.setScalar(s);
+      const ang = (i / 3) * Math.PI * 2 + rnd() * 0.8;
+      const rad = 38 + rnd() * 10;    // radius gerak lebar
+      const zBase = -70 - rnd() * 15; // dasar z — sangat jauh (kamera di z=17)
+      g.position.set(Math.cos(ang) * rad, 9 + rnd() * 5, zBase);
+      g.userData = { ang, rad, spd: 0.01 + rnd() * 0.01, y0: g.position.y, zBase };
+      scene.add(g);
+      gulls.push(g);
+    }
   }
 
   const shipLamp = new PointLight('#ffb46b', 1.4, 12, 2);
@@ -183,6 +212,30 @@ export async function initIcebergScene(container) {
   scene.add(oceanWater);
   loaded.ocean = { mesh: oceanWater, geo: oceanGeo, base: oceanBase, mat: oceanMat, zMin: oZMin, zMax: oZMax };
 
+  /* ── Glint: kilau cahaya kepecah di puncak ombak (titik additive) ── */
+  const GLINT_N = 240;
+  const glintGeo = new BufferGeometry();
+  const glintPos = new Float32Array(GLINT_N * 3);
+  const glintSeed = new Float32Array(GLINT_N);   // fase denyut tiap titik
+  for (let i = 0; i < GLINT_N; i++) {
+    glintPos[i * 3] = (rnd() - 0.5) * 150;       // x tersebar
+    glintPos[i * 3 + 2] = -10 - rnd() * 85;      // z di area permukaan (depan kamera)
+    glintPos[i * 3 + 1] = 0;
+    glintSeed[i] = rnd() * Math.PI * 2;
+  }
+  glintGeo.setAttribute('position', new BufferAttribute(glintPos, 3));
+  const glintMat = new PointsMaterial({
+    color: '#cfeaff',
+    size: 0.05,
+    transparent: true,
+    opacity: 0.9,
+    depthWrite: false,
+    sizeAttenuation: true,
+    blending: AdditiveBlending,
+  });
+  const glint = new Points(glintGeo, glintMat);
+  scene.add(glint);
+
   /** Cat ulang gradasi air per tema: horizon terang → dalam/dekat gelap. */
   function paintOcean(dark) {
     const o = loaded.ocean;
@@ -212,6 +265,20 @@ export async function initIcebergScene(container) {
     return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
   }
 
+  /** Tinggi gelombang di posisi (x,z) pada waktu t — dipakai ocean mesh,
+      glint & foam ring biar semua sinkron di permukaan yang sama. */
+  function waveY(x, z, t) {
+    return (
+      Math.sin(x * 0.35 + t * 0.9) * WAVE_AMP * 0.6 +
+      Math.sin(z * 0.5 + t * 0.7 + 2.1) * WAVE_AMP * 0.7 +
+      Math.sin((x + z) * 0.16 + t * 0.5) * WAVE_AMP * 0.5 +
+      /* riak halus frekuensi tinggi — bikin tekstur permukaan dari cahaya */
+      Math.sin(x * 1.7 + t * 2.2) * 0.014 +
+      Math.sin(z * 2.3 + t * 1.9 + 1.1) * 0.012 +
+      Math.sin((x + z) * 0.9 + t * 1.5) * 0.01
+    );
+  }
+
   /* ── Salju ── */
   const COUNT = 500;
   const snowGeo = new BufferGeometry();
@@ -235,6 +302,102 @@ export async function initIcebergScene(container) {
   snow.position.y = 6;
   scene.add(snow);
 
+  /* ── Bintang (dark mode aja — malam arktik) ── */
+  const STAR_N = 260;
+  const starGeo = new BufferGeometry();
+  const starPos = new Float32Array(STAR_N * 3);
+  const starSeed = new Float32Array(STAR_N);
+  for (let i = 0; i < STAR_N; i++) {
+    // langit: z jauh (-30..-90), x lebar, y tinggi (4..26)
+    starPos[i * 3] = (rnd() - 0.5) * 130;
+    starPos[i * 3 + 1] = 4 + rnd() * 24;
+    starPos[i * 3 + 2] = -40 - rnd() * 55;
+    starSeed[i] = rnd() * Math.PI * 2;
+  }
+  starGeo.setAttribute('position', new BufferAttribute(starPos, 3));
+  const starMat = new PointsMaterial({
+    color: '#ffffff', size: 0.16, transparent: true,
+    opacity: 0.9, depthWrite: false, sizeAttenuation: true,
+    fog: false, // bintang di luar angkasa — jangan kena fog
+  });
+  const stars = new Points(starGeo, starMat);
+  stars.visible = false; // nyala di dark mode aja
+  scene.add(stars);
+
+  /* ── Bulan pucat — sumber cahaya glint di air ── */
+  const moonGeo = new CircleGeometry(1.7, 40);
+  const moonMat = new MeshBasicMaterial({
+    color: '#e8f0f8', transparent: true, opacity: 0.0,
+    fog: false, depthWrite: false, side: DoubleSide,
+  });
+  const moon = new Mesh(moonGeo, moonMat);
+  moon.position.set(-14, 17, -60); // pojok kiri-atas langit
+  moon.lookAt(camera.position);
+  scene.add(moon);
+
+  /* ── Awan 3D (cloud2.glb — Cumulus Clouds 5, 10.4k tris) ── */
+  const cloud3d = [];
+  if (cloudGltf.status === 'fulfilled') {
+    const cloudSrc = cloudGltf.value.scene;
+    cloudSrc.traverse((o) => {
+      if (o.isMesh && o.material) {
+        // MeshBasicMaterial — nggak kena lighting, putih bersih kayak awan
+        // (MeshStandardMaterial kena ambient redup → keliatan abu-abu gelap)
+        o.material = new MeshBasicMaterial({
+          color: '#ffffff',
+          transparent: true,
+          opacity: 0.55,
+          fog: false,
+        });
+      }
+    });
+    // 5 awan, drift pelan — sebar di langit, jarak aman dari iceberg
+    for (let i = 0; i < 5; i++) {
+      const cl = cloudSrc.clone(true);
+      // skala besar — keliatan jelas di langit
+      const s = 2.0 + rnd() * 2.0;
+      cl.scale.setScalar(s);
+      // sebar merata di x, TINGGI di langit y 10-20, z -30..-50 (masuk frame atas)
+      cl.position.set(
+        -50 + (i / 4) * 100 + (rnd() - 0.5) * 15,
+        10 + rnd() * 10,
+        -30 - rnd() * 20,
+      );
+      cl.userData = { spd: 0.06 + rnd() * 0.1, y: cl.position.y };
+      scene.add(cl);
+      cloud3d.push(cl);
+    }
+  }
+
+  /* ── Awan tipis: 4 sprite lembut, drift pelan di langit ── */
+  function makeCloudSprite() {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 128;
+    const ctx = cv.getContext('2d');
+    const g = ctx.createRadialGradient(64, 64, 8, 64, 64, 60);
+    g.addColorStop(0, 'rgba(255,255,255,0.55)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 128, 128);
+    const tex = new CanvasTexture(cv);
+    return { tex, mat: new SpriteMaterial({
+      map: tex, transparent: true, opacity: 0.35,
+      depthWrite: false, fog: false,
+    }) };
+  }
+  const cloudSprites = [];
+  const CLOUD_N = 6;
+  for (let i = 0; i < CLOUD_N; i++) {
+    const { tex, mat } = makeCloudSprite();
+    const sp = new Sprite(mat);
+    const w = 9 + rnd() * 12;
+    sp.scale.set(w, w * 0.3, 1);
+    sp.position.set((rnd() - 0.5) * 110, 7 + rnd() * 12, -30 - rnd() * 35);
+    sp.userData = { spd: 0.04 + rnd() * 0.08, y: sp.position.y };
+    scene.add(sp);
+    cloudSprites.push(sp);
+  }
+
   /* ── Palette theme ── */
   function applyPalette() {
     const p = isDark() ? PAL.dark : PAL.light;
@@ -246,6 +409,11 @@ export async function initIcebergScene(container) {
     snowMat.color.set(p.snow);
     scene.fog.color.set(p.fog);
     shipLamp.intensity = isDark() ? 1.4 : 0.9;
+
+    // Bintang: nyala di dark (malam arktik), mati di light (siang)
+    stars.visible = isDark();
+    // Bulan: samar di dark, nyaris nggak keliatan di light (siang terang)
+    moonMat.opacity = isDark() ? 0.85 : 0.1;
 
     paintOcean(isDark());
   }
@@ -314,24 +482,68 @@ export async function initIcebergScene(container) {
     }
     snowGeo.attributes.position.needsUpdate = true;
 
-    /* Ocean: gelombang halus per-vertex (sin/cos) di sekitar waterline.
-       Kapal & iceberg di bawah WATER_Y ketutup beneran (depthWrite ON)
-       → kesan mengapung, bukan melayang. */
+    /* Ocean: gelombang halus per-vertex via waveY(). depthWrite OFF →
+       iceberg/kapal bawah air tembus (mengapung beneran). */
     if (loaded.ocean) {
       const o = loaded.ocean;
       const pos = o.geo.attributes.position.array;
       const n = pos.length / 3;
       for (let i = 0; i < n; i++) {
-        const x = o.base[i * 3];
-        const z = o.base[i * 3 + 2];
-        const y =
-          Math.sin(x * 0.35 + t * 0.9) * WAVE_AMP * 0.6 +
-          Math.sin(z * 0.5 + t * 0.7 + 2.1) * WAVE_AMP * 0.7 +
-          Math.sin((x + z) * 0.16 + t * 0.5) * WAVE_AMP * 0.5;
-        pos[i * 3 + 1] = y;
+        pos[i * 3 + 1] = waveY(o.base[i * 3], o.base[i * 3 + 2], t);
       }
       o.geo.attributes.position.needsUpdate = true;
       o.geo.computeVertexNormals();
+    }
+
+    /* Glint: titik kilau di puncak ombak — denyut pelan (nyala: nempel
+       puncak; mati: dilempar jauh ke bawah biar fog nutupin) */
+    if (glintGeo) {
+      const gp = glintGeo.attributes.position.array;
+      for (let i = 0; i < GLINT_N; i++) {
+        const x = gp[i * 3];
+        const z = gp[i * 3 + 2];
+        const w = waveY(x, z, t);
+        const pulse = 0.5 + 0.5 * Math.sin(t * 1.6 + glintSeed[i]);
+        const on = pulse > 0.72;
+        gp[i * 3 + 1] = on ? w + 0.02 : -30;
+      }
+      glintGeo.attributes.position.needsUpdate = true;
+      glintMat.opacity = 0.85;
+    }
+
+    /* Bintang: kelap-kelip pelan (naik-turun ukuran/opacity) */
+    if (stars.visible) {
+      const sp2 = starGeo.attributes.position.array;
+      for (let i = 0; i < STAR_N; i++) {
+        const tw = 0.5 + 0.5 * Math.sin(t * 1.2 + starSeed[i] * 3);
+        // naik-turunin y sedikit = efek kerlip
+        sp2[i * 3 + 1] = starPos[i * 3 + 1] + tw * 0.08;
+      }
+      starGeo.attributes.position.needsUpdate = true;
+      starMat.opacity = 0.55 + 0.35 * Math.sin(t * 0.9);
+    }
+
+    /* Burung camar: orbit pelan di langit */
+    for (const g of gulls) {
+      const u = g.userData;
+      u.ang += u.spd * 0.016;
+      g.position.x = Math.cos(u.ang) * u.rad;
+      // gerak melingkar halus di sekitar zBase (jauh), nggak nembus ke depan
+      g.position.z = u.zBase + Math.sin(u.ang) * u.rad * 0.25;
+      g.position.y = u.y0 + Math.sin(t * 0.7 + u.ang) * 0.4;
+      g.rotation.y = -u.ang; // menghadap arah gerak
+    }
+
+    /* Awan 3D: drift pelan ke kanan, wrap */
+    for (const cl of cloud3d) {
+      cl.position.x += cl.userData.spd * 0.016;
+      if (cl.position.x > 55) cl.position.x = -55;
+    }
+
+    /* Awan tipis: drift pelan ke kanan, wrap */
+    for (const sp of cloudSprites) {
+      sp.position.x += sp.userData.spd * 0.016;
+      if (sp.position.x > 55) sp.position.x = -55;
     }
 
     renderer.render(scene, camera);
@@ -359,6 +571,28 @@ export async function initIcebergScene(container) {
     if (loaded.ocean) {
       loaded.ocean.geo.dispose();
       loaded.ocean.mat.dispose();
+    }
+    if (glintGeo) {
+      glintGeo.dispose();
+      glintMat.dispose();
+    }
+    starGeo.dispose();
+    starMat.dispose();
+    moonGeo.dispose();
+    moonMat.dispose();
+    for (const cs of cloudSprites) {
+      cs.material.map.dispose();
+      cs.material.dispose();
+    }
+    for (const cl of cloud3d) {
+      cl.traverse((o) => {
+        if (o.isMesh) o.material.dispose();
+      });
+    }
+    for (const g of gulls) {
+      g.traverse((o) => {
+        if (o.isMesh) o.material.dispose();
+      });
     }
     renderer.dispose();
     if (renderer.domElement.parentNode === container) container.removeChild(renderer.domElement);
