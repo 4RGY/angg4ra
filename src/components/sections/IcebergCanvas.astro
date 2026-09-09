@@ -1,0 +1,45 @@
+---
+/**
+ * IcebergCanvas.astro
+ * -------------------
+ * Container scene "Midnight Arctic" untuk hero.
+ *
+ * - `<canvas>` hanya di-render di client (bukan SSR) lewat script
+ * - three.js di-dynamic-import → tidak ikut bundle awal
+ * - initIcebergScene() mengurus guard sendiri:
+ *     prefers-reduced-motion → null (teks tetap tampil)
+ *     layar < 768px / WebGL absent → null (fallback statis)
+ *
+ * Props: none.
+ */
+---
+
+<div class="iceberg-canvas" aria-hidden="true" data-iceberg-canvas></div>
+
+<script>
+  // Hanya jalan di client; container dijamin ada.
+  const container = document.querySelector('[data-iceberg-canvas]');
+  if (container) {
+    import('../../scripts/iceberg-scene.js').then(({ initIcebergScene }) =>
+      initIcebergScene(container),
+    );
+  }
+</script>
+
+<style>
+  .iceberg-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none; /* biar teks/CTA tetap bisa diklik */
+    z-index: 0;
+  }
+
+  .iceberg-canvas canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

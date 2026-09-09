@@ -82,6 +82,28 @@ test('Google Fonts stylesheet is loaded only once', async () => {
   assert.equal(loads, 1);
 });
 
+test('Iceberg scene guards reduced motion and loads three lazily', async () => {
+  const script = await read('src/scripts/iceberg-scene.js');
+  // Guard reduced-motion: harus cek SEBELUM dynamic import three (return null)
+  const guardIndex = script.indexOf('prefers-reduced-motion: reduce');
+  const importIndex = script.indexOf("await import('three')");
+  assert.ok(guardIndex >= 0, 'Iceberg script must check prefers-reduced-motion');
+  assert.ok(importIndex >= 0, 'Iceberg script must dynamic-import three');
+  assert.ok(guardIndex < importIndex, 'Reduced-motion guard must run before three is imported');
+  assert.match(script, /isMobile/);
+  assert.match(script, /return null/);
+
+  // Canvas container + lazy loader ada di komponen
+  const comp = await read('src/components/sections/IcebergCanvas.astro');
+  assert.match(comp, /data-iceberg-canvas/);
+  assert.match(comp, /import\('\.\.\/\.\.\/scripts\/iceberg-scene\.js'\)/);
+  assert.match(comp, /pointer-events:\s*none/);
+
+  // Hero memuat komponen canvas
+  const hero = await read('src/components/sections/Hero.astro');
+  assert.match(hero, /IcebergCanvas/);
+});
+
 test('Hero content remains meaningful before JavaScript enhancement', async () => {
   const idHtml = await read('dist/id/index.html');
   const hero = await read('src/components/sections/Hero.astro');
