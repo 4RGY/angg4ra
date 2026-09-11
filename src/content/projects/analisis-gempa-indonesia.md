@@ -17,10 +17,10 @@ Data gempa bumi dari BMKG tersedia publik, tetapi dalam bentuk XML yang kurang n
 
 ## Pendekatan
 
-- **Ingest otomatis** — `requests` menarik data XML terkini, diparsing menjadi baris-baris terstruktur.
-- **Normalisasi** — setiap kejadian gempa diubah menjadi satu baris dengan kolom magnitudo, kedalaman, lokasi, dan waktu.
-- **Analisis deskriptif** — statistik ringkas (rerata magnitudo, rerata kedalaman, gempa terbesar) dihitung langsung dari data terbaru.
-- **Visualisasi** — distribusi magnitudo dan hubungan magnitudo vs kedalaman diplot untuk menangkap pola.
+- **Ingest otomatis**: `requests` menarik data XML terkini, diparsing menjadi baris-baris terstruktur.
+- **Normalisasi**: setiap kejadian gempa diubah menjadi satu baris dengan kolom magnitudo, kedalaman, lokasi, dan waktu.
+- **Analisis deskriptif**: statistik ringkas (rerata magnitudo, rerata kedalaman, gempa terbesar) dihitung langsung dari data terbaru.
+- **Visualisasi**: distribusi magnitudo dan hubungan magnitudo vs kedalaman diplot untuk menangkap pola.
 
 ## Temuan Utama
 
@@ -28,4 +28,4 @@ Dari sampel 15 gempa terakhir, gempa terbesar tercatat magnitudo 6.2 SR, dengan 
 
 ## Refleksi
 
-Proyek ini menegaskan bahwa analisis data yang berguna tidak harus rumit — yang penting adalah membangun jalur dari data mentah menuju insight dengan rapi dan bisa diulang.
+Proyek ini menegaskan bahwa analisis data yang berguna tidak harus rumit. Yang penting adalah membangun jalur dari data mentah menuju insight dengan rapi dan bisa diulang.

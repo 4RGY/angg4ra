@@ -7,7 +7,7 @@ readingTime: 5
 excerpt: "Empat proyek analisis data mengajarkan satu hal yang sama: kualitas analitik bukan soal jumlah grafik, tapi disiplin data."
 ---
 
-Empat proyek analisis data terakhir saya — gempa Indonesia, Transjakarta, pendidikan nasional, dan e-commerce Olist — terlihat sangat berbeda di permukaan. Satu soal geologi, satu transportasi, satu kebijakan pendidikan, satu ritel online.
+Empat proyek analisis data terakhir saya (gempa Indonesia, Transjakarta, pendidikan nasional, dan e-commerce Olist) terlihat sangat berbeda di permukaan. Satu soal geologi, satu transportasi, satu kebijakan pendidikan, satu ritel online.
 
 Tapi semuanya mengajarkan pelajaran yang sama.
 
@@ -27,7 +27,7 @@ Detail-detail kecil ini yang membedakan analisis yang bisa dipercaya dari yang s
 
 Proyek pendidikan menemukan korelasi positif antara lama sekolah dan pengangguran. Kalau berhenti di angka, kesimpulannya keliru: *"pendidikan menyebabkan pengangguran."*
 
-Konteksnya — terbatasnya lapangan kerja formal di provinsi tertentu — yang mengubah angka itu menjadi cerita yang benar. Korelasi tanpa konteks hanyalah angka.
+Konteksnya, terbatasnya lapangan kerja formal di provinsi tertentu, yang mengubah angka itu menjadi cerita yang benar. Korelasi tanpa konteks hanyalah angka.
 
 ## Kesimpulannya
 

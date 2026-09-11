@@ -1,6 +1,6 @@
 ---
 title: "Olist Commerce Analytics"
-description: "Analisis e-commerce Brazil (dataset Olist) yang berorientasi keputusan — 96 ribu order dianalisis untuk rekomendasi performa komersial dan pengalaman pelanggan."
+description: "Analisis e-commerce Brazil (dataset Olist) yang berorientasi keputusan: 96 ribu order dianalisis untuk rekomendasi performa komersial dan pengalaman pelanggan."
 status: "Selesai"
 tags: ["Python", "Jupyter", "Pandas", "pytest", "Analisis Data"]
 category: "Analisis Data"
@@ -13,7 +13,7 @@ github: "https://github.com/4RGY/olist-commerce-analysis"
 
 ## Konsep
 
-Dataset publik Brazilian E-Commerce dari Olist adalah kasus analitik yang kaya: pesanan, item, pembayaran, ulasan, dan pelanggan. Proyek ini membangun analisis berorientasi keputusan — bukan sekadar visualisasi, tapi jawaban atas pertanyaan bisnis yang konkret.
+Dataset publik Brazilian E-Commerce dari Olist adalah kasus analitik yang kaya: pesanan, item, pembayaran, ulasan, dan pelanggan. Proyek ini membangun analisis berorientasi keputusan. Bukan sekadar visualisasi, tapi jawaban atas pertanyaan bisnis yang konkret.
 
 ## Pertanyaan Bisnis
 
@@ -21,9 +21,9 @@ Ke mana operator e-commerce harus fokus untuk meningkatkan performa komersial da
 
 ## Pendekatan
 
-- **Analytical mart** — satu baris per order sebagai fondasi; tabel one-to-many diagregasi sebelum join untuk mencegah inflasi KPI.
-- **Disiplin metrik** — KPI komersial hanya memakai order yang terkirim; bulan parsial dikecualikan dari tren.
-- **Kontrak data** — rentang metrik diuji dengan pytest untuk menjaga kualitas.
+- **Analytical mart**: satu baris per order sebagai fondasi; tabel one-to-many diagregasi sebelum join untuk mencegah inflasi KPI.
+- **Disiplin metrik**: KPI komersial hanya memakai order yang terkirim; bulan parsial dikecualikan dari tren.
+- **Kontrak data**: rentang metrik diuji dengan pytest untuk menjaga kualitas.
 
 ## Temuan Utama
 

@@ -1,0 +1,91 @@
+---
+import { copy, formatDate } from './ArcticProjectCopy';
+interface Props {
+  lang: 'id' | 'en'; kind: 'projects' | 'blog'; title: string; description: string; date: string;
+  tags: string[]; headings: { depth: number; slug: string; text: string }[];
+  category?: keyof typeof copy.en.categories; status?: string; metric?: string; github?: string; demo?: string; readingTime?: number;
+}
+const { lang, kind, title, description, date, tags, headings, category, status, metric, github, demo, readingTime } = Astro.props;
+const t = copy[lang];
+const back = kind === 'projects' ? t.backProjects : t.backBlog;
+const sections = headings.filter(h => h.depth === 2);
+---
+<article class:list={['arctic-reader', { 'is-journal': kind === 'blog' }]}>
+  <a class="back" href={`/${lang}/${kind}`}><span aria-hidden="true">←</span> {back}</a>
+  <header class="reader-header">
+    <div class="eyebrow"><span>{kind === 'projects' ? (category ? t.categories[category] : t.projects) : t.journal}</span>{status && <span class="status">{status}</span>}</div>
+    <h1>{title}</h1>
+    <p class="description">{description}</p>
+    <div class="header-bottom"><time datetime={date}>{formatDate(date,lang)}</time>{readingTime !== undefined && <span>{readingTime} {t.minutes}</span>}
+      {kind === 'blog' && <ul class="inline-tags" aria-label={t.topics}>{tags.map(tag => <li>{tag}</li>)}</ul>}
+    </div>
+  </header>
+  <div class="reader-layout">
+    <aside class="reader-aside">
+      <div class="aside-inner">
+        {metric && <section class="outcome"><h2>{t.result}</h2><p>{metric}</p></section>}
+        {kind === 'projects' && <section class="tools"><h2>{t.tools}</h2><ul>{tags.map(tag => <li>{tag}</li>)}</ul></section>}
+        {(github || demo) && <div class="external-links">{github && <a href={github} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>}{demo && <a href={demo} target="_blank" rel="noopener noreferrer">Demo <span aria-hidden="true">↗</span></a>}</div>}
+        {sections.length > 0 && <nav class="contents" aria-label={t.contents}><h2>{t.contents}</h2><ol>{sections.map((heading,index) => <li><a href={`#${heading.slug}`}><span>{String(index + 1).padStart(2,'0')}</span>{heading.text}</a></li>)}</ol></nav>}
+      </div>
+    </aside>
+    <div class="reading-column"><div class="prose"><slot /></div><footer class="reader-end"><a href={`/${lang}/${kind}`}>{back} <span aria-hidden="true">↗</span></a></footer></div>
+  </div>
+</article>
+<style>
+  .arctic-reader { max-width: 1180px; margin: auto; padding: 4rem 2.5rem 7rem; }
+  .back { display: inline-flex; align-items: center; gap: .75rem; min-height: 44px; color: var(--text-secondary); font-size: .82rem; margin-bottom: 2.8rem; }
+  .back:hover { color: var(--accent); }
+  .reader-header { border-bottom: 1px solid var(--border); padding-bottom: 2.5rem; }
+  .eyebrow { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; color: var(--accent); font-size: .77rem; margin-bottom: 1.25rem; }
+  .status { color: var(--text-secondary); display: inline-flex; align-items: center; gap: .5rem; }
+  .status::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+  h1 { max-width: 990px; font-size: clamp(2.5rem, 5.4vw, 4.7rem); line-height: 1.07; letter-spacing: -.05em; font-weight: 500; text-wrap: balance; overflow-wrap: anywhere; }
+  .description { max-width: 780px; font-size: clamp(1.03rem, 1.6vw, 1.18rem); line-height: 1.8; margin-top: 1.7rem; }
+  .header-bottom { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.5rem; margin-top: 2rem; font-size: .76rem; color: var(--text-secondary); }
+  .inline-tags { display: flex; flex-wrap: wrap; gap: .6rem 1rem; list-style: none; margin-left: auto; }
+  .reader-layout { display: grid; grid-template-columns: 235px minmax(0,1fr); gap: 5rem; padding-top: 3rem; }
+  .reader-aside { min-width: 0; }
+  .aside-inner { position: sticky; top: 7rem; }
+  .reader-aside h2 { font-size: .73rem; font-weight: 450; color: var(--text-secondary); margin-bottom: .85rem; letter-spacing: 0; }
+  .outcome { border-left: 1px solid var(--accent); padding-left: 1.2rem; margin-bottom: 2rem; }
+  .outcome p { font-size: 1rem; line-height: 1.65; color: var(--text-primary); }
+  .tools ul { display: flex; flex-wrap: wrap; list-style: none; gap: .45rem .8rem; color: var(--text-primary); font-size: .78rem; }
+  .tools { margin-bottom: 1.5rem; }
+  .external-links { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 2.5rem; }
+  .external-links a { border: 1px solid var(--border); border-radius: 4px; padding: .55rem .9rem; min-height: 44px; font-size: .8rem; display: inline-flex; align-items: center; gap: 1rem; color: var(--text-primary); }
+  .external-links a:hover { border-color: var(--accent); color: var(--accent); }
+  .contents { border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  .contents ol { list-style: none; }
+  .contents a { display: flex; align-items: baseline; gap: .8rem; padding: .55rem 0; color: var(--text-secondary); font-size: .78rem; line-height: 1.55; }
+  .contents a:hover { color: var(--accent); }
+  .contents a span { font: .62rem var(--font-mono); color: var(--accent); }
+  .reading-column { min-width: 0; max-width: 720px; }
+  .prose { font-size: 1.02rem; line-height: 1.85; overflow-wrap: anywhere; }
+  .prose :global(h2) { margin: 3rem 0 1rem; font-size: clamp(1.5rem, 2.7vw, 2rem); font-weight: 500; scroll-margin-top: 7rem; }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(h3) { margin: 2rem 0 .85rem; font-size: 1.3rem; font-weight: 500; scroll-margin-top: 7rem; }
+  .prose :global(p) { margin: 0 0 1.3rem; color: var(--text-secondary); }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.4rem; margin: 0 0 1.5rem; color: var(--text-secondary); }
+  .prose :global(ul) { list-style: disc; } .prose :global(ol) { list-style: decimal; }
+  .prose :global(li) { padding-left: .2rem; margin: .4rem 0; }
+  .prose :global(li::marker) { color: var(--accent); }
+  .prose :global(strong) { color: var(--text-primary); font-weight: 600; }
+  .prose :global(a) { color: var(--accent); text-decoration: underline; text-underline-offset: .2em; }
+  .prose :global(code) { background: var(--bg-elevated); padding: .15rem .35rem; border-radius: 3px; font-size: .83em; }
+  .prose :global(pre) { margin: 1.5rem 0; padding: 1.4rem; border: 1px solid var(--border); border-radius: 6px; overflow-x: auto; max-width: 100%; }
+  .prose :global(pre code) { background: transparent; padding: 0; border: 0; font-size: .83rem; }
+  .prose :global(blockquote) { margin: 2rem 0; padding: 1.2rem 1.5rem; border-left: 2px solid var(--accent); background: linear-gradient(90deg, var(--bg-card), transparent); font-size: 1.1rem; }
+  .prose :global(blockquote p:last-child) { margin-bottom: 0; }
+  .prose :global(hr) { border: 0; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  .prose :global(img) { display: block; max-width: 100%; height: auto; margin: 1.5rem 0; border-radius: 6px; }
+  .prose :global(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.5rem 0; font-size: .85rem; }
+  .prose :global(th), .prose :global(td) { border-bottom: 1px solid var(--border); padding: .7rem 1rem; text-align: left; }
+  .prose :global(th) { color: var(--text-primary); background: var(--bg-card); }
+  .reader-end { border-top: 1px solid var(--border); margin-top: 4rem; padding-top: 1.5rem; }
+  .reader-end a { display: flex; justify-content: space-between; align-items: center; min-height: 44px; font-size: .85rem; color: var(--accent); }
+  .reader-end span { font-size: 1.5rem; }
+  .is-journal .reader-header { background: radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 60%); }
+  @media(max-width: 900px) { .reader-layout { grid-template-columns: 190px minmax(0,1fr); gap: 2.5rem; } }
+  @media(max-width: 700px) { .arctic-reader { padding: 2.5rem 1.5rem 5rem; } .back { margin-bottom: 2rem; } .reader-layout { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 2rem; } .aside-inner { position: static; } .contents ol { display: flex; flex-wrap: wrap; gap: .2rem 1rem; } .contents a { padding-block: .7rem; } .contents { padding-top: 1rem; } .inline-tags { margin-left: 0; flex-basis: 100%; } .prose { font-size: .98rem; } }
+</style>

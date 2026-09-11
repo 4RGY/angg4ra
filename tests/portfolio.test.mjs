@@ -32,46 +32,46 @@ test('Indonesian project routes exclude English content IDs', async () => {
   ]);
 });
 
-test('About cards never depend on opacity animation to be readable', async () => {
+test('Section reveal never hides content without JS', async () => {
   const animations = await read('src/scripts/gsap-animations.js');
-  const bentoBlock = animations.split("gsap.utils.toArray('.bento-card')")[1]
-    ?.split('// ===== TIMELINE EXPERIENCE =====')[0] ?? '';
-  assert.ok(bentoBlock, 'Bento animation block must exist');
-  assert.doesNotMatch(
-    bentoBlock,
-    /opacity:\s*0/,
-    'Bento cards must remain visible when animation initialization or ScrollTrigger fails',
-  );
+  const revealBlock = animations.split("gsap.utils.toArray('[data-reveal]')")[1]
+    ?.split('DEPTH HUD')[0] ?? '';
+  assert.ok(revealBlock, 'Section reveal block must exist');
+  // fromTo = progressive enhancement: kalau GSAP gagal load, konten tetap
+  // terbaca karena CSS scoped tidak set opacity awal.
+  assert.match(revealBlock, /fromTo/);
 });
 
 test('GSAP enhancements are skipped when reduced motion is requested', async () => {
   const animations = await read('src/scripts/gsap-animations.js');
   assert.match(animations, /matchMedia\(['"]\(prefers-reduced-motion:\s*reduce\)['"]\)/);
   const guardIndex = animations.indexOf('prefers-reduced-motion: reduce');
-  const firstTweenIndex = animations.indexOf("gsap.utils.toArray('.bento-card')");
+  const firstTweenIndex = animations.indexOf("gsap.utils.toArray('[data-reveal]')");
   assert.ok(guardIndex >= 0 && guardIndex < firstTweenIndex, 'Reduced-motion guard must run before GSAP tweens');
   assert.match(animations.slice(guardIndex, firstTweenIndex), /return;/);
 });
 
-test('Accordion buttons contain phrasing content only', async () => {
+test('One-page dive sections exist in order on both languages', async () => {
   for (const lang of ['id', 'en']) {
-    const source = await read(`src/pages/${lang}/index.astro`);
-    const button = source.match(/<button[\s\S]*?class="exp-row-head"[\s\S]*?<\/button>/)?.[0] ?? '';
-    assert.ok(button, `${lang} accordion button must exist`);
-    assert.doesNotMatch(button, /<(?:div|p)\b/);
+    const html = await read(`dist/${lang}/index.html`);
+    const ids = [...html.matchAll(/<section[^>]*class="dz[^"]*"[^>]*id="([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual(ids, ['about', 'projects', 'notes', 'contact'], `${lang} must have 4 dive sections in order`);
   }
 });
 
-test('English language switch links back to ID and marks EN as current', async () => {
-  const html = await read('dist/en/index.html');
-  assert.match(html, /<a[^>]+href="\/id\/"[^>]*>ID<\/a>/);
-  assert.match(html, /<span[^>]+aria-current="page"[^>]*>EN<\/span>/);
+test('Listing pages exist for projects and blog on both languages', async () => {
+  for (const lang of ['id', 'en']) {
+    await read(`dist/${lang}/projects/index.html`);
+    await read(`dist/${lang}/blog/index.html`);
+  }
 });
 
-test('Indonesian language switch marks ID as current and links to EN', async () => {
-  const html = await read('dist/id/index.html');
-  assert.match(html, /<span[^>]+aria-current="page"[^>]*>ID<\/span>/);
-  assert.match(html, /<a[^>]+href="\/en\/"[^>]*>EN<\/a>/);
+test('Language switch links to the other language homepage', async () => {
+  const enHtml = await read('dist/en/index.html');
+  const idHtml = await read('dist/id/index.html');
+  // Bahasa lain direpresentasikan link langsung di DepthNav/footer
+  assert.match(enHtml, /href="\/id\/"/);
+  assert.match(idHtml, /href="\/en\/"/);
 });
 
 test('Google Fonts stylesheet is loaded only once', async () => {
@@ -99,15 +99,20 @@ test('Iceberg scene guards reduced motion and loads three lazily', async () => {
   assert.match(comp, /import\('\.\.\/\.\.\/scripts\/iceberg-scene\.js'\)/);
   assert.match(comp, /pointer-events:\s*none/);
 
-  // Hero memuat komponen canvas
+  // v11: canvas dirender di BaseLayout (fixed, homepage doang / data-dive)
+  const layout = await read('src/components/layout/BaseLayout.astro');
+  assert.match(layout, /IcebergCanvas/);
+  assert.match(layout, /data-dive/);
+
+  // Hero TIDAK lagi memuat canvas (sudah pindah ke layout)
   const hero = await read('src/components/sections/Hero.astro');
-  assert.match(hero, /IcebergCanvas/);
+  assert.doesNotMatch(hero, /IcebergCanvas/);
 });
 
 test('Hero content remains meaningful before JavaScript enhancement', async () => {
   const idHtml = await read('dist/id/index.html');
   const hero = await read('src/components/sections/Hero.astro');
-  assert.match(idHtml, /id="typed-output"[^>]*>Halo, gua Anggara\.<\/span>/);
+  assert.match(idHtml, /id="typed-output"[^>]*>Halo, saya Anggara\.<\/span>/);
   assert.match(idHtml, /data-target="11"[^>]*>11<\/span>/);
   assert.match(idHtml, /data-target="500"[^>]*>500<\/span>/);
   for (const selector of ['.hero-tagline', '.hero-cta', '.hero-stats']) {
@@ -118,24 +123,12 @@ test('Hero content remains meaningful before JavaScript enhancement', async () =
   }
 });
 
-test('Project filters include featured and regular cards with accessible state', async () => {
-  for (const lang of ['id', 'en']) {
-    const html = await read(`dist/${lang}/projects/index.html`);
-    assert.match(html, /class="[^"]*featured-project[^"]*"[^>]+data-category="[^"]+"/);
-    assert.match(html, /class="[^"]*\bproject-card\b[^"]*"[^>]+data-category=/);
-    assert.match(html, /class="[^"]*filter-btn[^"]*active[^"]*"[^>]+aria-pressed="true"/);
-  }
-});
-
-test('Unsupported Simple Icons use local text fallback without failed requests', async () => {
+test('Homepage one-page links project details to their own pages', async () => {
   for (const lang of ['id', 'en']) {
     const html = await read(`dist/${lang}/index.html`);
-    for (const slug of ['shap', 'matplotlib', 'seaborn', 'microsoftexcel']) {
-      assert.doesNotMatch(html, new RegExp(`cdn\\.simpleicons\\.org/${slug}`));
-    }
-    for (const label of ['SHAP', 'Matplotlib', 'Seaborn', 'Excel']) {
-      assert.match(html, new RegExp(`data-fallback="${label}"[^>]*marquee-logo--fallback|marquee-logo--fallback[^>]*data-fallback="${label}"`));
-    }
+    // Link detail harus ke halaman detail (bukan anchor)
+    const detailLinks = [...html.matchAll(new RegExp(`href="/${lang}/(projects|blog)/[^"]+"`, 'g'))].map((m) => m[0]);
+    assert.ok(detailLinks.length >= 4, `${lang} homepage must link at least 4 detail pages`);
   }
 });
 

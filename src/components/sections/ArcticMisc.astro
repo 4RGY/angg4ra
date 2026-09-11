@@ -1,0 +1,40 @@
+---
+interface Book { title: string; author: string; year: string; isbn: string; genre: string; status: string; note: string }
+interface Props { lang: 'id' | 'en'; books: Book[] }
+const { lang, books } = Astro.props;
+const id = lang === 'id';
+const filters = [['all', id ? 'Semua' : 'All'], ['fiction', id ? 'Fiksi' : 'Fiction'], ['nonfiction', id ? 'Nonfiksi' : 'Nonfiction'], ['currently-reading', id ? 'Sedang dibaca' : 'Reading now']];
+const notes = id ? [
+ ['Kualitas udara Jakarta', 'Mencari pola kualitas udara lewat machine learning dan menjelaskan prediksi dengan SHAP.'],
+ ['Predictive CRM', 'Mempelajari hubungan kehadiran, hasil belajar, dan retensi siswa.'],
+ ['Model di dunia nyata', 'Deployment, monitoring, dan apa yang terjadi setelah sebuah model meninggalkan notebook.'],
+ ['Dari Roblox ke data', 'Lua dan Roblox Studio menjadi awal ketertarikan untuk membangun sesuatu sendiri.'],
+] : [
+ ['Jakarta air quality', 'Exploring air-quality patterns with machine learning and explaining predictions with SHAP.'],
+ ['Predictive CRM', 'Exploring the relationship between attendance, learning outcomes, and student retention.'],
+ ['Models in the real world', 'Deployment, monitoring, and what happens after a model leaves the notebook.'],
+ ['From Roblox to data', 'Lua and Roblox Studio were the starting point for building things of my own.'],
+];
+---
+<div class="misc-wrap">
+  <header><p class="eyebrow">{id ? 'Di luar kode' : 'Beyond code'}</p><h1>{id ? 'Rasa ingin tahu,' : 'Curiosity,'}<br/><span>{id ? 'tanpa kategori.' : 'uncategorized.'}</span></h1><p class="intro">{id ? 'Bacaan, pertanyaan, dan hal-hal yang membentuk cara saya berpikir. Tidak semuanya harus menjadi proyek.' : 'Books, questions, and things that shape how I think. Not everything has to become a project.'}</p></header>
+  <section class="notes" aria-labelledby="notes-heading"><div class="section-heading"><h2 id="notes-heading">{id ? 'Catatan terbuka' : 'Open notes'}</h2><a href={`/${lang}/projects/`}>{id ? 'Lihat proyek' : 'View projects'} ↗</a></div><div class="note-grid">{notes.map(([title, body], i) => <details><summary><span class="number">0{i + 1}</span><h3>{title}</h3><span aria-hidden="true">+</span></summary><p>{body}</p></details>)}</div></section>
+  <section aria-labelledby="library-heading"><div class="section-heading"><h2 id="library-heading">{id ? 'Di rak buku' : 'On the bookshelf'}</h2><span class="count" aria-live="polite" id="book-count">{books.length} {id ? 'judul' : 'titles'}</span></div><div class="filters" role="group" aria-label={id ? 'Filter buku' : 'Filter books'}>{filters.map(([value,label],i) => <button type="button" data-book-filter={value} aria-pressed={i === 0}>{label}</button>)}</div><div class="book-grid">{books.map((book,i) => <article class="book" data-genre={book.genre} data-status={book.status}><div class="book-top"><span class="number">{String(i+1).padStart(2,'0')}</span><span>{book.year}</span></div><h3>{book.title}</h3><p class="author">{book.author}</p>{book.status === 'currently-reading' && <p class="reading">{id ? 'Sedang dibaca' : 'Reading now'}</p>}<details><summary>{id ? 'Catatan bacaan' : 'Reading note'} <span aria-hidden="true">↗</span></summary><p>{book.note}</p><a href={`https://openlibrary.org/isbn/${book.isbn}`} target="_blank" rel="noopener noreferrer">Open Library ↗</a></details></article>)}</div><p id="books-empty" hidden>{id ? 'Belum ada buku dalam kategori ini.' : 'No books in this category yet.'}</p></section>
+</div>
+<script>
+const buttons = document.querySelectorAll<HTMLButtonElement>('[data-book-filter]');
+const books = document.querySelectorAll<HTMLElement>('.book[data-genre]');
+buttons.forEach(button => button.addEventListener('click', () => {
+ const filter = button.dataset.bookFilter;
+ buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+ let count = 0;
+ books.forEach(book => { book.hidden = !(filter === 'all' || book.dataset.genre === filter || book.dataset.status === filter); if (!book.hidden) count++; });
+ const label = document.querySelector('#book-count');
+ if (label) label.textContent = `${count} ${document.documentElement.lang === 'id' ? 'judul' : 'titles'}`;
+ const empty = document.querySelector<HTMLElement>('#books-empty');
+ if (empty) empty.hidden = count > 0;
+}));
+</script>
+<style>
+.misc-wrap{max-width:1200px;margin:auto;padding:7rem 2rem 8rem}header{padding-bottom:4rem;border-bottom:1px solid var(--border)}.eyebrow{color:var(--accent);font-size:.8rem;margin-bottom:1.7rem}h1{font-size:clamp(3rem,7vw,6rem);font-weight:450;letter-spacing:-.06em;line-height:1.05}h1 span{color:var(--text-secondary)}.intro{max-width:46ch;color:var(--text-secondary);line-height:1.85;margin-top:2rem}section{margin-top:4rem}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:2rem}h2{font-size:1.7rem;font-weight:500;letter-spacing:-.035em}.section-heading a,.count{font-size:.8rem;color:var(--text-secondary)}.note-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 3rem}.note-grid details{border-top:1px solid var(--border);padding:1.5rem 0}.note-grid summary{display:flex;gap:1rem;align-items:center}.note-grid h3{flex:1;font-weight:450;font-size:1rem}.number{font-family:var(--font-mono);color:var(--accent);font-size:.72rem}.note-grid p{padding:1rem 0 0 2.1rem;color:var(--text-secondary);line-height:1.8;font-size:.9rem}summary{cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}.filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}.filters button{background:none;border:1px solid var(--border);color:var(--text-secondary);font:inherit;font-size:.8rem;min-height:44px;padding:.6rem 1rem;cursor:pointer}.filters button[aria-pressed=true]{color:var(--bg-main);background:var(--accent);border-color:var(--accent)}.book-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}.book{background:var(--bg-main);padding:1.6rem;min-width:0}.book[hidden]{display:none}.book-top{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary);margin-bottom:2rem}.book h3{font-size:1.25rem;line-height:1.4;font-weight:500;letter-spacing:-.025em}.author{color:var(--text-secondary);font-size:.85rem;margin-top:.8rem}.reading{font-size:.7rem;color:var(--accent);margin-top:.8rem}.book details{margin-top:1.6rem;font-size:.8rem}.book summary{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0}.book details p{color:var(--text-secondary);line-height:1.8;margin:1rem 0}.book a{color:var(--accent)}a:hover{color:var(--accent)}@media(max-width:800px){.book-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.misc-wrap{padding:4rem 1.25rem}.note-grid,.book-grid{grid-template-columns:1fr}.section-heading{align-items:baseline}.book{padding:1.4rem}h1{font-size:3rem}}
+</style>

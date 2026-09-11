@@ -1,135 +1,44 @@
 ---
-import BaseLayout from '../../../components/layout/BaseLayout.astro';
-import BentoCard from '../../../components/ui/BentoCard.astro';
-import StatusBadge from '../../../components/ui/StatusBadge.astro';
 import { getCollection } from 'astro:content';
+import BaseLayout from '../../../components/layout/BaseLayout.astro';
 
-const allProjects = await getCollection('projects');
-const projects = allProjects.filter(p => p.data.language === 'en');
-const featured = projects.find(p => p.data.featured);
-const rest = projects.filter(p => p !== featured);
+const all = await getCollection('projects');
+const projects = all
+  .filter(p => p.id.endsWith('-en'))
+  .sort((a, b) => String(b.data.date ?? '').localeCompare(String(a.data.date ?? '')));
 ---
-
-<BaseLayout title="Projects" lang="en">
+<BaseLayout title="Projects · Anggara" lang="en">
   <div class="page-container">
-    <h1 class="page-title">Projects</h1>
-
-    <div class="filter-tabs" id="filter-tabs">
-      {['All', 'Machine Learning', 'Analisis Data', 'Web', 'Mengajar'].map(cat => (
-        <button class={`filter-btn font-mono ${cat === 'All' ? 'active' : ''}`} data-filter={cat} aria-pressed={cat === 'All'}>
-          {cat}
-        </button>
-      ))}
-    </div>
-
-    {featured && (
-      <div class="featured-project project-filter-item" data-category={featured.data.category}>
-        <BentoCard size="xl">
-          <StatusBadge status={featured.data.status} />
-          <h2 style="margin-top: 0.5rem">{featured.data.title}</h2>
-          <p>{featured.data.description}</p>
-          <div class="tags">
-            {featured.data.tags.map(tag => <span class="tag font-mono">{tag}</span>)}
-          </div>
-          {featured.data.metric && <p class="metric font-mono">{featured.data.metric}</p>}
-          <a href={`/en/projects/${featured.id}`} class="btn-outline" style="margin-top: 1rem; display: inline-block">
-            Open project →
+    <header class="page-head">
+      <p class="eyebrow">Full collection · {projects.length} projects</p>
+      <h1>Projects</h1>
+      <p class="lede">Every piece of work documented here: data analysis, automation, and tools. Sorted from the most recent.</p>
+    </header>
+    <ul class="index-list">
+      {projects.map(p => (
+        <li>
+          <a href={`/en/projects/${p.id}/`}>
+            <span class="cat">{p.data.category}</span>
+            <span class="title">{p.data.title}</span>
+            <span class="desc">{p.data.description}</span>
           </a>
-        </BentoCard>
-      </div>
-    )}
-
-    <div class="bento-grid projects-grid" id="projects-grid">
-      {rest.map(project => (
-        <BentoCard size="md" class="project-card project-filter-item" data-category={project.data.category}>
-          <StatusBadge status={project.data.status} />
-          <h3 style="margin: 0.5rem 0">{project.data.title}</h3>
-          <p style="font-size: 0.9rem">{project.data.description}</p>
-          <div class="tags">
-            {project.data.tags.slice(0, 3).map(tag => <span class="tag font-mono">{tag}</span>)}
-          </div>
-          <a href={`/en/projects/${project.id}`} class="project-link font-mono">Open project →</a>
-        </BentoCard>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </BaseLayout>
 
 <style>
-  .page-container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
-  .page-title { margin-bottom: 2rem; }
-  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-  .filter-btn {
-    font-size: 0.75rem;
-    padding: 0.4rem 1rem;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-secondary);
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all 200ms ease;
-    letter-spacing: 0.05em;
-  }
-  .filter-btn:hover, .filter-btn.active {
-    border-color: var(--accent);
-    color: var(--text-primary);
-    background: rgba(86, 200, 232, 0.1);
-  }
-  .featured-project { margin-bottom: 2rem; }
-  .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
-  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem; }
-  .tag {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-secondary);
-    letter-spacing: 0.05em;
-  }
-  .metric { color: var(--accent-data); margin-top: 0.5rem; font-size: 0.85rem; }
-  .project-link {
-    display: inline-block;
-    margin-top: 1rem;
-    font-size: 0.8rem;
-    color: var(--accent-data);
-    transition: color 200ms ease;
-  }
-  .project-link:hover { color: var(--hover); }
-  .btn-outline {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    padding: 0.6rem 1.25rem;
-    border: 1px solid var(--accent);
-    color: var(--text-primary);
-    text-decoration: none;
-    border-radius: var(--radius);
-    transition: all 250ms ease;
-  }
-  .btn-outline:hover { background-color: var(--accent); }
+  .page-container { position: relative; z-index: 1; max-width: 62rem; margin: 0 auto; padding: 8rem 1.5rem 6rem; }
+  .eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 .8rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 .6rem; }
+  .lede { color: var(--text-secondary); max-width: 40rem; margin: 0 0 2.5rem; }
+  .index-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+  .index-list li { border-bottom: 1px solid var(--border); }
+  .index-list a { display: grid; grid-template-columns: 9rem 1fr; grid-template-areas: 'cat title' 'cat desc'; gap: .15rem 1.25rem; padding: 1.1rem .25rem; text-decoration: none; color: inherit; transition: background .2s; }
+  .index-list a:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  .cat { grid-area: cat; font-family: var(--font-mono); font-size: .74rem; letter-spacing: .05em; color: var(--text-secondary); padding-top: .25rem; }
+  .title { grid-area: title; font-weight: 650; }
+  .desc { grid-area: desc; color: var(--text-secondary); font-size: .88rem; }
+  @media (max-width: 640px) { .index-list a { grid-template-columns: 1fr; grid-template-areas: 'cat' 'title' 'desc'; } }
 </style>
-
-<script>
-  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-  const projectCards = document.querySelectorAll<HTMLElement>('.project-filter-item');
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const filter = btn.dataset.filter;
-
-      filterBtns.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
-
-      projectCards.forEach(card => {
-        if (filter === 'All' || card.dataset.category === filter) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  });
-</script>

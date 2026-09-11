@@ -22,7 +22,7 @@ Sebagian besar mahasiswa, terutama yang merangkap jadi "Freelancer" seperti saya
 Aplikasi ini dirancang dengan satu prinsip utama, yaitu *zero friction*. Tidak perlu setup database, tidak perlu instalasi rumit, cukup jalankan, pilih folder, klik beberapa tombol, dan semuanya selesai.
 
 Untuk menjaga pengalaman tetap jelas dan tidak membingungkan, antarmuka dipecah ke dalam tiga tab yang punya tanggung jawab masing-masing:
-* **Tab Main :** Tempat memilih base folder dan menjalankan dua aksi inti — membuat struktur folder dan mengeksekusi proses sortir.
+* **Tab Main :** Tempat memilih base folder dan menjalankan dua aksi inti: membuat struktur folder dan mengeksekusi proses sortir.
 * **Tab Keywords :** Konfigurasi mapping antara nama folder tujuan dengan kata kunci pemicunya, supaya sistem tetap fleksibel kalau suatu saat ada mata kuliah baru.
 * **Tab Activity Logs :** Riwayat setiap pergerakan file secara real-time, lengkap dengan statistik total entri, jumlah file yang berhasil dipindah, dan error yang mungkin terjadi.
 

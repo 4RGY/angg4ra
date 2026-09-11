@@ -1,6 +1,6 @@
 ---
 title: "Student Archive System"
-description: "Sistem pengarsipan data mahasiswa — aplikasi untuk menyimpan, mengelola, dan mencari arsip mahasiswa secara terstruktur."
+description: "Sistem pengarsipan data mahasiswa: aplikasi untuk menyimpan, mengelola, dan mencari arsip mahasiswa secara terstruktur."
 status: "Selesai"
 tags: ["Web App", "CRUD", "Arsip", "Database"]
 category: "Web"
@@ -17,9 +17,9 @@ Pengelolaan data mahasiswa secara manual rentan tersebar dan tidak terstruktur. 
 
 ## Pendekatan
 
-- **CRUD lengkap** — tambah, baca, ubah, dan hapus data arsip.
-- **Penyimpanan terstruktur** — data tersimpan rapi dan dapat dicari.
-- **Antarmuka sederhana** — fokus pada alur kerja pengarsipan yang jelas.
+- **CRUD lengkap**: tambah, baca, ubah, dan hapus data arsip.
+- **Penyimpanan terstruktur**: data tersimpan rapi dan dapat dicari.
+- **Antarmuka sederhana**: fokus pada alur kerja pengarsipan yang jelas.
 
 ## Refleksi
 

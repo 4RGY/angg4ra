@@ -17,15 +17,15 @@ Education quality in Indonesia is uneven, and national aggregates often hide the
 
 ## Approach
 
-- **Cleaning & processing** — raw Kaggle datasets normalized into several clean tables.
-- **Trend analysis** — tracking HDI movement for top vs bottom provinces from 2017 to 2023.
-- **Correlation** — testing the relationship between mean years of schooling and open unemployment rate.
-- **Infrastructure** — measuring the ratio of damaged to good classrooms per province.
+- **Cleaning & processing**: raw Kaggle datasets normalized into several clean tables.
+- **Trend analysis**: tracking HDI movement for top vs bottom provinces from 2017 to 2023.
+- **Correlation**: testing the relationship between mean years of schooling and open unemployment rate.
+- **Infrastructure**: measuring the ratio of damaged to good classrooms per province.
 
 ## Key Findings
 
 - HDI gap between the highest province (Jakarta 82.46) and lowest (West Papua 66.16) reaches **16.3 points**.
-- Positive correlation (r=0.474) between schooling and unemployment — better-educated provinces show higher unemployment.
+- Positive correlation (r=0.474) between schooling and unemployment: better-educated provinces show higher unemployment.
 - Papua recorded the largest HDI gain (+13.32 points) thanks to special autonomy.
 - West Java has 94,835 damaged classrooms, or 159% of good classrooms.
 

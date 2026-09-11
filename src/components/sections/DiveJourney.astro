@@ -1,0 +1,250 @@
+---
+import { getCollection } from 'astro:content';
+const { lang = 'id' } = Astro.props;
+const id = lang === 'id';
+
+const projects = (await getCollection('projects'))
+  .filter((e) => e.data.language === lang)
+  .sort((a, b) => String(b.data.date).localeCompare(String(a.data.date)));
+const posts = (await getCollection('blog'))
+  .filter((e) => e.data.language === lang)
+  .sort((a, b) => String(b.data.date).localeCompare(String(a.data.date)));
+
+const fmt = (d) => new Date(d).toLocaleDateString(id ? 'id-ID' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+const links = [
+  ['GitHub', 'https://github.com/4RGY'],
+  ['LinkedIn', 'https://www.linkedin.com/in/argy-anggara'],
+  ['Email', 'mailto:argyanggara@gmail.com'],
+];
+---
+
+<!-- ══ 20m · TENTANG ══ -->
+<section class="dz" data-zone="about" id="about">
+  <div class="scrim">
+    <p class="eyebrow">{id ? '−20 m · Zona jellyfish' : '−20 m · Jellyfish zone'}</p>
+    <h2 class="dz-title">{id ? 'Data itu cerita' : 'Data is a story'}<br /><span>{id ? 'yang belum diceritakan.' : "that hasn't been told yet."}</span></h2>
+    <p class="dz-lede">{id
+      ? 'Saya Argy Anggara, mahasiswa Sistem Informasi yang mengolah data dan menulis kode menjadi produk yang dipakai orang. Sebagian besar pekerjaan saya adalah merapikan data berantakan sampai jadi jelas dibaca: dashboard, model, laporan. Saya senang mengajar; hasilnya paling terasa saat orang lain bisa melanjutkan tanpa bantuan saya.'
+      : "I'm Argy Anggara, an Information Systems student who works with data and code. Most of my work is cleaning up messy data until it reads clearly: dashboards, models, reports. I also teach, and it works best when someone can continue without me."}</p>
+    <dl class="facts">
+      <div><dt>{id ? 'Fokus' : 'Focus'}</dt><dd>Data analysis · Machine learning</dd></div>
+      <div><dt>{id ? 'Perkakas' : 'Tooling'}</dt><dd>Python · SQL · Pandas · Scikit-learn</dd></div>
+      <div><dt>{id ? 'Lokasi' : 'Based in'}</dt><dd>Jakarta, Indonesia</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ══ 200m · KARYA — specimen collection ══ -->
+<section class="dz dz-wide" data-zone="projects" id="projects">
+  <div class="veil">
+    <header class="dz-head">
+      <div>
+        <p class="eyebrow">{id ? '−200 m · Zona twilight' : '−200 m · Twilight zone'}</p>
+        <h2 class="dz-title sm">{id ? 'Spesimen terkumpul.' : 'Specimens collected.'}</h2>
+      </div>
+      <p class="dz-count">{projects.length} {id ? 'proyek' : 'projects'} · 200–240 m</p>
+    </header>
+    <ul class="spec">
+      {projects.slice(0, 5).map((prj, i) => (
+        <li class="spec-card" data-reveal>
+          <a href={`/${lang}/projects/${prj.id}/`}>
+            <div class="spec-tag">
+              <span>Spec-{String(i + 1).padStart(2, '0')} · {prj.data.category}</span>
+              <span class="depth">−{212 + i * 7} m</span>
+            </div>
+            <h3>{prj.data.title}</h3>
+            <p class="desc">{prj.data.description}</p>
+            {prj.data.metric && <p class="metric">{prj.data.metric}</p>}
+            <div class="spec-foot">
+              <span class="tags">{(prj.data.tags ?? []).slice(0, 3).join(' · ')}</span>
+              <span class="go" aria-hidden="true">↗</span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+    {projects.length > 5 && (
+      <a class="all-link" data-reveal href={`/${lang}/projects/`}>
+        {id ? `Lihat semua ${projects.length} spesimen` : `View all ${projects.length} specimens`}
+        <span aria-hidden="true"> →</span>
+      </a>
+    )}
+  </div>
+</section>
+
+<!-- ══ 800m · TULISAN ══ -->
+<section class="dz dz-wide" data-zone="notes" id="notes">
+  <div class="scrim">
+    <header class="dz-head">
+      <div>
+        <p class="eyebrow">{id ? '−800 m · Zona midnight' : '−800 m · Midnight zone'}</p>
+        <h2 class="dz-title sm">{id ? 'Tulisan' : 'Writing'}</h2>
+      </div>
+      <p class="dz-count">{posts.length} {id ? 'catatan' : 'notes'}</p>
+    </header>
+    <ul class="rows">
+      {posts.slice(0, 4).map((post) => (
+        <li data-reveal>
+          <a href={`/${lang}/blog/${post.id}/`}>
+            <time datetime={String(post.data.date)}>{fmt(post.data.date)}</time>
+            <div class="row-main">
+              <h3>{post.data.title}</h3>
+              <p>{post.data.excerpt}</p>
+            </div>
+            <span class="read">{post.data.readingTime} {id ? 'mnt' : 'min'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    {posts.length > 4 && (
+      <a class="all-link" data-reveal href={`/${lang}/blog/`}>
+        {id ? `Semua ${posts.length} tulisan` : `All ${posts.length} posts`}
+        <span aria-hidden="true"> →</span>
+      </a>
+    )}
+  </div>
+</section>
+
+<!-- ══ 4000m · KONTAK ══ -->
+<section class="dz" data-zone="contact" id="contact">
+  <div class="abyss">
+    <p class="eyebrow">{id ? '−4000 m · Palung' : '−4000 m · The abyss'}</p>
+    <h2 class="dz-title">{id ? 'Sampai dasar.' : 'You reached the floor.'}<br /><span>{id ? 'Mau bangun sesuatu?' : 'Want to build something?'}</span></h2>
+    <ul class="contact-links">
+      {links.map(([label, href]) => (
+        <li><a href={href} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined} target={href.startsWith('http') ? '_blank' : undefined}>{label} <span aria-hidden="true">↗</span></a></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .dz { position: relative; min-height: 105svh; display: flex; align-items: center; padding: 6rem max(1.5rem, calc((100vw - 980px) / 2)); scroll-margin-top: 0; }
+  .dz-wide { padding-inline: max(1.5rem, calc((100vw - 1160px) / 2)); }
+
+  /* SCRIM: panel blur biar teks kebaca di atas air. Di zona gelap
+     (>1800m ≈ notes/contact) scrim dimatiin — airnya udah gelap sendiri. */
+  .dz[data-zone="about"] .scrim {
+    background: linear-gradient(160deg, rgba(9, 21, 38, .82), rgba(9, 21, 38, .6));
+  }
+  .scrim {
+    width: 100%;
+    padding: clamp(1.5rem, 3.5vw, 2.6rem);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    border-top-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    background: linear-gradient(160deg, rgba(5, 12, 20, .82), rgba(5, 12, 20, .6));
+    backdrop-filter: blur(14px) saturate(115%);
+    -webkit-backdrop-filter: blur(14px) saturate(115%);
+    box-shadow: 0 24px 70px rgba(2, 8, 16, .5);
+  }
+  /* zona midnight ke bawah: scrim menipis, air gelap jadi latarnya */
+  [data-zone='notes'] .scrim { background: linear-gradient(160deg, rgba(6, 12, 22, .55), rgba(4, 10, 18, .38)); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); box-shadow: none; }
+  .abyss { width: 100%; text-align: center; }
+
+  .eyebrow { font-family: var(--font-mono); font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.4rem; }
+  .dz-title { font-size: clamp(1.9rem, 4.6vw, 3.3rem); font-weight: 500; letter-spacing: -.055em; line-height: 1.08; margin: 0; }
+  .dz-title.sm { font-size: clamp(1.6rem, 3vw, 2.2rem); }
+  .dz-title span { color: var(--text-secondary); }
+  .dz-lede { max-width: 52ch; margin: 1.6rem 0 0; color: var(--text-secondary); font-size: 1.02rem; line-height: 1.85; }
+
+  .facts { display: grid; gap: 1px; margin: 2.2rem 0 0; padding: 0; }
+  .facts div { display: grid; grid-template-columns: 8.5rem 1fr; gap: 1rem; padding: .85rem 0; border-top: 1px solid var(--border); }
+  .facts dt { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); }
+  .facts dd { margin: 0; font-size: .9rem; color: var(--text-secondary); }
+
+  .dz-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .dz-count { margin: 0; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em; color: var(--text-muted); }
+
+  /* KARYA — specimen collection: kartu tersebar staggered, veil lokal (lampu penyelam),
+     bukan panel kaca. Rotasi/offset via properti `rotate`/`translate` biar nggak bentrok
+     sama reveal GSAP yang megang `transform`. */
+  .veil { position: relative; width: 100%; }
+  .veil::before { content: ''; position: absolute; inset: -2.5rem -3.5rem -4rem; z-index: -1;
+    background: radial-gradient(ellipse 88% 60% at 24% 30%, rgba(4, 10, 18, .82), rgba(4, 10, 18, .42) 55%, transparent 76%);
+    filter: blur(2px);
+  }
+
+  .spec { list-style: none; margin: 2.2rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.1rem; }
+  /* rotasi stagger & hover hidup di <a> — GSAP reveal megang <li> (transform),
+     jadi dua-duanya nggak saling injek. */
+  .spec-card { border: 1px solid var(--border); border-radius: 4px;
+    background: linear-gradient(165deg, rgba(5, 12, 23, .78), rgba(5, 12, 23, .55));
+    transition: border-color .35s, box-shadow .35s;
+  }
+  .spec-card a { display: flex; flex-direction: column; gap: .8rem; height: 100%; padding: 1.4rem 1.3rem 1.15rem; text-decoration: none;
+    transition: rotate .35s cubic-bezier(.22, 1, .36, 1), translate .35s cubic-bezier(.22, 1, .36, 1);
+  }
+  .spec-card:hover { border-color: color-mix(in srgb, var(--accent) 55%, transparent); box-shadow: 0 18px 50px rgba(2, 8, 16, .6); }
+  .spec-card:nth-child(6n+1) { grid-column: span 3; }
+  .spec-card:nth-child(6n+2) { grid-column: span 2; margin-top: 2.6rem; }
+  .spec-card:nth-child(6n+3) { grid-column: span 3; margin-top: -1.2rem; }
+  .spec-card:nth-child(6n+4) { grid-column: span 2; margin-top: 1.4rem; }
+  .spec-card:nth-child(6n+5) { grid-column: span 4; }
+  .spec-card:nth-child(6n)   { grid-column: span 2; margin-top: -0.8rem; }
+  .spec-card:nth-child(6n+1) a { min-height: 15rem; rotate: -.4deg; }
+  .spec-card:nth-child(6n+2) a { rotate: .6deg; }
+  .spec-card:nth-child(6n+3) a { rotate: .3deg; }
+  .spec-card:nth-child(6n+4) a { rotate: -.6deg; }
+  .spec-card:nth-child(6n+5) a { rotate: .2deg; }
+  .spec-card:nth-child(6n) a   { rotate: -.3deg; }
+  .spec-card:nth-child(6n+1) h3 { font-size: 1.55rem; }
+  .spec-card:nth-child(6n+1) .metric { font-size: 1.3rem; }
+  .spec-card a:hover { rotate: 0deg; translate: 0 -4px; }
+  .spec-tag { display: flex; justify-content: space-between; gap: .8rem; padding-bottom: .65rem;
+    border-bottom: 1px dashed color-mix(in srgb, var(--border-color, #8cb4d2) 22%, transparent);
+    font-family: var(--font-mono); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .spec-tag .depth { color: var(--text-muted); }
+  .spec-card h3 { margin: 0; font-size: 1.12rem; font-weight: 520; letter-spacing: -.025em; line-height: 1.35; color: var(--text-primary); }
+  .desc { margin: 0; font-size: .84rem; line-height: 1.7; color: var(--text-secondary); }
+  .metric { margin: 0; font-family: var(--font-mono); font-size: .68rem; color: var(--success); }
+  .spec-foot { margin-top: auto; padding-top: .6rem; display: flex; justify-content: space-between; align-items: center; gap: .8rem; border-top: 1px solid var(--border); }
+  .tags { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .06em; color: var(--text-muted); }
+  .go { color: var(--accent); font-size: .8rem; }
+  .all-link { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.8rem;
+    font-family: var(--font-mono); font-size: .78rem; letter-spacing: .04em; color: var(--text-secondary);
+    text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); padding-bottom: .25rem;
+    transition: color .25s, border-color .25s; }
+  .all-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .spec { grid-template-columns: repeat(2, 1fr); }
+    .spec-card:nth-child(n) { grid-column: auto; margin-top: 0; rotate: 0deg; }
+    .spec-card:nth-child(odd) { rotate: -.5deg; }
+    .spec-card:nth-child(even) { rotate: .5deg; translate: 0 1.4rem; }
+    .spec-card:nth-child(6n+1) a { min-height: 0; }
+    .spec-card:nth-child(6n+1) h3 { font-size: 1.12rem; }
+    .spec-card:nth-child(6n+1) .metric { font-size: .68rem; }
+  }
+  @media (max-width: 560px) {
+    .spec { grid-template-columns: 1fr; gap: 1rem; }
+    .spec-card:nth-child(n) { rotate: 0deg; translate: none; }
+  }
+
+  /* baris tulisan */
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .rows li { border-top: 1px solid var(--border); }
+  .rows li:last-child { border-bottom: 1px solid var(--border); }
+  .rows a { display: grid; grid-template-columns: 7.5rem 1fr auto; gap: 1.4rem; align-items: baseline; padding: 1.3rem .4rem; text-decoration: none; transition: background .3s ease, padding-inline .3s ease; }
+  .rows a:hover { background: rgba(20, 38, 62, .4); padding-inline: .9rem .4rem; }
+  .rows time, .read { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .08em; color: var(--text-muted); white-space: nowrap; }
+  .row-main h3 { margin: 0 0 .45rem; font-size: 1.02rem; font-weight: 500; letter-spacing: -.02em; color: var(--text-primary); }
+  .row-main p { margin: 0; font-size: .85rem; line-height: 1.7; color: var(--text-secondary); max-width: 62ch; }
+  .rows a:hover h3 { color: var(--accent); }
+
+  .contact-links { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: 2.4rem 0 0; padding: 0; }
+  .contact-links a { display: inline-block; padding: .8rem 1.4rem; border: 1px solid var(--border); border-radius: 999px; font-size: .85rem; color: var(--text-secondary); text-decoration: none; backdrop-filter: blur(6px); transition: color .3s, border-color .3s, transform .3s; }
+  .contact-links a:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+
+  [data-reveal] { opacity: 0; transform: translateY(26px); }
+
+  @media (max-width: 700px) {
+    .dz { min-height: auto; padding-block: 4.5rem; }
+    .facts div { grid-template-columns: 1fr; gap: .3rem; }
+    .rows a { grid-template-columns: 1fr; gap: .5rem; }
+    .read { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1; transform: none; }
+  }
+</style>

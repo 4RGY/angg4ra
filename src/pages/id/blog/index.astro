@@ -1,306 +1,47 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../components/layout/BaseLayout.astro';
-import BentoCard from '../../../components/ui/BentoCard.astro';
 
-const allPosts = await getCollection('blog');
-const posts = allPosts
-  .filter(post => post.data.language === 'id')
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
-
-const featured = posts[0];
-const rest = posts.slice(1);
-
-// Semua tag unik untuk filter
-const allTags = [...new Set(posts.flatMap(p => p.data.tags))];
+const all = await getCollection('blog');
+const posts = all
+  .filter(p => !p.id.endsWith('-en'))
+  .sort((a, b) => String(b.data.date ?? '').localeCompare(String(a.data.date ?? '')));
+const fmt = d => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 ---
-
-<BaseLayout title="Blog" lang="id">
+<BaseLayout title="Tulisan · Anggara" lang="id">
   <div class="page-container">
-    <h1 class="page-title">Blog</h1>
-    <p class="page-desc">Catatan jujur soal ngoding, data, ngajar, dan proses belajar yang ga selalu rapi.</p>
-
-    <!-- Tag filter -->
-    {allTags.length > 0 && (
-      <div class="tag-filter" id="tag-filter">
-        <button class="filter-btn active font-mono" data-tag="all">Semua</button>
-        {allTags.map(tag => (
-          <button class="filter-btn font-mono" data-tag={tag}>{tag}</button>
-        ))}
-      </div>
-    )}
-
-    <div class="bento-grid" id="post-grid">
-
-      <!-- Featured post -->
-      {featured && (
-        <div class="card-xl" data-tags={featured.data.tags.join(',')}>
-          <BentoCard size="xl">
-            <a href={`/id/blog/${featured.id}`} class="featured-link">
-              <div class="featured-inner">
-                <div class="featured-left">
-                  <div class="post-meta">
-                    <span class="post-date font-mono">{featured.data.date}</span>
-                    <span class="meta-sep">·</span>
-                    <span class="post-reading font-mono">{featured.data.readingTime} menit baca</span>
-                    <span class="featured-badge font-mono">Terbaru</span>
-                  </div>
-                  <h2 class="featured-title">{featured.data.title}</h2>
-                  <p class="featured-excerpt">{featured.data.excerpt}</p>
-                  <div class="post-tags">
-                    {featured.data.tags.map(tag => (
-                      <span class="post-tag font-mono">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-                <div class="featured-cta font-mono">Baca →</div>
-              </div>
-            </a>
-          </BentoCard>
-        </div>
-      )}
-
-      <!-- Rest of posts -->
-      {rest.map(post => (
-        <div class="card-md" data-tags={post.data.tags.join(',')}>
-          <BentoCard size="md">
-            <a href={`/id/blog/${post.id}`} class="post-link">
-              <div class="post-meta">
-                <span class="post-date font-mono">{post.data.date}</span>
-                <span class="meta-sep">·</span>
-                <span class="post-reading font-mono">{post.data.readingTime} menit baca</span>
-              </div>
-              <h3 class="post-title">{post.data.title}</h3>
-              <p class="post-excerpt">{post.data.excerpt}</p>
-              <div class="post-tags">
-                {post.data.tags.map(tag => (
-                  <span class="post-tag font-mono">{tag}</span>
-                ))}
-              </div>
-              <span class="post-read-more font-mono">Baca →</span>
-            </a>
-          </BentoCard>
-        </div>
+    <header class="page-head">
+      <p class="eyebrow">Catatan log · {posts.length} tulisan</p>
+      <h1>Tulisan</h1>
+      <p class="lede">Catatan tentang data, kode, dan mengajar. Ditulis saat ada hal yang layak diingat.</p>
+    </header>
+    <ul class="index-list">
+      {posts.map(p => (
+        <li>
+          <a href={`/id/blog/${p.id}/`}>
+            <time datetime={String(p.data.date)}>{fmt(p.data.date)}</time>
+            <span class="title">{p.data.title}</span>
+            <span class="desc">{p.data.excerpt}</span>
+            <span class="read">{p.data.readingTime} mnt</span>
+          </a>
+        </li>
       ))}
-
-      <!-- Empty state kalau belum ada post -->
-      {posts.length === 0 && (
-        <div class="card-xl">
-          <BentoCard size="xl">
-            <div class="empty-state">
-              <p class="font-mono empty-label">/ belum ada tulisan</p>
-              <p class="empty-body">Tulisan pertama sedang dalam proses. Nantikan.</p>
-            </div>
-          </BentoCard>
-        </div>
-      )}
-
-    </div>
+    </ul>
   </div>
 </BaseLayout>
 
-<script>
-  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-  const cards = document.querySelectorAll<HTMLElement>('#post-grid > [data-tags]');
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tag = btn.dataset.tag ?? 'all';
-
-      // Update active button
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      // Show/hide cards
-      cards.forEach(card => {
-        const tags = card.dataset.tags?.split(',') ?? [];
-        const show = tag === 'all' || tags.includes(tag);
-        card.style.display = show ? '' : 'none';
-      });
-    });
-  });
-</script>
-
 <style>
-  .page-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-  }
-  .page-title {
-    font-family: var(--font-heading);
-    margin-bottom: 0.75rem;
-  }
-  .page-desc {
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    max-width: 520px;
-    font-size: 1rem;
-  }
-
-  /* Tag filter */
-  .tag-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2.5rem;
-  }
-  .filter-btn {
-    font-size: 0.72rem;
-    padding: 0.3rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-secondary);
-    background: transparent;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: all 200ms ease;
-  }
-  .filter-btn:hover {
-    border-color: var(--accent-data);
-    color: var(--accent-data);
-  }
-  .filter-btn.active {
-    border-color: var(--accent-data);
-    color: var(--accent-data);
-    background: rgba(107, 143, 212, 0.08);
-  }
-
-  /* Grid */
-  .bento-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1.5rem;
-  }
-  .card-xl { grid-column: span 12; }
-  .card-md  { grid-column: span 6; }
-
-  /* Featured post */
-  .featured-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-  .featured-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 2rem;
-  }
-  .featured-left { flex: 1; }
-  .post-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap;
-  }
-  .post-date, .post-reading {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-  }
-  .meta-sep { color: var(--border); font-size: 0.72rem; }
-  .featured-badge {
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent-data);
-    border: 1px solid var(--accent-data);
-    padding: 0.1rem 0.5rem;
-    border-radius: 999px;
-  }
-  .featured-title {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-    transition: color 200ms ease;
-  }
-  .featured-link:hover .featured-title { color: var(--accent-data); }
-  .featured-excerpt {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-  .featured-cta {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    flex-shrink: 0;
-    transition: color 200ms ease, transform 200ms ease;
-  }
-  .featured-link:hover .featured-cta {
-    color: var(--accent-data);
-    transform: translateX(4px);
-  }
-
-  /* Post tags */
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.75rem;
-  }
-  .post-tag {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-secondary);
-  }
-
-  /* Regular post card */
-  .post-link {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    text-decoration: none;
-    color: inherit;
-  }
-  .post-title {
-    font-size: 1.05rem;
-    margin: 0.5rem 0 0.5rem;
-    line-height: 1.4;
-    transition: color 200ms ease;
-  }
-  .post-link:hover .post-title { color: var(--accent-data); }
-  .post-excerpt {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    flex: 1;
-  }
-  .post-read-more {
-    display: inline-block;
-    margin-top: 1rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    transition: color 200ms ease, transform 200ms ease;
-  }
-  .post-link:hover .post-read-more {
-    color: var(--accent-data);
-    transform: translateX(4px);
-  }
-
-  /* Empty state */
-  .empty-state {
-    padding: 3rem 0;
-    text-align: center;
-  }
-  .empty-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-  }
-  .empty-body {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    font-style: italic;
-  }
-
-  @media (max-width: 768px) {
-    .card-xl, .card-md { grid-column: span 12; }
-    .featured-inner { flex-direction: column; align-items: flex-start; }
-  }
+  .page-container { position: relative; z-index: 1; max-width: 62rem; margin: 0 auto; padding: 8rem 1.5rem 6rem; }
+  .eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 .8rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 .6rem; }
+  .lede { color: var(--text-secondary); max-width: 40rem; margin: 0 0 2.5rem; }
+  .index-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+  .index-list li { border-bottom: 1px solid var(--border); }
+  .index-list a { display: grid; grid-template-columns: 6.5rem 1fr 3.5rem; grid-template-areas: 'date title read' 'date desc read'; gap: .15rem 1rem; padding: 1.1rem .25rem; text-decoration: none; color: inherit; transition: background .2s; }
+  .index-list a:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  time { grid-area: date; font-family: var(--font-mono); font-size: .74rem; color: var(--text-secondary); padding-top: .3rem; }
+  .title { grid-area: title; font-weight: 650; }
+  .desc { grid-area: desc; color: var(--text-secondary); font-size: .88rem; }
+  .read { grid-area: read; font-family: var(--font-mono); font-size: .74rem; color: var(--text-secondary); text-align: right; padding-top: .3rem; }
+  @media (max-width: 640px) { .index-list a { grid-template-columns: 1fr 3.5rem; grid-template-areas: 'date read' 'title title' 'desc desc'; } }
 </style>

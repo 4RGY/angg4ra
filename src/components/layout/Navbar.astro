@@ -1,375 +1,155 @@
 ---
 import LanguageToggle from '../ui/LanguageToggle.astro';
+import id from '../../i18n/id/ui.json';
+import en from '../../i18n/en/ui.json';
 
 const { lang = 'id', currentPath = '' } = Astro.props;
-
-const navLinks = lang === 'id'
-  ? [
-      { href: `/${lang}/`,         label: 'Home' },
-      { href: `/${lang}/projects`, label: 'Proyek' },
-      { href: `/${lang}/blog`,     label: 'Blog' },
-      { href: `/${lang}/misc`,     label: 'Misc' },
-      { href: `/${lang}/contact`,  label: 'Kontak' },
-    ]
-  : [
-      { href: `/${lang}/`,         label: 'Home' },
-      { href: `/${lang}/projects`, label: 'Projects' },
-      { href: `/${lang}/blog`,     label: 'Blog' },
-      { href: `/${lang}/misc`,     label: 'Misc' },
-      { href: `/${lang}/contact`,  label: 'Contact' },
-    ];
+const t = lang === 'id' ? id : en;
+const path = currentPath.replace(/\/+$/, '') || '/';
+const navLinks = ['projects', 'blog', 'misc', 'contact'].map(section => ({
+  href: `/${lang}/${section}/`,
+  label: t.nav[section as keyof typeof t.nav],
+  active: path === `/${lang}/${section}` || path.startsWith(`/${lang}/${section}/`),
+}));
 ---
 
-<nav class="navbar">
-  <div class="scroll-progress" id="scroll-progress"></div>
-
+<nav class="navbar" aria-label={lang === 'id' ? 'Navigasi utama' : 'Primary navigation'}>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <div class="nav-inner">
-    <a href={`/${lang}/`} class="nav-logo">
-      <span class="font-mono text-data">anggara</span><span class="font-mono text-secondary">.dev</span>
+    <a href={`/${lang}/`} class="nav-logo" aria-label="Argy Anggara" aria-current={path === `/${lang}` ? 'page' : undefined}>
+      <span class="nav-wordmark">anggara<span class="nav-wordmark-dot">.</span></span>
+      <span class="nav-signature font-mono" aria-hidden="true">MIDNIGHT ARCTIC</span>
     </a>
 
     <ul class="nav-links">
-      {navLinks.map(link => {
-        // Normalisasi URL untuk menghilangkan trailing slash '/' di bagian akhir agar perbandingan akurat
-        const cleanCurrentPath = currentPath.replace(/\/$/, '');
-        const cleanLinkHref = link.href.replace(/\/$/, '');
-        const isActive = cleanCurrentPath === cleanLinkHref;
-
-        return (
-          <li class="nav-item">
-            <a
-              href={link.href}
-              class={`nav-link font-mono ${isActive ? 'active' : ''}`}
-            >
-              {link.label}
-            </a>
-          </li>
-        );
-      })}
+      {navLinks.map(link => (
+        <li><a href={link.href} class:list={['nav-link', { active: link.active }]} aria-current={link.active ? (path === link.href.slice(0, -1) ? 'page' : 'true') : undefined}>{link.label}</a></li>
+      ))}
     </ul>
 
     <div class="nav-right">
-      <button
-        class="theme-toggle"
-        id="theme-toggle"
-        aria-label="Ganti tema terang/gelap"
-        title="Ganti tema"
-      >
-        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.2"></circle>
-          <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"></path>
-        </svg>
-        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"></path>
-        </svg>
-      </button>
       <LanguageToggle currentLang={lang} currentPath={currentPath} />
-      <button class="hamburger font-mono" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
-        <span class="ham-line"></span>
-        <span class="ham-line"></span>
-        <span class="ham-line"></span>
-      </button>
+      <details class="mobile-nav" id="mobile-nav">
+        <summary class="hamburger" id="hamburger" aria-controls="mobile-menu" aria-label={lang === 'id' ? 'Menu navigasi' : 'Navigation menu'}>
+          <span class="ham-line" aria-hidden="true"></span>
+          <span class="ham-line" aria-hidden="true"></span>
+        </summary>
+        <div class="mobile-menu" id="mobile-menu">
+          <ul class="mobile-links">
+            {navLinks.map((link, index) => (
+              <li><a href={link.href} class:list={['mobile-link', { active: link.active }]} aria-current={link.active ? (path === link.href.slice(0, -1) ? 'page' : 'true') : undefined}>
+                <span class="mobile-index font-mono" aria-hidden="true">0{index + 1}</span>
+                <span>{link.label}</span><span class="mobile-arrow" aria-hidden="true">↗</span>
+              </a></li>
+            ))}
+          </ul>
+        </div>
+      </details>
     </div>
-  </div>
-
-  <div class="mobile-menu" id="mobile-menu">
-    <ul class="mobile-links">
-      {navLinks.map(link => {
-        const cleanCurrentPath = currentPath.replace(/\/$/, '');
-        const cleanLinkHref = link.href.replace(/\/$/, '');
-        const isActive = cleanCurrentPath === cleanLinkHref;
-
-        return (
-          <li>
-            <a
-              href={link.href}
-              class={`mobile-link font-mono ${isActive ? 'active' : ''}`}
-            >
-              {link.label}
-            </a>
-          </li>
-        );
-      })}
-    </ul>
   </div>
 </nav>
 
 <script>
-  // Theme toggle — dark/light "siang & malam di laut"
-  const themeToggle = document.getElementById('theme-toggle');
-  const rootEl = document.documentElement;
-
-  function syncIcon(theme) {
-    if (!themeToggle) return;
-    const sun = themeToggle.querySelector('.icon-sun');
-    const moon = themeToggle.querySelector('.icon-moon');
-    if (!sun || !moon) return;
-    // Di dark: tampilkan ikon matahari (untuk switch ke light). Di light: sebaliknya.
-    sun.style.display = theme === 'dark' ? 'block' : 'none';
-    moon.style.display = theme === 'dark' ? 'none' : 'block';
-  }
-
-  syncIcon(rootEl.getAttribute('data-theme') || 'dark');
-
-  themeToggle?.addEventListener('click', () => {
-    const current = rootEl.getAttribute('data-theme') || 'dark';
-    const next = current === 'dark' ? 'light' : 'dark';
-    rootEl.setAttribute('data-theme', next);
-    try { localStorage.setItem('arctic-theme', next); } catch (e) {}
-    syncIcon(next);
-  });
-
-  // Scroll progress
   const progressBar = document.getElementById('scroll-progress');
   function updateProgress() {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    if (progressBar) progressBar.style.width = `${pct}%`;
+    const distance = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = distance > 0 ? Math.min(1, Math.max(0, window.scrollY / distance)) : 0;
+    if (progressBar) progressBar.style.transform = `scaleX(${progress})`;
   }
   window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  window.addEventListener('load', updateProgress);
+  updateProgress();
 
-  // Hamburger toggle
-  const hamburger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobile-menu');
-
-  hamburger?.addEventListener('click', () => {
-    const isOpen = mobileMenu?.classList.toggle('open');
-    hamburger.classList.toggle('open');
-    hamburger.setAttribute('aria-expanded', String(isOpen));
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+  // Native disclosure remains usable without JavaScript. No body scroll lock:
+  // closing or crossing a breakpoint must never strand the dive/page scroll.
+  const menu = document.querySelector<HTMLDetailsElement>('#mobile-nav');
+  const trigger = document.getElementById('hamburger');
+  menu?.addEventListener('toggle', () => {
+    trigger?.setAttribute('aria-expanded', String(menu.open));
   });
-
-  // Tutup menu kalau klik link
-  document.querySelectorAll('.mobile-link').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenu?.classList.remove('open');
-      hamburger?.classList.remove('open');
-      hamburger?.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    });
+  trigger?.setAttribute('aria-expanded', String(menu?.open ?? false));
+  menu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => { menu.open = false; });
   });
-
-  // Tutup menu kalau klik di luar
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    if (mobileMenu?.classList.contains('open') &&
-        !mobileMenu.contains(target) &&
-        !hamburger?.contains(target)) {
-      mobileMenu.classList.remove('open');
-      hamburger?.classList.remove('open');
-      hamburger?.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu?.open) {
+      menu.open = false;
+      trigger?.focus();
     }
+  });
+  document.addEventListener('click', event => {
+    if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+  });
+  document.addEventListener('focusin', event => {
+    if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+  });
+  window.matchMedia('(min-width: 801px)').addEventListener('change', event => {
+    if (event.matches && menu) menu.open = false;
   });
 </script>
 
-<style is:global>
+<style>
   .navbar {
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: var(--bg-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--bg-glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-bottom: 1px solid var(--border);
   }
-
-  /* Theme toggle */
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
-  }
-  .theme-toggle:hover {
-    color: var(--text-primary);
-    border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-  }
-  .theme-toggle svg { display: block; }
-
-  /* Scroll progress bar */
   .scroll-progress {
     position: absolute;
-    top: 0;
-    left: 0;
-    height: 2px;
-    width: 0%;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-data) 100%);
-    transition: width 80ms linear;
-    z-index: 101;
-  }
-
-  .nav-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .nav-logo {
-    font-size: 1rem;
-    text-decoration: none;
-    flex-shrink: 0;
-    transition: opacity 200ms ease;
-  }
-  .nav-logo:hover { opacity: 0.75; }
-
-  /* Desktop links */
-  .nav-links {
-    display: flex;
-    list-style: none;
-    gap: 1.75rem;
-    margin-left: auto;
-    padding: 0;
-  }
-
-  .nav-item { position: relative; }
-
-  .nav-link {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    letter-spacing: 0.03em;
-    padding-bottom: 6px; /* Ditambah sedikit untuk jarak ke underline */
-    position: relative;
-    transition: color 200ms ease;
-    display: inline-block;
-  }
-
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0%;
-    height: 2px; /* Diubah menjadi 2px agar lebih solid */
-    background-color: var(--accent-data);
-    border-radius: 999px;
-    transition: width 250ms ease;
-  }
-
-  .nav-link:hover { color: var(--text-primary); }
-  .nav-link:hover::after { width: 100%; }
-
-  .nav-link.active { color: var(--text-primary); }
-  .nav-link.active::after {
-    width: 100%;
-    background-color: var(--accent);
-  }
-
-  /* Nav right: language toggle + hamburger */
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: auto;
-  }
-
-  /* Desktop: nav-right margin auto dihapus, nav-links yang push */
-  @media (min-width: 641px) {
-    .nav-links { margin-left: auto; }
-    .nav-right { margin-left: 1.5rem; }
-  }
-
-  /* Hamburger button */
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 32px;
-    height: 32px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background 200ms ease;
-  }
-  .hamburger:hover { background: rgba(255,255,255,0.05); }
-
-  .ham-line {
-    display: block;
+    inset: 0 0 auto;
     height: 1px;
-    background-color: var(--text-secondary);
-    border-radius: 999px;
-    transition: transform 250ms ease, opacity 250ms ease, width 250ms ease;
-    transform-origin: center;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
   }
-  .ham-line:nth-child(1) { width: 20px; }
-  .ham-line:nth-child(2) { width: 14px; }
-  .ham-line:nth-child(3) { width: 20px; }
-
-  /* Hamburger open state → X */
-  .hamburger.open .ham-line:nth-child(1) {
-    width: 18px;
-    transform: translateY(6px) rotate(45deg);
-  }
-  .hamburger.open .ham-line:nth-child(2) {
-    opacity: 0;
-    width: 0;
-  }
-  .hamburger.open .ham-line:nth-child(3) {
-    width: 18px;
-    transform: translateY(-6px) rotate(-45deg);
-  }
-
-  /* Mobile menu */
-  .mobile-menu {
-    display: none;
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 300ms ease;
-    border-top: 1px solid transparent;
-  }
-  .mobile-menu.open {
-    max-height: 400px;
-    border-top-color: var(--border);
-  }
-
-  .mobile-links {
-    list-style: none;
-    padding: 1rem 2rem 1.5rem;
+  .nav-inner {
+    max-width: var(--shell-width);
+    min-height: 76px;
+    margin: 0 auto;
+    padding: 0 var(--shell-gutter);
     display: flex;
-    flex-direction: column;
-    gap: 0;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
   }
-
-  .mobile-link {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border);
-    letter-spacing: 0.04em;
-    transition: color 200ms ease, padding-left 200ms ease;
-  }
-  .mobile-link:last-child { border-bottom: none; }
-  .mobile-link:hover {
-    color: var(--text-primary);
-    padding-left: 0.5rem;
-  }
-  .mobile-link.active {
-    color: var(--accent-data);
-  }
-
-  /* Mobile breakpoint */
-  @media (max-width: 640px) {
+  .nav-logo { display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; min-height: 48px; color: var(--text-primary); }
+  .nav-wordmark { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.065em; line-height: 1.15; }
+  .nav-wordmark-dot { color: var(--accent); }
+  .nav-signature { margin-top: 0.25rem; font-size: 0.5rem; letter-spacing: 0.16em; color: var(--text-secondary); }
+  .nav-logo:hover .nav-wordmark { color: var(--hover); }
+  .nav-links { display: flex; align-items: center; gap: clamp(1rem, 2.5vw, 2rem); list-style: none; margin-left: auto; }
+  .nav-link { position: relative; display: flex; align-items: center; min-height: 48px; font-size: 0.84rem; color: var(--text-secondary); }
+  .nav-link::after { content: ''; position: absolute; inset: auto 0 4px; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 200ms ease; }
+  .nav-link:hover, .nav-link.active { color: var(--text-primary); }
+  .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+  .nav-right :global(.lang-toggle) { gap: 0.35rem; font-size: 0.68rem; }
+  .nav-right :global(.lang-toggle a) { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 44px; }
+  .mobile-nav { display: none; }
+  .hamburger { width: 44px; height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; list-style: none; border: 1px solid var(--border); border-radius: 50%; }
+  .hamburger::-webkit-details-marker { display: none; }
+  .hamburger::marker { content: ''; }
+  .hamburger:hover { background: var(--bg-elevated); }
+  .hamburger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .ham-line { width: 17px; height: 1px; background: var(--text-primary); transition: transform 200ms ease; }
+  .mobile-nav[open] .ham-line:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .mobile-nav[open] .ham-line:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .mobile-menu { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-main); border-bottom: 1px solid var(--border); max-height: calc(100dvh - 68px); overflow-y: auto; overscroll-behavior: contain; box-shadow: 0 20px 32px color-mix(in srgb, var(--bg-main) 65%, transparent); }
+  .mobile-links { list-style: none; padding: 0.5rem var(--shell-gutter) 1.25rem; }
+  .mobile-links li + li { border-top: 1px solid var(--border); }
+  .mobile-link { display: flex; align-items: center; gap: 1rem; min-height: 64px; color: var(--text-secondary); font-size: 1.15rem; }
+  .mobile-index { color: var(--text-secondary); font-size: 0.6rem; }
+  .mobile-arrow { margin-left: auto; font-size: 1rem; }
+  .mobile-link:hover, .mobile-link.active { color: var(--accent); }
+  @media (max-width: 800px) {
+    .nav-inner { min-height: 68px; gap: 0.75rem; }
     .nav-links { display: none; }
-    .hamburger { display: flex; }
-    .mobile-menu { display: block; }
-    .nav-right { margin-left: auto; }
+    .nav-right { margin-left: auto; gap: 0.65rem; }
+    .mobile-nav { display: block; }
   }
 </style>

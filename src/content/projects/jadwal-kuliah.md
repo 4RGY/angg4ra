@@ -1,6 +1,6 @@
 ---
 title: "Jadwal Kuliah"
-description: "Aplikasi web ringan untuk memantau jadwal kuliah, dibuat khusus untuk Piti — dibangun dengan React dan Vite."
+description: "Aplikasi web ringan untuk memantau jadwal kuliah, dibuat khusus untuk Piti, dibangun dengan React dan Vite."
 status: "Selesai"
 tags: ["React", "Vite", "JavaScript", "Web App"]
 category: "Web"
@@ -13,13 +13,13 @@ github: "https://github.com/4RGY/jadwal_kuliah"
 
 ## Konsep
 
-Jadwal kuliah yang berantakan dan sulit diakses adalah masalah kecil yang sering terjadi. Proyek ini adalah aplikasi web ringan untuk menampilkan jadwal kuliah dengan cepat dan jelas — dibuat khusus untuk orang terdekat, bukan sekadar latihan.
+Jadwal kuliah yang berantakan dan sulit diakses adalah masalah kecil yang sering terjadi. Proyek ini adalah aplikasi web ringan untuk menampilkan jadwal kuliah dengan cepat dan jelas, dibuat untuk orang terdekat, bukan sekadar latihan.
 
 ## Pendekatan
 
-- **React + Vite** — komponen yang cepat dimuat dan mudah dikembangkan.
-- **Antarmuka bersih** — fokus pada keterbacaan jadwal, bukan dekorasi berlebihan.
-- **Personal & praktis** — dibangun untuk dipakai sehari-hari, bukan untuk dipamerkan.
+- **React + Vite**: komponen yang cepat dimuat dan mudah dikembangkan.
+- **Antarmuka bersih**: fokus pada keterbacaan jadwal, bukan dekorasi berlebihan.
+- **Personal & praktis**: dibangun untuk dipakai sehari-hari, bukan untuk dipamerkan.
 
 ## Refleksi
 

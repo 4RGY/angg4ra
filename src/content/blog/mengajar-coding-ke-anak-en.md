@@ -25,7 +25,7 @@ I've been teaching coding at DigiKidz long enough to draw a fairly confident con
 
 Coding curricula for kids tend to spend too much time explaining *what* something is, when kids respond far more to *what it's for*. They don't need a definition of a variable. They need a reason to care about it.
 
-Once that reason exists — usually a game, an animation, something they can show a friend — the rest tends to follow on its own.
+Once that reason exists, usually a game, an animation, something they can show a friend, the rest tends to follow on its own.
 
 ## Three Things I Changed
 

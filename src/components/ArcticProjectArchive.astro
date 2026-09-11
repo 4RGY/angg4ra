@@ -1,0 +1,99 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { copy, formatDate } from './ArcticProjectCopy';
+interface Props { projects: CollectionEntry<'projects'>[]; lang: 'id' | 'en' }
+const { projects, lang } = Astro.props;
+const t = copy[lang];
+const featured = projects.find(p => p.data.featured);
+const ordered = [...(featured ? [featured] : []), ...projects.filter(p => p !== featured).sort((a,b) => b.data.date.localeCompare(a.data.date))];
+const categories = [...new Set(projects.map(p => p.data.category))];
+---
+<section class="arctic-projects" data-arctic-projects>
+  <header class="archive-header">
+    <div><p class="eyebrow">{t.archive}</p><h1>{t.projects}<span aria-hidden="true">.</span></h1></div>
+    <div class="intro"><h2>{t.projectIntro}</h2><p>{t.projectDesc}</p></div>
+  </header>
+  <div class="archive-toolbar">
+    <div class="filters" role="group" aria-label={`${t.filter} ${t.category.toLowerCase()}`}>
+      <button type="button" data-filter="all" aria-pressed="true">{t.all} <span>{projects.length}</span></button>
+      {categories.map(category => <button type="button" data-filter={category} aria-pressed="false">{t.categories[category]}</button>)}
+    </div>
+    <span class="archive-count" aria-live="polite"><span data-count>{projects.length}</span> / {projects.length}</span>
+  </div>
+  <div class="project-list">
+    {ordered.map((project, index) => (
+      <article class:list={['project-entry', { 'is-featured': project === featured }]} data-category={project.data.category}>
+        <a href={`/${lang}/projects/${project.id}`}>
+          <div class="entry-index"><span>{String(index + 1).padStart(2, '0')}</span><span class="index-line" aria-hidden="true"></span></div>
+          <div class="entry-main">
+            <div class="entry-meta"><span>{project === featured ? t.selected : t.categories[project.data.category]}</span><span class="status">{project.data.status}</span></div>
+            <h2>{project.data.title}</h2>
+            <p class="description">{project.data.description}</p>
+            <ul class="tags" aria-label={t.tools}>{project.data.tags.map(tag => <li>{tag}</li>)}</ul>
+          </div>
+          <div class="entry-aside">
+            {project.data.metric && <div class="outcome"><span>{t.result}</span><p>{project.data.metric}</p></div>}
+            <div class="entry-bottom"><time datetime={project.data.date}>{formatDate(project.data.date, lang)}</time><span class="arrow" aria-label={t.open}>↗</span></div>
+          </div>
+        </a>
+      </article>
+    ))}
+  </div>
+  {projects.length === 0 && <p class="empty">{t.projectEmpty}</p>}
+</section>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-arctic-projects]').forEach(root => {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const entries = root.querySelectorAll<HTMLElement>('[data-category]');
+    buttons.forEach(button => button.addEventListener('click', () => {
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      let visible = 0;
+      entries.forEach(entry => { entry.hidden = button.dataset.filter !== 'all' && entry.dataset.category !== button.dataset.filter; if (!entry.hidden) visible++; });
+      const count = root.querySelector('[data-count]');
+      if (count) count.textContent = String(visible);
+    }));
+  });
+</script>
+<style>
+  .arctic-projects { max-width: 1240px; margin: auto; padding: 6rem 2.5rem 8rem; }
+  .archive-header { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 4rem; margin-bottom: 4rem; }
+  .eyebrow { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.4rem; }
+  h1 { font-size: clamp(3.8rem, 8vw, 7rem); letter-spacing: -.065em; line-height: .98; font-weight: 500; }
+  h1 span { color: var(--accent); }
+  .intro h2 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); font-weight: 450; margin-bottom: 1rem; }
+  .intro p { max-width: 440px; font-size: .97rem; }
+  .archive-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; }
+  .filters { display: flex; gap: .3rem; flex-wrap: wrap; }
+  button { min-height: 44px; padding: .55rem .9rem; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--text-secondary); font: inherit; font-size: .82rem; cursor: pointer; transition: color .2s, background .2s; }
+  button:hover { color: var(--text-primary); }
+  button[aria-pressed='true'] { color: var(--text-primary); background: var(--bg-elevated); border-color: var(--border); }
+  button span { margin-left: .5rem; color: var(--accent); font-family: var(--font-mono); font-size: .7rem; }
+  .archive-count { font-family: var(--font-mono); color: var(--text-secondary); font-size: .7rem; white-space: nowrap; }
+  .project-entry { border-top: 1px solid var(--border); }
+  .project-entry[hidden] { display: none; }
+  .project-entry:last-child { border-bottom: 1px solid var(--border); }
+  .project-entry a { display: grid; grid-template-columns: 54px minmax(0,1.65fr) minmax(0,1fr); gap: 2rem; padding: 2.5rem 1.25rem 2.5rem 0; color: inherit; transition: background .25s; }
+  .project-entry a:hover { background: color-mix(in srgb, var(--bg-card) 70%, transparent); }
+  .entry-index { font: .75rem var(--font-mono); color: var(--text-secondary); padding-top: .35rem; display: flex; flex-direction: column; gap: 1.4rem; }
+  .index-line { width: 22px; height: 1px; background: var(--accent); }
+  .entry-meta { display: flex; flex-wrap: wrap; gap: .7rem 1.2rem; align-items: center; color: var(--accent); font-size: .73rem; margin-bottom: .9rem; }
+  .status { color: var(--text-secondary); display: inline-flex; align-items: center; gap: .45rem; }
+  .status::before { content: ''; height: 4px; width: 4px; border-radius: 50%; background: var(--accent); }
+  .entry-main h2 { font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.22; font-weight: 500; transition: color .2s; }
+  a:hover h2 { color: var(--hover); }
+  .description { margin-top: 1rem; font-size: .93rem; line-height: 1.75; max-width: 560px; }
+  .tags { list-style: none; display: flex; flex-wrap: wrap; gap: .25rem .85rem; margin-top: 1.4rem; color: var(--text-secondary); font-size: .73rem; }
+  .entry-aside { padding-left: 2rem; border-left: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; }
+  .outcome > span { display: block; color: var(--text-secondary); font-size: .7rem; margin-bottom: .6rem; }
+  .outcome p { color: var(--text-primary); font-size: .92rem; line-height: 1.6; }
+  .entry-bottom { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: auto; }
+  time { color: var(--text-secondary); font-size: .72rem; }
+  .arrow { display: grid; place-items: center; height: 40px; width: 40px; border: 1px solid var(--border); border-radius: 50%; font-size: 1.2rem; color: var(--accent); transition: background .2s, color .2s; flex-shrink: 0; }
+  a:hover .arrow { background: var(--accent); color: var(--bg-main); }
+  .is-featured { background: linear-gradient(115deg, var(--bg-elevated), var(--bg-card) 55%, var(--bg-main)); border-top-color: var(--depth-waterline); }
+  .is-featured a { padding: 3rem 1.5rem; }
+  .is-featured h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: -.045em; }
+  .empty { padding: 4rem 0; }
+  @media(max-width: 800px) { .arctic-projects { padding: 4rem 1.5rem 5rem; } .archive-header { grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; } .intro p { max-width: 560px; } .project-entry a { grid-template-columns: 32px minmax(0,1fr); gap: 1rem; } .entry-aside { grid-column: 2; padding: 0; border: 0; gap: 1.5rem; } .is-featured a { padding: 2rem 1.25rem; } }
+  @media(max-width: 480px) { .arctic-projects { padding-inline: 1.2rem; } .archive-count { display: none; } .filters { gap: 0; } button { padding-inline: .65rem; } .project-entry a { padding-right: 0; } .is-featured a { padding-right: 1rem; } }
+</style>

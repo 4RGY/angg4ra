@@ -1,6 +1,6 @@
 ---
 title: "Transjakarta BRT Analysis"
-description: "Analisis data eksploratif transaksi Transjakarta (BRT Jakarta) April 2023 — pola rute, jam sibuk, dan demografi penumpang."
+description: "Analisis data eksploratif transaksi Transjakarta (BRT Jakarta) April 2023: pola rute, jam sibuk, dan demografi penumpang."
 status: "Selesai"
 tags: ["Python", "Pandas", "Jupyter", "EDA", "Matplotlib", "Seaborn"]
 category: "Analisis Data"
@@ -17,10 +17,10 @@ Transjakarta adalah tulang punggung transportasi publik Jakarta, dan data transa
 
 ## Pendekatan
 
-- **Pembersihan data** — transaksi mentah dinormalkan, kolom waktu diparsing, dan data tidak valid dibuang.
-- **Analisis rute** — mengidentifikasi koridor tersibuk dan distribusi perjalanan antar halte.
-- **Jam puncak** — memetakan lonjakan penumpang per jam untuk melihat ritme harian kota.
-- **Demografi** — mengurai profil penumpang dari atribut transaksi.
+- **Pembersihan data**: transaksi mentah dinormalkan, kolom waktu diparsing, dan data tidak valid dibuang.
+- **Analisis rute**: mengidentifikasi koridor tersibuk dan distribusi perjalanan antar halte.
+- **Jam puncak**: memetakan lonjakan penumpang per jam untuk melihat ritme harian kota.
+- **Demografi**: mengurai profil penumpang dari atribut transaksi.
 
 ## Temuan Utama
 

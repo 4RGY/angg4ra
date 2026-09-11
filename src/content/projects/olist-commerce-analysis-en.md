@@ -1,6 +1,6 @@
 ---
 title: "Olist Commerce Analytics"
-description: "Decision-oriented analysis of Brazil's Olist e-commerce dataset — 96k orders analyzed for commercial performance and customer experience recommendations."
+description: "Decision-oriented analysis of Brazil's Olist e-commerce dataset covering 96k orders, analyzed for commercial performance and customer experience recommendations."
 status: "Completed"
 tags: ["Python", "Jupyter", "Pandas", "pytest", "Data Analysis"]
 category: "Analisis Data"
@@ -13,7 +13,7 @@ github: "https://github.com/4RGY/olist-commerce-analysis"
 
 ## Concept
 
-The public Brazilian E-Commerce dataset by Olist is a rich analytics case: orders, items, payments, reviews, and customers. This project builds decision-oriented analysis — not just visualizations, but answers to concrete business questions.
+The public Brazilian E-Commerce dataset by Olist is a rich analytics case: orders, items, payments, reviews, and customers. This project builds decision-oriented analysis; not just visualizations, but answers to concrete business questions.
 
 ## Business Question
 
@@ -21,9 +21,9 @@ Where should an e-commerce operator focus to improve commercial performance and 
 
 ## Approach
 
-- **Analytical mart** — one row per order as the foundation; one-to-many tables aggregated before joining to prevent KPI inflation.
-- **Metric discipline** — commercial KPIs use delivered orders only; partial months excluded from trends.
-- **Data contracts** — metric ranges tested with pytest to protect quality.
+- **Analytical mart**: one row per order as the foundation; one-to-many tables aggregated before joining to prevent KPI inflation.
+- **Metric discipline**: commercial KPIs use delivered orders only; partial months excluded from trends.
+- **Data contracts**: metric ranges tested with pytest to protect quality.
 
 ## Key Findings
 

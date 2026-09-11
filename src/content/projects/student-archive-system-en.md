@@ -1,6 +1,6 @@
 ---
 title: "Student Archive System"
-description: "A student data archiving system — an app for storing, managing, and searching student records in a structured way."
+description: "A student data archiving system: an app for storing, managing, and searching student records in a structured way."
 status: "Completed"
 tags: ["Web App", "CRUD", "Archive", "Database"]
 category: "Web"
@@ -17,9 +17,9 @@ Managing student data manually tends to scatter and lose structure. This project
 
 ## Approach
 
-- **Full CRUD** — create, read, update, and delete archive records.
-- **Structured storage** — data kept tidy and searchable.
-- **Simple interface** — focused on a clear archiving workflow.
+- **Full CRUD**: create, read, update, and delete archive records.
+- **Structured storage**: data kept tidy and searchable.
+- **Simple interface**: focused on a clear archiving workflow.
 
 ## Reflection
 

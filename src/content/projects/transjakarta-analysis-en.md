@@ -1,6 +1,6 @@
 ---
 title: "Transjakarta BRT Analysis"
-description: "Exploratory data analysis of Transjakarta (Jakarta BRT) transaction data for April 2023 — route patterns, peak hours, and passenger demographics."
+description: "Exploratory data analysis of Transjakarta (Jakarta BRT) transaction data for April 2023: route patterns, peak hours, and passenger demographics."
 status: "Completed"
 tags: ["Python", "Pandas", "Jupyter", "EDA", "Matplotlib", "Seaborn"]
 category: "Analisis Data"
@@ -17,10 +17,10 @@ Transjakarta is the backbone of Jakarta's public transport, and its transaction 
 
 ## Approach
 
-- **Data cleaning** — raw transactions normalized, time columns parsed, invalid records dropped.
-- **Route analysis** — identifying the busiest corridors and trip distribution between stops.
-- **Peak hours** — mapping hourly passenger surges to reveal the city's daily rhythm.
-- **Demographics** — profiling passenger segments from transaction attributes.
+- **Data cleaning**: raw transactions normalized, time columns parsed, invalid records dropped.
+- **Route analysis**: identifying the busiest corridors and trip distribution between stops.
+- **Peak hours**: mapping hourly passenger surges to reveal the city's daily rhythm.
+- **Demographics**: profiling passenger segments from transaction attributes.
 
 ## Key Findings
 
@@ -28,4 +28,4 @@ Morning and evening peak patterns emerge clearly, with certain corridors dominat
 
 ## Reflection
 
-Public transport data is a mirror of the city. Analyzing it isn't just about numbers — it's understanding how people move, work, and live within it.
+Public transport data is a mirror of the city. Analyzing it isn't just about numbers; it's understanding how people move, work, and live within it.

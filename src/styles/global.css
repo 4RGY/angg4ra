@@ -4,11 +4,9 @@
 @source "../**/*.{astro,js,jsx,ts,tsx,md,mdx}";
 
 /* =====================================================================
-   MIDNIGHT ARCTIC — Design Tokens (dark + light)
-   Konsep: "siang & malam di laut arctic".
-   Dark  = menyelam malam (bioluminescence cyan, es menyala).
-   Light = arctic siang (langit pucat, es putih-biru, laut pirus).
-   Satu set token, dua suasana — cerita tetap sama.
+   MIDNIGHT ARCTIC — Design Tokens (dark-only, v12)
+   Light mode dihapus — arctic malam selamanya.
+   Dark = menyelam malam (bioluminescence cyan, es menyala).
    ===================================================================== */
 
 :root {
@@ -48,33 +46,14 @@
   --gap:            1.5rem;
   --radius:         0.75rem;
   --radius-lg:      1rem;
+  --shell-width:    1200px;
+  --shell-gutter:   clamp(1.25rem, 4vw, 2rem);
 }
 
-/* Light mode = "arctic siang" — aktif via [data-theme="light"] di <html> */
-[data-theme='light'] {
-  --bg-main:        #eef4f9;   /* langit arctic pucat */
-  --bg-card:        #ffffff;
-  --bg-elevated:    #e2ecf4;
-  --bg-glass:       rgba(255, 255, 255, 0.75);
-  --border:         rgba(21, 48, 74, 0.14);
+/* v12: LIGHT MODE DIHAPUS — arctic malam selamanya (dark-only).
+   [data-theme='light'] block lama tidak dipakai lagi. */
 
-  --text-primary:   #0e1c2c;
-  --text-secondary: #3d5a72;
-  --text-muted:     #6b8498;
-
-  --accent:         #0e7fa8;   /* cyan lebih dalam utk kontras di terang */
-  --accent-data:    #0a6b8f;
-  --accent-sci:     #4a6fa5;
-  --hover:          #0a5e7c;
-
-  --success:        #1f8a6d;
-  --warning:        #9c7417;
-  --danger:         #c0454e;
-
-  --depth-waterline: rgba(14, 127, 168, 0.4);
-}
-
-/* Dark mode default = tema utama — aktif via [data-theme='dark'] di <html> */
+/* Dark mode = SATU-SATUNYA tema — aktif via [data-theme='dark'] di <html> */
 [data-theme='dark'] {
   --bg-main:        #0b1220;
   --bg-card:        #101a2c;
@@ -94,10 +73,9 @@
   --depth-waterline: rgba(86, 200, 232, 0.35);
 }
 
-/* Shadcn-compatible aliases — konsisten di kedua mode */
+/* Shadcn-compatible aliases — konsisten */
 :root,
-[data-theme='dark'],
-[data-theme='light'] {
+[data-theme='dark'] {
   --background:       var(--bg-main);
   --foreground:       var(--text-primary);
   --card:             var(--bg-card);
@@ -126,8 +104,16 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  color-scheme: dark;
+  scroll-padding-top: 6rem;
   -webkit-text-size-adjust: 100%;
+}
+
+/* Data-dive (homepage): scene WebGL fixed di belakang.
+   Body harus transparan supaya canvas kebaca di seluruh tinggi halaman.
+   Konten section tetap punya bg-nya sendiri (lihat .page-section dive-glass). */
+body[data-dive='true'] {
+  background-color: transparent;
 }
 
 body {
@@ -144,6 +130,29 @@ body {
   background-color: var(--accent);
   color: var(--bg-main);
 }
+
+/* Shell-only treatment: no page-heading/card overrides, no painted layer on
+   the homepage (its negative-z fixed WebGL canvas depends on transparency). */
+body[data-page='editorial'] {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-image: radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--accent-sci) 7%, transparent), transparent 48rem);
+}
+body[data-page='editorial'] > main { flex: 1; min-width: 0; width: 100%; }
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: var(--shell-gutter);
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
 
 /* =====================================================================
    TIPOGRAFI
@@ -179,6 +188,50 @@ a:hover { color: var(--hover); }
 code, pre {
   font-family: var(--font-mono);
   font-size: 0.875rem;
+}
+
+/* ── DEPTH HUD (v14) — meter kedalaman di kanan layar ── */
+.depth-hud {
+  position: fixed;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 40;
+}
+.depth-hud--active { opacity: 1; }
+
+.depth-hud-bar {
+  width: 2px;
+  height: 34vh;
+  background: rgba(230, 238, 247, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.depth-hud-fill {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--accent), #2b6cb0);
+  border-radius: 2px;
+  will-change: height;
+}
+.depth-hud-readout {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  text-shadow: 0 0 12px rgba(86, 200, 232, 0.4);
+  min-width: 4.2em;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .depth-hud { right: 0.6rem; }
+  .depth-hud-bar { height: 22vh; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -242,3 +295,10 @@ code, pre {
     color: var(--text-primary);
   }
 }
+
+/* ── ScrollSmoother wrapper (v15) ── */
+#smooth-wrapper { overflow: hidden; }
+#smooth-content { will-change: transform; }
+/* Native smooth-scroll dimatiin: ScrollSmoother yang pegang inersia,
+   kalau dua-duanya nyala gerakannya jadi patah. */
+html { scroll-behavior: auto; }

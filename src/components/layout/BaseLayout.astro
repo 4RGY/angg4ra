@@ -1,29 +1,26 @@
 ---
-import Navbar from './Navbar.astro';
+import DepthNav from './DepthNav.astro';
 import Footer from './Footer.astro';
-import DepthMeter from '../sections/DepthMeter.astro';
+import GodRays from '../ui/GodRays.astro';
+import IcebergCanvas from '../sections/IcebergCanvas.astro';
 import '../../styles/global.css';
 import '@fontsource-variable/geist';
 
 const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
+// Homepage = root tiap bahasa (dengan/tanpa trailing slash — Astro bisa
+// normalize beda-beda). Hanya homepage yang dapat scene dive.
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isHome = ['', '/', '/id', '/en'].includes(path);
 ---
 
 <!DOCTYPE html>
-<html lang={lang}>
+<html lang={lang} data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Set theme sebelum CSS render → anti-flash (FOUC). Script inline kecil & sinkron. -->
+  <!-- v12: dark mode permanen (light mode dihapus). Set sebelum CSS render → anti-flash. -->
   <script is:inline>
-    (function () {
-      try {
-        var stored = localStorage.getItem('arctic-theme');
-        var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    })();
+    document.documentElement.setAttribute('data-theme', 'dark');
   </script>
   <meta name="google-site-verification" content="jOBM_TfElB7pgQ7ma9FPdplZoX7eLIxOUwMRnRUEAFs" />
   <meta name="google-site-verification" content="VUfGHUN7rWGBDneYgqbWO1bJaxJqS3ttOLBYUX-ni6o" />
@@ -173,21 +170,27 @@ const { title = 'Argy Anggara', lang = 'id' } = Astro.props;
     }
   </style>
 </head>
-<body>
-  <Navbar lang={lang} currentPath={Astro.url.pathname} />
-  <DepthMeter lang={lang} />
+<body data-dive={isHome ? 'true' : undefined} data-page={isHome ? 'dive' : 'editorial'}>
+  <a class="skip-link" href="#main-content">{lang === 'id' ? 'Langsung ke konten' : 'Skip to content'}</a>
+  {isHome && <DepthNav lang={lang} />}
 
-  <main>
-    <slot />
-  </main>
+  {isHome && <IcebergCanvas />}
 
-  <Footer lang={lang} />
+  {!isHome && <GodRays intensity={0.45} />}
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main id="main-content" tabindex="-1">
+        <slot />
+      </main>
+
+      <Footer lang={lang} />
+    </div>
+  </div>
 
   <!-- Script GSAP global -->
   <script>
-    import '../../scripts/gsap-animations.js';
     import '../../scripts/terminal.js';
-    import '../../scripts/depth-meter.js';
   </script>
 </body>
 </html>

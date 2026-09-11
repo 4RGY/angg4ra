@@ -1,0 +1,58 @@
+---
+// God rays subterus — murni CSS, tanpa JS/aset.
+// Dipasang di subpage (bukan homepage) supaya kesan "di bawah air" tetap terasa.
+const { intensity = 0.5 } = Astro.props;
+---
+<div class="god-rays" aria-hidden="true" style={`--ray-i: ${intensity}`}></div>
+
+<style>
+  .god-rays {
+    position: fixed;
+    inset: -10% -10% auto -10%;
+    height: 85svh;
+    pointer-events: none;
+    z-index: 0;
+    --ray-i: 0.5;
+    background:
+      /* berkas utama: tiga lempeng cahaya miring dari kiri-atas */
+      linear-gradient(103deg,
+        transparent 18%,
+        color-mix(in srgb, var(--accent) calc(var(--ray-i) * 9%), transparent) 22%,
+        transparent 26%),
+      linear-gradient(97deg,
+        transparent 34%,
+        color-mix(in srgb, var(--accent) calc(var(--ray-i) * 7%), transparent) 39%,
+        transparent 44%),
+      linear-gradient(106deg,
+        transparent 55%,
+        color-mix(in srgb, var(--accent) calc(var(--ray-i) * 11%), transparent) 61%,
+        transparent 66%),
+      /* glow sumber cahaya di permukaan */
+      radial-gradient(60% 45% at 24% -12%,
+        color-mix(in srgb, var(--accent) calc(var(--ray-i) * 14%), transparent), transparent 70%);
+    mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .45) 45%, transparent 82%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .45) 45%, transparent 82%);
+    opacity: 0;
+    animation: rays-in 1.6s ease-out .3s forwards;
+  }
+
+  /* denyut sangat pelan — cahaya menembus ombak */
+  @keyframes rays-in { to { opacity: 1; } }
+  .god-rays::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    animation: rays-breathe 9s ease-in-out infinite;
+    opacity: .35;
+  }
+  @keyframes rays-breathe {
+    0%, 100% { opacity: .2; }
+    50% { opacity: .5; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .god-rays { animation: none; opacity: 1; }
+    .god-rays::after { animation: none; }
+  }
+</style>

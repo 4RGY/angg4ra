@@ -1,19 +1,17 @@
 ---
-import IcebergCanvas from './IcebergCanvas.astro';
-
 const { lang = 'id' } = Astro.props;
 
 const t = lang === 'id' ? {
-  eyebrow:      'Ekspedisi Arktik · 0m — Permukaan',
-  greeting:     'Halo, gua Anggara.',
-  tagline:      'Nulis kode, ngulik data, ngajarin anak-anak coding, dan bikin hal-hal yang berguna.',
+  eyebrow:      'Ekspedisi Arktik · 0 m · Permukaan',
+  greeting:     'Halo, saya Anggara.',
+  tagline:      'Saya menulis kode dan mengolah data menjadi sesuatu yang berguna.',
   cta_projects: 'Lihat Proyek',
   cta_cv:       'Unduh CV',
-  scroll:       'mulai menyelam',
+  scroll:       'Mulai menyelam',
 } : {
-  eyebrow:      'Arctic Expedition · 0m — Surface',
-  greeting:     "Hey, I'm Anggara.",
-  tagline:      'Writing code, digging into data, teaching kids to code, and building things that matter.',
+  eyebrow:      'Arctic Expedition · 0 m · Surface',
+  greeting:     "Hello, I'm Anggara.",
+  tagline:      'I write code and turn data into something that people can use.',
   cta_projects: 'View Projects',
   cta_cv:       'Download CV',
   scroll:       'start diving',
@@ -23,9 +21,9 @@ const stat11 = lang === 'id' ? 'Proyek Selesai' : 'Projects Done';
 const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
 ---
 
-<section class="hero" aria-label={lang === 'id' ? 'Perkenalan' : 'Introduction'}>
-  <!-- Midnight Arctic: iceberg + kapal ekspedisi + aurora + salju (three.js) -->
-  <IcebergCanvas />
+<section class="hero" id="surface" data-hero aria-label={lang === 'id' ? 'Perkenalan' : 'Introduction'}>
+  <!-- Scene arctic kini FIXED di BaseLayout (data-dive, homepage only) —
+       hero ini cuma konten di atas scene. -->
 
   <!-- Scrim halus biar teks tetap terbaca di atas scene -->
   <div class="hero-scrim" aria-hidden="true"></div>
@@ -43,7 +41,7 @@ const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
     <p class="hero-tagline" id="hero-tagline">{t.tagline}</p>
 
     <div class="hero-cta" id="hero-cta">
-      <a href={`/${lang}/projects`} class="btn-primary">{t.cta_projects}</a>
+      <a href={`/${lang}/#projects`} class="btn-primary">{t.cta_projects}</a>
       <a href="/cv-anggara.pdf" download="cv-anggara.pdf" class="btn-ghost">{t.cta_cv}</a>
     </div>
 
@@ -257,6 +255,7 @@ const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
         linear-gradient(0deg, var(--bg-main) 2%, color-mix(in srgb, var(--bg-main) 55%, transparent) 45%, transparent 80%);
       opacity: 0.9;
     }
+    .hero-content { margin-left: 0; max-width: 100%; }
     .hero-stats { gap: 1.6rem; }
     .scroll-indicator { left: 1.4rem; bottom: 1.4rem; }
   }

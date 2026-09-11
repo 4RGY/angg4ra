@@ -7,7 +7,7 @@ readingTime: 5
 excerpt: "Four data analysis projects taught me the same thing: analytics quality isn't about chart count, it's about data discipline."
 ---
 
-My last four data analysis projects — Indonesian earthquakes, Transjakarta, national education, and Olist e-commerce — look very different on the surface. One is geology, one transport, one education policy, one online retail.
+My last four data analysis projects (Indonesian earthquakes, Transjakarta, national education, and Olist e-commerce) look very different on the surface. One is geology, one transport, one education policy, one online retail.
 
 But they all taught the same lesson.
 
@@ -27,7 +27,7 @@ These small details separate trustworthy analysis from merely convincing-looking
 
 The education project found a positive correlation between schooling and unemployment. Stop at the number and the conclusion is wrong: *"education causes unemployment."*
 
-It was the context — limited formal job markets in certain provinces — that turned that number into a true story. Correlation without context is just a number.
+It was the context, limited formal job markets in certain provinces, that turned that number into a true story. Correlation without context is just a number.
 
 ## The takeaway
 

@@ -1,0 +1,78 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { copy, formatDate } from './ArcticProjectCopy';
+interface Props { posts: CollectionEntry<'blog'>[]; lang: 'id' | 'en' }
+const { posts, lang } = Astro.props;
+const t = copy[lang];
+const tags = [...new Set(posts.flatMap(p => p.data.tags))];
+---
+<section class="arctic-blog" data-arctic-blog>
+  <header class="journal-header">
+    <div><p class="eyebrow">{t.journal}</p><h1>{t.blog}<span aria-hidden="true">.</span></h1></div>
+    <div class="intro"><h2>{t.blogIntro}</h2><p>{t.blogDesc}</p></div>
+  </header>
+  <div class="journal-layout">
+    <aside class="topic-sidebar">
+      <div class="topic-inner"><p class="topic-label">{t.topics}</p>
+        <div class="filters" role="group" aria-label={`${t.filter} ${t.topics.toLowerCase()}`}>
+          <button type="button" data-tag="all" aria-pressed="true">{t.all}<span>{posts.length}</span></button>
+          {tags.map(tag => <button type="button" data-tag={tag} aria-pressed="false">{tag}</button>)}
+        </div>
+      </div>
+    </aside>
+    <div class="notes">
+      {posts.map((post,index) => <article class:list={['note', { 'latest': index === 0 }]} data-tags={JSON.stringify(post.data.tags)}>
+        <a href={`/${lang}/blog/${post.id}`}>
+          <div class="note-meta"><time datetime={post.data.date}>{formatDate(post.data.date, lang)}</time><span>{post.data.readingTime} {t.minutes}</span>{index === 0 && <span class="latest-label">{t.latest}</span>}</div>
+          <h2>{post.data.title}</h2><p class="excerpt">{post.data.excerpt}</p>
+          <div class="note-footer"><ul aria-label={t.topics}>{post.data.tags.map(tag => <li>{tag}</li>)}</ul><span class="read">{t.read} <span aria-hidden="true">↗</span></span></div>
+        </a>
+      </article>)}
+      {posts.length === 0 && <p class="empty">{t.empty}</p>}
+    </div>
+  </div>
+</section>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-arctic-blog]').forEach(root => {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-tag]');
+    const notes = root.querySelectorAll<HTMLElement>('[data-tags]');
+    buttons.forEach(button => button.addEventListener('click', () => {
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      notes.forEach(note => { const tags: string[] = JSON.parse(note.dataset.tags || '[]'); note.hidden = button.dataset.tag !== 'all' && !tags.includes(button.dataset.tag || ''); });
+    }));
+  });
+</script>
+<style>
+  .arctic-blog { max-width: 1240px; margin: auto; padding: 6rem 2.5rem 8rem; }
+  .journal-header { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 4rem; margin-bottom: 4.5rem; }
+  .eyebrow { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.4rem; }
+  h1 { font-size: clamp(3.8rem, 8vw, 7rem); letter-spacing: -.065em; line-height: .98; font-weight: 500; } h1 span { color: var(--accent); }
+  .intro h2 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); font-weight: 450; margin-bottom: 1rem; }
+  .intro p { max-width: 440px; font-size: .97rem; }
+  .journal-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 3.5rem; border-top: 1px solid var(--border); }
+  .topic-inner { position: sticky; top: 7rem; padding-top: 2rem; }
+  .topic-label { font-size: .74rem; color: var(--text-secondary); margin-bottom: 1rem; }
+  .filters { display: flex; flex-direction: column; gap: .2rem; }
+  button { text-align: left; display: flex; justify-content: space-between; gap: 1rem; min-height: 44px; padding: .5rem .8rem; background: transparent; border: 0; border-left: 1px solid var(--border); color: var(--text-secondary); font: inherit; font-size: .83rem; cursor: pointer; transition: color .2s, background .2s; }
+  button:hover { color: var(--text-primary); }
+  button[aria-pressed='true'] { color: var(--accent); border-left-color: var(--accent); background: linear-gradient(90deg, var(--bg-elevated), transparent); }
+  button span { font-family: var(--font-mono); font-size: .7rem; }
+  .note { border-bottom: 1px solid var(--border); }
+  .note[hidden] { display: none; }
+  .note a { display: block; padding: 2.4rem 0; color: inherit; }
+  .note-meta { display: flex; flex-wrap: wrap; gap: .55rem 1rem; align-items: center; font-size: .73rem; color: var(--text-secondary); margin-bottom: 1rem; }
+  .note-meta > span:not(.latest-label) { border-left: 1px solid var(--border); padding-left: 1rem; }
+  .latest-label { color: var(--accent); margin-left: auto; }
+  h2 { font-size: clamp(1.4rem, 2.5vw, 2rem); line-height: 1.25; font-weight: 500; transition: color .2s; max-width: 700px; }
+  a:hover h2 { color: var(--hover); }
+  .excerpt { font-size: .98rem; margin-top: 1rem; max-width: 660px; }
+  .note-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.75rem; }
+  ul { list-style: none; display: flex; flex-wrap: wrap; gap: .35rem 1rem; color: var(--text-secondary); font-size: .73rem; }
+  .read { white-space: nowrap; font-size: .78rem; color: var(--accent); } .read span { font-size: 1.2rem; margin-left: .5rem; display: inline-block; transition: transform .2s; } a:hover .read span { transform: translate(2px,-2px); }
+  .latest a { padding: 2.5rem; background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card) 60%, var(--bg-main)); }
+  .latest h2 { font-size: clamp(1.8rem, 3vw, 2.9rem); letter-spacing: -.04em; }
+  .latest { margin: 1.5rem 0 0; border: 1px solid var(--border); }
+  .empty { padding: 3rem 0; }
+  @media(max-width: 850px) { .arctic-blog { padding: 4rem 1.5rem 5rem; } .journal-header { grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem; } .journal-layout { grid-template-columns: 1fr; gap: .8rem; } .topic-inner { position: static; padding-top: 1rem; } .topic-label { margin-bottom: .5rem; } .filters { flex-direction: row; flex-wrap: wrap; gap: .25rem; } button { border-left: none; border-bottom: 1px solid var(--border); padding-inline: .6rem; } button[aria-pressed='true'] { border-bottom-color: var(--accent); background: var(--bg-card); } .latest { margin-top: .5rem; } }
+  @media(max-width: 480px) { .arctic-blog { padding-inline: 1.2rem; } .latest a { padding: 1.5rem; } .latest-label { margin-left: 0; flex-basis: 100%; } .note-footer { flex-direction: column; align-items: start; } }
+</style>

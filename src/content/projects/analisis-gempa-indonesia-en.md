@@ -17,10 +17,10 @@ Indonesia's earthquake data from BMKG is publicly available, but ships as XML th
 
 ## Approach
 
-- **Automated ingest** — `requests` pulls the latest XML data and parses it into structured rows.
-- **Normalization** — each earthquake becomes one row with magnitude, depth, location, and time columns.
-- **Descriptive analysis** — summary statistics (mean magnitude, mean depth, largest quake) computed straight from live data.
-- **Visualization** — magnitude distribution and magnitude-vs-depth relationship plotted to surface patterns.
+- **Automated ingest**: `requests` pulls the latest XML data and parses it into structured rows.
+- **Normalization**: each earthquake becomes one row with magnitude, depth, location, and time columns.
+- **Descriptive analysis**: summary statistics (mean magnitude, mean depth, largest quake) computed straight from live data.
+- **Visualization**: magnitude distribution and magnitude-vs-depth relationship plotted to surface patterns.
 
 ## Key Findings
 
@@ -28,4 +28,4 @@ From a sample of the last 15 earthquakes, the largest hit magnitude 6.2 SR, with
 
 ## Reflection
 
-This project reinforced that useful data analysis doesn't need to be complex — the key is building a clean, repeatable path from raw data to insight.
+This project reinforced that useful data analysis doesn't need to be complex; the key is building a clean, repeatable path from raw data to insight.
