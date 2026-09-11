@@ -3,7 +3,7 @@ title: "Olist Commerce Analytics"
 description: "Decision-oriented analysis of Brazil's Olist e-commerce dataset covering 96k orders, analyzed for commercial performance and customer experience recommendations."
 status: "Completed"
 tags: ["Python", "Jupyter", "Pandas", "pytest", "Data Analysis"]
-category: "Analisis Data"
+category: "Data Analysis"
 metric: "96,478 orders → recommendations for delivery monitoring & repeat-purchase cohorts"
 date: "2026-06-12"
 featured: false

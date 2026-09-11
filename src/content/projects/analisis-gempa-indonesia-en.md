@@ -3,7 +3,7 @@ title: "Indonesia Earthquake Analysis"
 description: "An automated pipeline that pulls the latest earthquake data from BMKG open data, converts XML into tabular CSV, then runs descriptive analysis and visualization."
 status: "Completed"
 tags: ["Python", "Pandas", "Requests", "Matplotlib", "Seaborn", "Open Data"]
-category: "Analisis Data"
+category: "Data Analysis"
 metric: "Turned BMKG's XML feed into magnitude-vs-depth insight automatically"
 date: "2026-09-08"
 featured: false

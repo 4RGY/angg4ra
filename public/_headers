@@ -1,0 +1,11 @@
+# Model 3D: konten immutable (filename tidak pernah berubah tanpa deploy baru)
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Aset hashed Astro: nama file berisi hash konten
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Google site verification: jangan di-cache
+/google*.html
+  Cache-Control: no-store

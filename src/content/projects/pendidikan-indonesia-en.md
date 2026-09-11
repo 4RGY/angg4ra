@@ -3,7 +3,7 @@ title: "Indonesia Education Analysis (2017–2023)"
 description: "Province-level education data analysis covering HDI, mean years of schooling, unemployment, and primary school infrastructure to understand inter-province inequality."
 status: "Completed"
 tags: ["Python", "Pandas", "Matplotlib", "Data Analysis", "Statistics"]
-category: "Analisis Data"
+category: "Data Analysis"
 metric: "Uncovered a 16.3-point HDI gap & a counterintuitive schooling–unemployment correlation"
 date: "2026-07-21"
 featured: false

@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro';
+---
+
+<BaseLayout title="404" lang="id">
+  <main class="nf">
+    <div class="nf-inner">
+      <p class="nf-code">ERR · 404</p>
+      <h1 class="nf-title">Sinyal hilang di kedalaman</h1>
+      <p class="nf-desc">
+        Halaman yang kamu cari tidak ditemukan. Mungkin tenggelam, dipindahkan,
+        atau memang tidak pernah ada.
+      </p>
+      <a class="nf-cta" href="/id/">Kembali ke permukaan</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, #0b1828 0%, transparent 60%),
+      #040a12;
+    padding: 2rem;
+  }
+  .nf-inner {
+    max-width: 34rem;
+    text-align: center;
+  }
+  .nf-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.35em;
+    color: #56c8e8;
+    margin-bottom: 1.25rem;
+  }
+  .nf-title {
+    font-family: 'Geist Variable', system-ui, sans-serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    color: #e6eef7;
+    line-height: 1.15;
+    margin: 0 0 1rem;
+  }
+  .nf-desc {
+    color: #8fa3b8;
+    line-height: 1.7;
+    margin: 0 0 2.25rem;
+  }
+  .nf-cta {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: #56c8e8;
+    border: 1px solid rgba(86, 200, 232, 0.35);
+    border-radius: 6px;
+    padding: 0.7rem 1.6rem;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .nf-cta:hover {
+    background: rgba(86, 200, 232, 0.08);
+    border-color: rgba(86, 200, 232, 0.7);
+  }
+</style>

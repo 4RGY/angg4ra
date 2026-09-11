@@ -3,7 +3,7 @@ title: "Transjakarta BRT Analysis"
 description: "Exploratory data analysis of Transjakarta (Jakarta BRT) transaction data for April 2023: route patterns, peak hours, and passenger demographics."
 status: "Completed"
 tags: ["Python", "Pandas", "Jupyter", "EDA", "Matplotlib", "Seaborn"]
-category: "Analisis Data"
+category: "Data Analysis"
 metric: "Unpacked a month of BRT transactions into corridor & peak-hour patterns"
 date: "2026-07-27"
 featured: true

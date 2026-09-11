@@ -11,7 +11,7 @@ const projectsCollection = defineCollection({
     description: z.string(),
     status:      z.enum(['Selesai', 'Sedang Berjalan', 'Berkelanjutan', 'Completed', 'In Progress', 'Ongoing']),
     tags:        z.array(z.string()),
-    category:    z.enum(['Machine Learning', 'Analisis Data', 'Web', 'Mengajar']),
+    category:    z.enum(['Machine Learning', 'Analisis Data', 'Web', 'Mengajar', 'Data Analysis', 'Teaching']),
     language:    z.enum(['id', 'en']).default('id'),
     metric:      z.string().optional(),
     date:        z.string(),
