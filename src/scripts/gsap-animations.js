@@ -32,9 +32,15 @@ async function initAnimations() {
       normalizeScroll: true, // samain perilaku trackpad/mobile
       ignoreMobileResize: true,
     });
+    // tandai HTML supaya CSS boleh mengunci wrapper; tanpa ini overflow:hidden
+    // memotong tinggi dokumen saat smoother gagal dimuat.
+    if (smoother) document.documentElement.classList.add('has-smoother');
   } catch {
     smoother = null;
+    document.documentElement.classList.remove('has-smoother');
   }
+  // ScrollTrigger harus mengukur ulang setelah wrapper menentukan tinggi final.
+  ScrollTrigger.refresh();
 
   /* ── DIVE: progress scroll → kedalaman scene ── */
   if (isDive) {

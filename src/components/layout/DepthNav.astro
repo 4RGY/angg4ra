@@ -66,6 +66,9 @@ const stops = [
     stops.forEach((a, i) => {
       if (i === active) a.setAttribute('aria-current', 'true');
       else a.removeAttribute('aria-current');
+      // zona yang sudah dilewati tetap menyala redup — jejak penyelaman
+      if (i < active) a.setAttribute('data-passed', '');
+      else a.removeAttribute('data-passed');
     });
   };
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(paint); } }, { passive: true });
@@ -142,6 +145,12 @@ const stops = [
   .dr-stops a:hover .dr-text { color: var(--text-secondary); }
   .dr-stops a:hover i { width: 26px; background: var(--text-primary); }
   .dr-stops a:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+  .dr-stops a[data-passed] .dr-text { color: color-mix(in srgb, var(--text-secondary) 72%, transparent); }
+  .dr-stops a[data-passed] i {
+    width: 22px;
+    background: color-mix(in srgb, var(--accent) 52%, transparent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
   .dr-stops a[aria-current] .dr-text { color: var(--text-primary); }
   .dr-stops a[aria-current] i {
     width: 30px;
@@ -173,5 +182,6 @@ const stops = [
   }
   @media (prefers-reduced-motion: reduce) {
     .dr-stops i, .dr-text { transition: none; }
+    .dr-fill { transition: none; }
   }
 </style>

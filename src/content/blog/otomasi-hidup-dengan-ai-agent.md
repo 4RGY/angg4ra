@@ -1,58 +1,58 @@
 ---
-title: "Gua Punya Asisten AI yang Nyalain HP Gua"
+title: "Asisten AI yang Menyalakan Ponsel Saya"
 date: "2026-07-20"
 language: "id"
 tags: ["AI", "Otomasi", "Refleksi"]
 readingTime: 8
-excerpt: "Dari morning briefing otomatis sampai nyalain HP yang tombol powernya rusak. Cerita setup AI agent sebagai co-pilot kehidupan."
+excerpt: "Dari ringkasan pagi otomatis sampai menyalakan ponsel yang tombol dayanya rusak. Cerita menyiapkan AI agent sebagai rekan kerja sehari-hari."
 ---
 
-Tombol power HP gua rusak.
+Tombol daya ponsel saya rusak.
 
-Redmi Note 11, udah setahun lebih jadi daily driver. Satu hari tombol powernya tiba-tiba ga responsif. Mati total. Panik? Sedikit. Tapi lebih ke kesel karena gua tau masalahnya bukan software.
+Redmi Note 11, sudah lebih dari setahun jadi ponsel harian. Suatu hari tombol dayanya tiba-tiba tidak merespons. Mati total. Panik? Sedikit. Tetapi lebih ke kesal, karena saya tahu masalahnya bukan pada perangkat lunak.
 
-Solusi normal: ke service center. Solusi gua: colok ke laptop, jalanin `fastboot reboot` dari terminal.
+Solusi normal: bawa ke pusat servis. Solusi saya: colokkan ke laptop, jalankan `fastboot reboot` dari terminal.
 
-Ya, gua nyalain HP pake laptop. Tiap kali mati. Itu awalnya.
+Ya, saya menyalakan ponsel memakai laptop. Setiap kali mati. Begitu awalnya.
 
-## Eskalasi yang Ga Direncanain
+## Eskalasi yang Tidak Direncanakan
 
-Dari situ gua mulai mikir: kalau gua bisa automate hal se-absurd ini, apa lagi yang bisa?
+Dari situ saya mulai berpikir: kalau hal seabsurd ini bisa diotomasi, apa lagi yang bisa?
 
-Gua udah pake Hermes Agent (AI assistant dari Nous Research) buat bantu coding. Tapi ternyata dia bisa lebih dari itu. Jauh lebih.
+Saya sudah memakai Hermes Agent (asisten AI dari Nous Research) untuk membantu menulis kode. Ternyata ia bisa jauh lebih dari itu.
 
-Sekarang gua punya:
+Sekarang saya punya:
 
-**Morning Briefing tiap jam 7 pagi.** Setiap bangun tidur, udah ada ringkasan: berita teknologi yang relevan, cuaca Bekasi, dan reminder tugas hari ini. Ga perlu scroll Twitter atau buka 5 aplikasi.
+**Ringkasan pagi setiap pukul 7.** Begitu bangun, ringkasannya sudah ada: berita teknologi yang relevan, cuaca Bekasi, dan pengingat tugas hari itu. Tidak perlu menggulir Twitter atau membuka 5 aplikasi.
 
-**Weekly Engineering Review tiap Senin malam.** Dia scan semua repo GitHub gua, liat commit terakhir, cek mana yang stagnant, dan kasih ringkasan jujur soal progres mingguan gua. Lebih brutal dari dosen pembimbing.
+**Tinjauan teknis mingguan setiap Senin malam.** Ia memindai semua repo GitHub saya, melihat commit terakhir, memeriksa mana yang mandek, lalu memberi ringkasan jujur soal kemajuan minggu itu. Lebih tajam daripada dosen pembimbing.
 
-**Monthly Portfolio Audit.** Tiap tanggal 1, dia audit portfolio gua dari sudut pandang recruiter Data/AI Engineer. Apa yang kurang, apa yang bisa diperbaiki, mana yang udah outdated. Feedback yang gua butuhin tapi malas cari sendiri.
+**Audit portfolio bulanan.** Setiap tanggal 1, ia mengaudit portfolio saya dari sudut pandang perekrut Data atau AI Engineer. Apa yang kurang, apa yang bisa diperbaiki, mana yang sudah usang. Masukan yang saya butuhkan tetapi malas saya cari sendiri.
 
-**Security Scan tiap Jumat.** Scan repo publik gua buat cek ada ga secret yang keexpose, dependency yang vulnerable, atau file aneh yang harusnya ga ke-push.
+**Pemindaian keamanan setiap Jumat.** Memindai repo publik saya untuk memeriksa apakah ada kredensial yang bocor, dependensi yang rentan, atau berkas aneh yang seharusnya tidak ikut terkirim.
 
-## Ini Bukan Cerita Hustle Culture
+## Ini Bukan Cerita Budaya Kerja Berlebihan
 
-Gua mau jelasin satu hal: ini bukan soal produktivitas gila-gilaan atau "grind 24/7." Justru sebaliknya.
+Saya ingin menjelaskan satu hal: ini bukan soal produktivitas gila-gilaan atau bekerja tanpa henti. Justru sebaliknya.
 
-Gua automate hal-hal yang bikin gua males. Yang seharusnya gua lakuin tapi selalu gua tunda. Review mingguan? Males. Cek keamanan repo? Males. Baca berita pagi? Scroll doang ga dapet apa-apa.
+Saya mengotomasi hal-hal yang membuat saya malas. Yang seharusnya saya lakukan tetapi selalu saya tunda. Tinjauan mingguan? Malas. Memeriksa keamanan repo? Malas. Membaca berita pagi? Menggulir tanpa dapat apa-apa.
 
-Sekarang hal-hal itu terjadi tanpa gua mikirin. Dan hasilnya lebih konsisten dari kalau gua lakuin manual. Karena mesin ga males. Mesin ga prokrastinasi.
+Sekarang hal-hal itu terjadi tanpa saya pikirkan. Hasilnya lebih konsisten dibandingkan kalau saya kerjakan manual. Sebab mesin tidak malas. Mesin tidak menunda.
 
-## Yang Ga Bisa Diautomate
+## Yang Tidak Bisa Diotomasi
 
-Tapi gua juga belajar batasnya.
+Tetapi saya juga belajar batasnya.
 
-AI ga bisa decide buat gua. Dia bisa kasih ringkasan, kasih opsi, kasih warning. Tapi keputusan tetap di tangan gua. Mau ambil proyek freelance yang mana. Mau prioritasin belajar apa minggu ini. Mau lanjut atau berhenti di satu repo.
+AI tidak bisa mengambil keputusan untuk saya. Ia bisa memberi ringkasan, pilihan, dan peringatan. Namun keputusan tetap di tangan saya. Mau mengambil proyek freelance yang mana. Mau memprioritaskan belajar apa minggu ini. Mau melanjutkan atau berhenti di satu repo.
 
-Otomasi itu copilot, bukan autopilot. Bedanya penting.
+Otomasi itu kopilot, bukan autopilot. Bedanya penting.
 
 ## Satu Hal yang Berubah
 
-Yang paling berubah bukan efisiensi atau kecepatan. Tapi awareness.
+Yang paling berubah bukan efisiensi atau kecepatan, melainkan kesadaran.
 
-Sebelumnya, gua ga tau kondisi real repo gua. Ga tau mana yang udah sebulan ga disentuh. Ga tau dependency mana yang udah expired. Sekarang gua tau. Tiap minggu. Tanpa effort.
+Sebelumnya saya tidak tahu kondisi sebenarnya repo saya. Tidak tahu mana yang sudah sebulan tidak disentuh. Tidak tahu dependensi mana yang sudah kedaluwarsa. Sekarang saya tahu. Setiap minggu. Tanpa usaha tambahan.
 
-Dan itu ternyata yang bikin gua lebih fokus. Bukan karena gua dikejar deadline otomatis, tapi karena gua jadi sadar mana yang penting dan mana yang cuma "nanti aja."
+Ternyata itu yang membuat saya lebih fokus. Bukan karena dikejar tenggat otomatis, melainkan karena saya jadi sadar mana yang penting dan mana yang sekadar "nanti saja".
 
-Tombol power HP gua masih rusak, by the way. Tapi sekarang gua punya asisten yang nyalain.
+Tombol daya ponsel saya masih rusak, omong-omong. Tetapi sekarang saya punya asisten yang menyalakannya.

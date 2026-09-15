@@ -33,7 +33,7 @@ Begitu alasannya ada yang mana biasanya berupa game, animasi, atau sesuatu yang 
 
 **Error bukan musuh.** Ini yang paling susah diubah. baik di siswa maupun di ekspektasi orang tua. Anak yang takut salah tidak akan bereksperimen. Anak yang tidak bereksperimen tidak akan belajar debugging. Dan debugging adalah 70% dari pekerjaan programmer nyata.
 
-Saya sengaja bikin error di depan kelas, lalu berjalan pelan-pelan mencari tahu kenapa. Bukan untuk pamer. Untuk menunjukkan bahwa tidak tahu jawaban adalah titik awal yang normal, bukan tanda kegagalan.
+Saya sengaja membuat error di depan kelas, lalu berjalan pelan-pelan mencari tahu kenapa. Bukan untuk pamer. Untuk menunjukkan bahwa tidak tahu jawaban adalah titik awal yang normal, bukan tanda kegagalan.
 
 **Beri mereka proyek yang bisa mereka klaim.** Ada perbedaan besar antara "kerjakan latihan ini" dan "bikin sesuatu yang ingin kamu bikin." Siswa yang punya proyek sendiri meskipun sederhana akan datang dengan pertanyaan yang jauh lebih tajam. Karena pertanyaannya lahir dari kebutuhan nyata, bukan dari soal latihan.
 

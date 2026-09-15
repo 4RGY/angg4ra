@@ -1,62 +1,62 @@
 ---
-title: "Gua Belajar Data Science dari Gempa Bumi dan Kualitas Udara"
+title: "Belajar Data Science dari Gempa Bumi dan Kualitas Udara"
 date: "2026-06-15"
 language: "id"
 tags: ["Data Science", "Refleksi", "Coding Education"]
 readingTime: 7
-excerpt: "Kenapa tutorial Kaggle ga pernah cukup, dan kenapa proyek yang 'kecil' justru ngajarin lebih banyak."
+excerpt: "Kenapa tutorial Kaggle tidak pernah cukup, dan kenapa proyek yang 'kecil' justru mengajarkan lebih banyak."
 ---
 
-Gua pernah nonton 12 jam tutorial data science di YouTube. Dalam satu hari. Hasilnya? Gua bisa ngomong "overfitting" di obrolan, tapi ga bisa debug kenapa model gua cuma predict satu class.
+Saya pernah menonton 12 jam tutorial data science di YouTube. Dalam satu hari. Hasilnya? Saya bisa menyebut "overfitting" di obrolan, tetapi tidak bisa menelusuri kenapa model saya hanya memprediksi satu kelas.
 
-Itu wake-up call.
+Itu peringatan keras.
 
-## Tutorial Trap
+## Jebakan Tutorial
 
-Masalah tutorial bukan di kualitasnya. Banyak yang bagus. Masalahnya di ilusi belajar yang dia kasih.
+Masalah tutorial bukan pada kualitasnya. Banyak yang bagus. Masalahnya pada ilusi belajar yang ditimbulkannya.
 
-Lu ikutin step by step, semua jalan, output-nya cantik, dan lu ngerasa paham. Tapi coba ganti dataset-nya. Coba pake data yang berantakan, yang ada missing values di mana-mana, yang kolom namanya ga make sense. Tiba-tiba semua skill "tutorial" lu ga cukup.
+Anda mengikuti langkah demi langkah, semuanya berjalan, hasilnya rapi, dan Anda merasa paham. Tetapi coba ganti datasetnya. Coba pakai data berantakan, yang nilai kosongnya tersebar di mana-mana, yang nama kolomnya tidak masuk akal. Tiba-tiba semua keterampilan hasil tutorial itu tidak cukup.
 
-Gua sadar ini waktu pertama kali coba analisis data gempa Indonesia dari BMKG.
+Saya menyadarinya saat pertama kali mencoba menganalisis data gempa Indonesia dari BMKG.
 
 ## Data Gempa: Pelajaran Pertama
 
-Data BMKG itu gratis dan terbuka. Tapi formatnya? Ga ada yang bilang kalau koordinat kadang pake koma, kadang pake titik. Ga ada yang bilang kalau timezone-nya ga konsisten. Ga ada yang bilang kalau ada duplikat entry yang baru ketauan setelah lu plot di peta.
+Data BMKG gratis dan terbuka. Tetapi formatnya? Tidak ada yang memberi tahu bahwa koordinatnya kadang memakai koma, kadang titik. Tidak ada yang memberi tahu bahwa zona waktunya tidak konsisten. Tidak ada yang memberi tahu bahwa ada entri ganda yang baru ketahuan setelah diplot di peta.
 
-Tutorial ga ngajarin ini. Tutorial kasih lu CSV yang udah bersih.
+Tutorial tidak mengajarkan ini. Tutorial memberi Anda CSV yang sudah bersih.
 
-Dari proyek kecil ini gua belajar:
-- **Data cleaning itu 70% kerjaan**. Bukan exaggeration.
-- **Visualisasi geospatial itu beda aturan mainnya**. Scatter plot biasa ga cukup buat data yang punya latitude longitude.
-- **Domain knowledge penting**. Gua harus baca soal subduksi, kedalaman fokus gempa, dan Ring of Fire buat bisa bikin analisis yang bermakna.
+Dari proyek kecil ini saya belajar:
+- **Pembersihan data itu 70 persen pekerjaan**. Ini bukan melebih-lebihkan.
+- **Visualisasi geospasial punya aturan main sendiri**. Scatter plot biasa tidak cukup untuk data yang punya lintang dan bujur.
+- **Pengetahuan domain itu penting**. Saya harus membaca soal subduksi, kedalaman fokus gempa, dan Ring of Fire agar analisisnya bermakna.
 
 ## Kualitas Udara: Pelajaran Kedua
 
-Proyek ISPU Jakarta lebih ambisius. Gua bandingin 5 algoritma ML, dapet akurasi 94.2% pake Random Forest. Kedengeran bagus kan?
+Proyek ISPU Jakarta lebih ambisius. Saya membandingkan 5 algoritma ML dan mendapat akurasi 94,2 persen dengan Random Forest. Terdengar bagus, bukan?
 
-Tapi angka itu hampir misleading.
+Tetapi angka itu nyaris menyesatkan.
 
-Model gua bagus di class yang dominan (kualitas udara "Sedang"), tapi payah di class yang paling penting ("Sangat Tidak Sehat"). Kenapa? Data imbalanced. Class yang langka justru yang paling kritis buat kesehatan publik.
+Model saya bagus pada kelas yang dominan (kualitas udara "Sedang"), tetapi buruk pada kelas yang paling penting ("Sangat Tidak Sehat"). Mengapa? Datanya timpang. Kelas yang langka justru yang paling kritis bagi kesehatan publik.
 
-Dari sini gua belajar satu hal yang tutorial jarang tekanin: **akurasi bukan metrik yang cukup**. Confusion matrix, recall per class, dan konteks domain. Ini yang beneran penting.
+Dari sini saya belajar satu hal yang jarang ditekankan tutorial: **akurasi bukan metrik yang cukup**. Confusion matrix, recall per kelas, dan konteks domain. Inilah yang benar-benar penting.
 
-SHAP juga ngubah cara gua mikir. Bukan cuma "berapa akurasinya" tapi "kenapa model ambil keputusan ini." Explainability bukan luxury, terutama di domain yang menyangkut manusia.
+SHAP juga mengubah cara saya berpikir. Bukan lagi sekadar "berapa akurasinya", melainkan "mengapa model mengambil keputusan ini". Explainability bukan kemewahan, apalagi pada domain yang menyangkut manusia.
 
 ## Pendidikan Indonesia: Pelajaran Ketiga
 
-Proyek terakhir yang bikin gua makin yakin sama approach ini: analisis data pendidikan 34 provinsi.
+Proyek terakhir yang membuat saya makin yakin dengan pendekatan ini: analisis data pendidikan 34 provinsi.
 
-Di sini gua ga pake ML sama sekali. Murni EDA dan visualisasi. Dan justru itu yang bikin gua appreciate statistik deskriptif.
+Di sini saya tidak memakai ML sama sekali. Murni EDA dan visualisasi. Justru itu yang membuat saya menghargai statistik deskriptif.
 
-Ga semua masalah butuh model. Kadang satu grafik yang tepat bisa ceritain lebih banyak dari seribu epoch training.
+Tidak semua masalah butuh model. Kadang satu grafik yang tepat bercerita lebih banyak daripada seribu epoch pelatihan.
 
-## Pola yang Gua Liat
+## Pola yang Saya Lihat
 
-Tiga proyek, tiga domain beda, satu pola sama:
+Tiga proyek, tiga domain berbeda, satu pola yang sama:
 
-1. **Mulai dari pertanyaan, bukan dari tools.** "Kenapa udara Jakarta buruk?" bukan "Gua mau pake Random Forest."
-2. **Data cleaning adalah guru terbaik.** Lu belajar lebih banyak tentang data dari bersihin dia daripada dari model yang lu train.
-3. **Domain knowledge ga bisa di-skip.** Tanpa dia, analisis lu cuma angka tanpa makna.
-4. **Proyek kecil itu cukup.** Ga perlu dataset 10 juta rows. Yang penting ada pertanyaan nyata dan jawaban yang jujur.
+1. **Mulai dari pertanyaan, bukan dari perkakas.** "Mengapa udara Jakarta buruk?" bukan "Saya mau memakai Random Forest."
+2. **Pembersihan data adalah guru terbaik.** Anda belajar lebih banyak tentang data dari membersihkannya daripada dari model yang Anda latih.
+3. **Pengetahuan domain tidak bisa dilewati.** Tanpa itu, analisis Anda hanya angka tanpa makna.
+4. **Proyek kecil itu cukup.** Tidak perlu dataset 10 juta baris. Yang penting ada pertanyaan nyata dan jawaban yang jujur.
 
-Gua masih belajar. Masih banyak yang ga gua tau. Tapi setidaknya sekarang gua belajar dari hal yang nyata, bukan dari tutorial yang bikin gua ngerasa pintar tanpa bisa apa-apa.
+Saya masih belajar. Masih banyak yang belum saya tahu. Tetapi setidaknya sekarang saya belajar dari hal yang nyata, bukan dari tutorial yang membuat saya merasa pintar tanpa bisa apa-apa.

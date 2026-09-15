@@ -175,28 +175,30 @@ const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
     letter-spacing: 0.06em;
     padding: 0.78rem 1.7rem;
     color: var(--text-primary);
-    border: 1px solid var(--border);
+    border: 1px solid color-mix(in srgb, var(--accent) 48%, transparent);
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
     border-radius: 999px;
     text-decoration: none;
-    transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
+    transition: border-color 220ms ease, background 220ms ease, transform 220ms ease, box-shadow 220ms ease;
   }
   .btn-ghost:hover {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
     transform: translateY(-2px);
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--accent) 18%, transparent);
   }
 
   /* Stats — ringkas, bawah kiri */
   .hero-stats {
     display: flex;
-    gap: 2.4rem;
+    gap: 3.4rem;
   }
   .stat-chip {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    border-left: 2px solid var(--accent);
-    padding-left: 0.85rem;
+    gap: 0.3rem;
+    border-left: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+    padding-left: 1.1rem;
   }
   .stat-value {
     font-size: 1.6rem;
@@ -206,7 +208,7 @@ const stat500 = lang === 'id' ? 'Jam Mengajar' : 'Hours Teaching';
   }
   .stat-label {
     font-size: 0.68rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }

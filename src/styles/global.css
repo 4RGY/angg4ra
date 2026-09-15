@@ -297,7 +297,10 @@ code, pre {
 }
 
 /* ── ScrollSmoother wrapper (v15) ── */
-#smooth-wrapper { overflow: hidden; }
+/* overflow:hidden HANYA saat ScrollSmoother benar-benar aktif. Kalau plugin
+   gagal dimuat, wrapper ini memotong tinggi dokumen sehingga ScrollTrigger
+   salah hitung progress (dive mentok ~0.82, palung tak pernah tercapai). */
+html.has-smoother #smooth-wrapper { overflow: hidden; }
 #smooth-content { will-change: transform; }
 /* Native smooth-scroll dimatiin: ScrollSmoother yang pegang inersia,
    kalau dua-duanya nyala gerakannya jadi patah. */

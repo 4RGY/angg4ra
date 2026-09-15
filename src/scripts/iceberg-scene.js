@@ -142,8 +142,15 @@ export async function initIcebergScene(container) {
     camZ:   [17, 14, 11, 9, 7],
     fogFar: [80, 55, 40, 28, 18],    // fog far makin dekat = makin gelap
     amb:    [0.38, 0.3, 0.18, 0.18, 0.17],
-    bg:     ['#0b1220', '#091526', '#050c17', '#050c14', '#040a12'], // idx1=Tentang #091526, idx2=Karya #050c17 (p=0.25/0.5 pas tengah section)
-    fog:    ['#0b1220', '#091526', '#050c17', '#050c14', '#040a12'], // fog ikut warna zona — nggak nyuci objek dgn kabut terang
+    // Gradasi WAJIB turun monoton: makin dalam makin gelap. Stop1 (Tentang)
+    // dulu #091526 lum 19.7 — lebih TERANG dari permukaan (17.5), jadi cahaya
+    // seolah naik pas lagi nyelam turun; itu sumber "terlalu cerah" + transisi aneh.
+    // #080f1c = tepat di tengah permukaan->Karya, laju perubahan jadi rata.
+    // stop1 (Tentang) = PERSIS --bg-main #0b1220 (warna permukaan), atas permintaan user:
+    // "warnanya disamain kaya warna permukaan aja". Permukaan & Tentang kini satu warna,
+    // penurunan kedalaman baru mulai terasa di Karya.
+    bg:     ['#0b1220', '#0b1220', '#050c17', '#050c14', '#040a12'], // lum 17.5 = 17.5 > 11.3 > 11.1 > 9.3
+    fog:    ['#0b1220', '#0b1220', '#050c17', '#050c14', '#040a12'], // fog ikut bg persis
     keyI:   [1.7, 0.85, 0.42, 0.36, 0.28],  // cahaya "bulan" (directional) — makin dalam makin redup
     fogFarBoost: [0, 0, 2, 4, 6],          // fog dikendurin dikit di dalam
   };
@@ -793,9 +800,12 @@ export async function initIcebergScene(container) {
     }
 
     // ── SKY FADE (dideklarasi di atas karena dipakai glint & bintang juga) ──
-    // fade-out smooth langit pas nyilem: diveP 0.08 → 0.3
+    // fade-out smooth langit pas nyilem: diveP 0.04 → 0.18
     // (1 di permukaan → 0 di kedalaman — "cahaya bulan nggak tembus ke bawah")
-    const skyK = 1 - smoothstep(0.08, 0.3, smoothDive);
+    // Rentang lama 0.08→0.3 bikin god ray masih 57% nyala saat zona Tentang
+    // mulai (dive 0.18). God ray = 11 mesh additive TANPA fog, jadi fog zona
+    // tidak bisa meredamnya; satu-satunya rem adalah skyK ini.
+    const skyK = 1 - smoothstep(0.04, 0.18, smoothDive);
 
     /* Glint: titik kilau di puncak ombak — denyut pelan (nyala: nempel
        puncak; mati: dilempar jauh ke bawah biar fog nutupin) */
@@ -830,6 +840,10 @@ export async function initIcebergScene(container) {
           m.transparent = true;
           m.opacity = a;
         }
+        // Halo chest/wreck adalah SPRITE, bukan mesh. Tanpa cabang ini halo
+        // tetap menyala penuh (op 0.8, additive, no-fog) walau landmark-nya
+        // masih jauh di palung — ikut mencerahkan zona atas seperti Tentang.
+        if (o.isSprite && o.material) o.material.opacity = a * 0.5;
       });
     }
 
@@ -881,7 +895,7 @@ export async function initIcebergScene(container) {
       scene.background.set(lerpHexArr(DIVE.bg, smoothDive));
       scene.fog.color.set(lerpHexArr(DIVE.fog, smoothDive));
       // objek permukaan (iceberg & tugboat) tenggelam ke kabut saat menyelam —
-      // zona Tentang/Karya (#091526/#050c17) bebas dari es teal keporos key light
+      // zona Tentang/Karya (#080f1c/#050c17) bebas dari es teal keporos key light
       const surfK = 1 - smoothstep(0.04, 0.3, smoothDive);
       if (loaded.berg) {
         loaded.berg.visible = surfK > 0.01;
@@ -934,7 +948,7 @@ export async function initIcebergScene(container) {
     if (loaded.ocean) {
       loaded.ocean.mesh.position.y = WATER_Y;
       // ocean keliatan TEAL dari bawah (DoubleSide) — fade cepat begitu nyelam,
-      // biar zona Tentang (#091526) nggak kecuci langit-langit biru terang
+      // biar zona Tentang (#080f1c) nggak kecuci langit-langit biru terang
       loaded.ocean.mesh.material.opacity = 1 - smoothstep(0.015, 0.14, smoothDive);
       loaded.ocean.mesh.visible = loaded.ocean.mesh.material.opacity > 0.005;
     }
@@ -967,7 +981,10 @@ export async function initIcebergScene(container) {
       for (let i = 0; i < fauna[key].length; i++) {
         const f = fauna[key][i];
         if (!f || !f.visible) continue;
-        if (f.userData.glow) f.userData.glow.material.opacity = za * 0.55;
+        // 0.55 bikin pojok layar nyala (sprite additive, jarak <15 dari kamera,
+        // dan sering tumpang tindih 2-3 sprite). 0.22 = aksen bioluminesensi
+        // yang kebaca tanpa nyuci zona. Lihat catatan kalibrasi glow di skill.
+        if (f.userData.glow) f.userData.glow.material.opacity = za * 0.16; // di-override oleh denyut di bawah
         const slot = slots[i];
         const ph = f.userData.phase;
         // PARALLEL DIVE: fauna nemenin kamera turun — offset statis + drift
@@ -991,7 +1008,11 @@ export async function initIcebergScene(container) {
         if (gl) {
           gl.position.copy(f.position);
           gl.position.z += 0.5;
-          gl.material.opacity = (0.45 + 0.3 * Math.sin(t * 1.4 + ph)) * Math.min(1, za + 0.2);
+          // CATATAN: baris ini dieksekusi SETELAH set glow di blok zona di atas,
+          // jadi nilai inilah yang menentukan. Dulu 0.45+0.3 (maks 0.75) bikin
+          // pojok layar nyala di zona Tentang karena sprite additive + no-fog
+          // nempel 9-14 unit dari lensa. Maks 0.16 = aksen, bukan lampu.
+          gl.material.opacity = (0.10 + 0.06 * Math.sin(t * 1.4 + ph)) * Math.min(1, za + 0.2);
         }
       }
     }

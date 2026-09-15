@@ -12,7 +12,7 @@ github: "https://github.com/4RGY/koperargy"
 
 ## Tentang
 
-Website koperasi simpan pinjam sederhana. Ini proyek kuliah tapi gua treat kayak proyek nyata: ada sistem member, pencatatan pinjaman, dan laporan.
+Website koperasi simpan pinjam sederhana. Ini proyek kuliah, tetapi saya perlakukan seperti proyek nyata: ada sistem anggota, pencatatan pinjaman, dan laporan.
 
 ## Stack
 
@@ -20,6 +20,6 @@ Website koperasi simpan pinjam sederhana. Ini proyek kuliah tapi gua treat kayak
 - Frontend: HTML + CSS Bootstrap
 - Database: SQLite
 
-## Yang Gua Pelajari
+## Yang Saya Pelajari
 
-Ini momen pertama gua ngerjain fullstack sendirian dari nol. Dari desain database, routing, sampai deploy. Hasilnya ga sempurna, tapi prosesnya bikin gua paham kenapa backend dan frontend harus "ngobrol" dengan bener.
+Ini pertama kalinya saya mengerjakan fullstack sendirian dari nol. Dari desain basis data, routing, sampai deploy. Hasilnya tidak sempurna, tetapi prosesnya membuat saya paham mengapa backend dan frontend harus saling terhubung dengan benar.

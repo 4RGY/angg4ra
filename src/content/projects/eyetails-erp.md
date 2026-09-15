@@ -12,7 +12,7 @@ github: "https://github.com/4RGY/eyetails-erp"
 
 ## Konteks
 
-Proyek freelance untuk toko kacamata yang butuh sistem inventory dan penjualan terintegrasi. Sebelumnya mereka pake Excel manual.
+Proyek freelance untuk toko kacamata yang butuh sistem inventory dan penjualan terintegrasi. Sebelumnya mereka menggunakan Excel manual.
 
 ## Fitur
 
@@ -22,6 +22,6 @@ Proyek freelance untuk toko kacamata yang butuh sistem inventory dan penjualan t
 - Dashboard ringkasan bisnis
 - Multi-user dengan role
 
-## Yang Gua Pelajari
+## Yang Saya Pelajari
 
-Proyek freelance pertama ngajarin gua bahwa requirement dari klien itu hidup. Berubah terus. Yang paling penting bukan bikin fitur sempurna dari awal, tapi bikin arsitektur yang cukup fleksibel buat accommodate perubahan tanpa rewrite total.
+Proyek freelance pertama mengajarkan saya bahwa kebutuhan klien itu hidup. Berubah terus. Yang paling penting bukan membuat fitur sempurna sejak awal, melainkan menyusun arsitektur yang cukup fleksibel untuk menampung perubahan tanpa menulis ulang semuanya.

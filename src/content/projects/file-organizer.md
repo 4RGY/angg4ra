@@ -1,6 +1,6 @@
 ---
 title: "File Organizer"
-description: "Aplikasi desktop berbasis Python dan Tkinter yang merapikan ribuan file kuliah dan kerjaan jokian secara otomatis berdasarkan keyword nama file."
+description: "Aplikasi desktop berbasis Python dan Tkinter yang merapikan ribuan berkas kuliah dan pekerjaan lepas secara otomatis berdasarkan keyword nama file."
 status: "Selesai"
 tags: ["Python", "Tkinter", "Threading", "Desktop App", "PyInstaller"]
 category: "Web"

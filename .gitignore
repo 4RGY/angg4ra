@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# folder kerja lokal (backup model, log preview, skrip probe)
+tmp/
+.scratch/
