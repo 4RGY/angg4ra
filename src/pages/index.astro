@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>angg4ra | Data Analyst</title>
+<meta name="description" content="Portofolio angg4ra. Analisis data, pengembangan web, dan pengajaran.">
+<meta name="author" content="angg4ra.">
+<meta name="theme-color" content="#121417">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<script is:inline>
+/* theme + js flag before first paint so nothing flashes */
+document.documentElement.classList.add('js');
+try{var t=localStorage.getItem('a4-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+</script>
+<style is:inline>
+/* ---------- tokens ----------
+   base 60%  #121417   alt 30%  #d9dce1   blue 10%  #2b5bff
+   Contrast: alt on base 13.4. Blue is only ever a shape, line or dot (3.5 to 3.8),
+   never small text. The theme toggle swaps base and alt, blue stays. */
+:root{
+  --base:#121417; --alt:#d9dce1; --blue:#2b5bff;
+  --line:color-mix(in srgb,var(--alt) 15%,transparent);
+  --line2:color-mix(in srgb,var(--alt) 32%,transparent);
+  --mute:color-mix(in srgb,var(--alt) 62%,var(--base));
+  --pline:color-mix(in srgb,var(--base) 18%,transparent);
+  --pmute:color-mix(in srgb,var(--base) 62%,var(--alt));
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --f:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{--base:#d9dce1;--alt:#121417;color-scheme:light}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--base);color:var(--alt);font:400 1.0625rem/1.6 var(--f);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,p,ul,dl,dd,figure{margin:0}
+ul{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+::selection{background:var(--blue);color:#d9dce1}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.sec{padding:clamp(72px,10vw,130px) 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:-999px;top:8px;background:var(--alt);color:var(--base);padding:8px 14px;border-radius:99px;z-index:100}
+.skip:focus{left:8px}
+h2{font-size:clamp(2rem,5.2vw,4.4rem);line-height:.95;font-weight:800;font-stretch:125%;letter-spacing:-.035em}
+.an{font-stretch:75%;font-weight:500;font-size:.85rem;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.muted{color:var(--mute)}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,5vw,56px)}
+
+/* heading wipe, the only scroll entrance for headings */
+.js .wipe{clip-path:inset(0 0 100% 0);transform:translateY(30%);transition:clip-path .8s var(--ease),transform .8s var(--ease)}
+.js .wipe.in{clip-path:inset(0);transform:none}
+
+/* layers: grid under the canvas, content over it, opaque panels hide the dots behind them */
+#grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background-image:
+    linear-gradient(var(--line2) 1px,transparent 1px),linear-gradient(90deg,var(--line2) 1px,transparent 1px),
+    linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:240px 240px,240px 240px,48px 48px,48px 48px}
+#field{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block}
+main{position:relative;z-index:2}
+
+/* corner brackets and crop marks, the signature device */
+.box,.crop::after{--c:var(--blue);
+  background:
+    linear-gradient(var(--c),var(--c)) top left/14px 2px,
+    linear-gradient(var(--c),var(--c)) top left/2px 14px,
+    linear-gradient(var(--c),var(--c)) top right/14px 2px,
+    linear-gradient(var(--c),var(--c)) top right/2px 14px,
+    linear-gradient(var(--c),var(--c)) bottom left/14px 2px,
+    linear-gradient(var(--c),var(--c)) bottom left/2px 14px,
+    linear-gradient(var(--c),var(--c)) bottom right/14px 2px,
+    linear-gradient(var(--c),var(--c)) bottom right/2px 14px;
+  background-repeat:no-repeat}
+.box{position:absolute;inset:-1px;pointer-events:none;opacity:0;transition:opacity .25s,transform .35s var(--ease);transform:scale(1.015)}
+.crop{position:relative}
+.crop::after{content:"";position:absolute;inset:-9px;pointer-events:none}
+
+/* ---------- ruler, nav ---------- */
+.ruler{position:fixed;left:0;top:0;bottom:0;width:18px;z-index:40;overflow:hidden;border-right:1px solid var(--line2);background:color-mix(in srgb,var(--base) 60%,transparent)}
+.ruler i{position:absolute;left:0;right:0;top:-50px;bottom:-50px;
+  background:
+    repeating-linear-gradient(to bottom,var(--line2) 0 1px,transparent 1px 50px) 0 0/14px 100% no-repeat,
+    repeating-linear-gradient(to bottom,var(--line) 0 1px,transparent 1px 10px) 0 0/7px 100% no-repeat}
+.ruler b{position:absolute;left:0;top:30px;width:18px;height:3px;background:var(--blue)}
+@media (max-width:760px){.ruler{display:none}}
+
+nav.top,nav.top *{white-space:nowrap}
+nav.top{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:6px;
+  padding:6px 6px 6px 10px;background:color-mix(in srgb,var(--base) 78%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border:1px solid var(--line2);border-radius:99px;max-width:calc(100% - 24px)}
+.mark{position:relative;width:34px;height:34px;display:grid;place-items:center;font-weight:800;font-stretch:125%;font-size:1.2rem;text-decoration:none;margin-right:4px;letter-spacing:-.04em}
+.mark .box{opacity:1;transform:none}
+.mark em{font-style:normal;color:var(--blue)}
+nav .links{display:flex;gap:2px}
+nav .links a{padding:7px 12px;border-radius:99px;text-decoration:none;font-size:.92rem;font-weight:500;color:var(--mute);transition:color .2s,background .2s}
+nav .links a:hover{color:var(--alt);background:var(--line)}
+nav .links a[aria-current=true]{color:var(--base);background:var(--alt)}
+.icon-btn{min-width:34px;height:34px;border-radius:99px;border:1px solid var(--line2);background:transparent;cursor:pointer;display:grid;place-items:center;padding:0 9px;font-size:.78rem;font-weight:600;color:var(--mute)}
+.icon-btn:hover{border-color:var(--alt);color:var(--alt)}
+.icon-btn b{color:var(--alt)}
+.icon-btn i{width:14px;height:14px;border-radius:50%;background:var(--alt);box-shadow:inset -5px -3px 0 0 var(--base);transition:transform .5s var(--ease)}
+:root[data-theme=light] .icon-btn i{transform:rotate(180deg)}
+.pill{display:inline-flex;align-items:center;padding:7px 14px 7px 12px;border-radius:99px;background:var(--alt);color:var(--base);font-weight:600;font-size:.92rem;text-decoration:none}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--blue);margin-right:8px}
+.pill:hover{opacity:.88}
+.js nav.top{opacity:0;transform:translate(-50%,-10px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.js.ready nav.top{opacity:1;transform:translate(-50%,0)}
+
+/* theme switch: circle wipe from the toggle */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}
+::view-transition-new(root){z-index:2}
+::view-transition-group(*){animation-duration:.5s;animation-timing-function:var(--ease)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:flex}
+.hero-in{display:flex;flex-direction:column;flex:1;width:100%;padding-top:92px;padding-bottom:26px}
+#st-name{flex:1;min-height:210px}
+.dim{display:flex;align-items:center;gap:14px;color:var(--mute);margin:10px 0 24px}
+.dim i{flex:1;height:9px;background:linear-gradient(var(--line2),var(--line2)) center/100% 1px no-repeat}
+.dim i:first-child{border-left:1px solid var(--line2)}
+.dim i:last-child{border-right:1px solid var(--line2)}
+.hero-foot{display:grid;grid-template-columns:minmax(0,34rem) minmax(0,25rem);justify-content:space-between;align-items:end;gap:28px}
+.lead{font-size:clamp(1.05rem,1.7vw,1.35rem);line-height:1.45}
+.hint{margin-top:14px;color:var(--mute)}
+.tblock{display:grid;grid-template-columns:auto 1fr;border:1px solid var(--line2);background:color-mix(in srgb,var(--base) 72%,transparent)}
+.tblock dt,.tblock dd{margin:0;padding:9px 13px;border-bottom:1px solid var(--line2)}
+.tblock dt{color:var(--mute);border-right:1px solid var(--line2);font-stretch:75%;font-weight:500;font-size:.88rem}
+.tblock>:nth-last-child(-n+2){border-bottom:0}
+.live{display:inline-block;width:8px;height:8px;margin-right:9px;background:var(--blue);border-radius:50%;animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--blue) 70%,transparent)}70%,100%{box-shadow:0 0 0 9px transparent}}
+.js .dim,.js .lead,.js .hint,.js .tblock{opacity:0;transform:translateY(10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.js .tblock{transform:none;clip-path:inset(0 100% 0 0);transition:clip-path .9s var(--ease),opacity .4s}
+.js .hero.go .dim,.js .hero.go .lead,.js .hero.go .hint{opacity:1;transform:none}
+.js .hero.go .hint{transition-delay:.25s}
+.js .hero.go .tblock{opacity:1;clip-path:inset(0)}
+
+/* ---------- stages (the dots draw into these boxes) ---------- */
+.stage{position:relative}
+.figcap{margin-top:12px;color:var(--mute);font-size:.88rem;max-width:34rem}
+
+/* ---------- panels (30%) ---------- */
+.panel{background:var(--alt);color:var(--base);padding:clamp(18px,3vw,34px)}
+.panel .muted,.panel .pm{color:var(--pmute)}
+.split{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(24px,4.5vw,72px);align-items:start}
+.stagecol{position:sticky;top:104px;align-self:start}
+#st-proj{height:min(58vh,500px)}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{padding:7px 14px;border-radius:99px;border:1px solid var(--pline);background:transparent;cursor:pointer;font-weight:500;font-size:.92rem;transition:background .2s,border-color .2s,color .2s}
+.chip:hover{border-color:var(--base)}
+.chip[aria-pressed=true]{background:var(--base);color:var(--alt);border-color:var(--base)}
+.chip .n{color:var(--pmute);margin-left:6px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed=true] .n{color:inherit;opacity:.65}
+.rows{border-bottom:1px solid var(--pline)}
+.row{position:relative;border-top:1px solid var(--pline)}
+.row[hidden]{display:none}
+.row-h{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;width:100%;padding:22px 4px;text-align:left;background:none;border:0;cursor:pointer}
+.row-h .t{display:block;font-size:clamp(1.1rem,2vw,1.55rem);line-height:1.1;font-weight:700;font-stretch:112%;letter-spacing:-.02em;transition:transform .45s var(--ease)}
+.row-h:hover .t,.row-h:focus-visible .t,.row.act .t{transform:translateX(10px)}
+.tags{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:.86rem;color:var(--pmute)}
+.tags span{display:inline-flex;align-items:center;gap:7px}
+.tags span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--k,var(--base));border:1.5px solid var(--base)}
+.k-ai{--k:var(--blue)}.k-data{--k:var(--base)}.k-web{--k:transparent}
+.yr{color:var(--pmute);font-variant-numeric:tabular-nums;font-size:.9rem}
+.plus{position:relative;width:18px;height:18px;transition:transform .45s var(--ease)}
+.plus::before,.plus::after{content:"";position:absolute;inset:50% 0 auto;height:2px;background:var(--base);margin-top:-1px}
+.plus::after{transform:rotate(90deg)}
+.row-h[aria-expanded=true] .plus{transform:rotate(135deg)}
+.row .box{inset:-1px -6px}
+.row-h:hover~.box,.row-h:focus-visible~.box,.row.act .box{opacity:1;transform:none}
+.row-b{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .5s var(--ease),visibility 0s .5s}
+.row-h[aria-expanded=true]+.row-b{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.row-b>div{overflow:hidden}
+.detail{display:grid;gap:14px;padding:2px 4px 26px}
+.detail p{font-size:1.05rem;max-width:40ch}
+.detail ul{display:grid;gap:10px}
+.detail li{padding-left:22px;position:relative}
+.detail li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:2px;background:var(--blue)}
+.detail a{display:inline-block;font-weight:600;text-decoration:none;border-bottom:3px solid var(--blue);padding-bottom:1px}
+.detail a:hover{background:var(--base);color:var(--alt);border-color:var(--base)}
+.fact{display:inline-block;padding:5px 10px;border:1px solid var(--pline);font-size:.9rem;color:var(--pmute);justify-self:start}
+
+/* ---------- results ---------- */
+.res{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,6vw,96px);align-items:start}
+.res .lead2{font-size:1.2rem;max-width:30rem}
+.res .note{margin-top:18px;color:var(--mute);max-width:30rem}
+.plot{--rh:78px;display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr) 4.6rem;border-top:1px solid var(--line2)}
+.plot .c{display:grid;grid-auto-rows:var(--rh)}
+.names>div{display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--line);line-height:1.25;font-weight:500;padding-right:10px}
+.names small{color:var(--mute);font-weight:400;font-size:.8rem;font-variant-numeric:tabular-nums}
+#st-res{position:relative;height:calc(var(--rh)*4);background:repeating-linear-gradient(to bottom,transparent 0 calc(var(--rh) - 1px),var(--line) calc(var(--rh) - 1px) var(--rh))}
+#st-res::before{content:"";position:absolute;left:83.33%;top:0;bottom:0;border-left:2px dashed var(--blue)}
+#st-res .better{position:absolute;left:calc(83.33% + 8px);top:6px;color:var(--mute)}
+.vals>span{display:flex;align-items:center;justify-content:flex-end;border-bottom:1px solid var(--line);font-weight:700;font-variant-numeric:tabular-nums}
+.axis{grid-column:1/-1;padding:0 0 12px;color:var(--mute);order:-1}
+.plot .fig{grid-column:1/-1}
+.fact2{display:inline-block;margin-top:18px;padding:6px 11px;border:1px solid var(--line2);color:var(--mute);font-size:.92rem}
+
+/* ---------- lab ---------- */
+.lab{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4.5vw,72px);align-items:stretch}
+.lab .panel h3{font-size:1.6rem;line-height:1.1;font-weight:800;font-stretch:112%;letter-spacing:-.025em;margin:10px 0 8px}
+.tag{display:inline-block;padding:3px 10px;border:1px solid var(--pline);border-radius:99px;font-size:.82rem;color:var(--pmute)}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.item{padding:14px 14px;text-align:left;border:1px solid var(--pline);background:transparent;cursor:pointer;font-weight:500;transition:border-color .2s,background .2s,color .2s,transform .25s var(--ease)}
+.item:hover{border-color:var(--base)}
+.item:active{transform:scale(.97)}
+.item[aria-pressed=true]{background:var(--base);color:var(--alt);border-color:var(--base)}
+.verdict{margin-top:18px;min-height:4.6em;font-size:.98rem}
+.note2{font-size:.82rem;color:var(--pmute);margin-top:6px}
+#st-lab{height:min(44vh,330px)}
+.probs{display:grid;grid-template-columns:repeat(3,1fr);column-gap:max(10px,4%);margin-top:12px;text-align:center}
+.probs b{display:block;font-weight:600}
+.probs span{color:var(--mute);font-variant-numeric:tabular-nums}
+.probs .win span{color:var(--alt);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:clamp(20px,3vw,32px)}
+.card{display:block;text-decoration:none;position:relative;border:1px solid var(--line2);padding:clamp(18px,2.6vw,28px);transition:background .3s,color .3s,border-color .3s}
+.card:hover{background:var(--alt);color:var(--base);border-color:var(--alt)}
+.card:hover p,.card:hover .tag{color:var(--pmute);border-color:var(--pline)}
+.card:hover .box{opacity:1;transform:none}
+.card h3{font-size:1.35rem;line-height:1.15;font-weight:800;font-stretch:112%;letter-spacing:-.02em;margin:12px 0 6px}
+.card p{color:var(--mute)}
+.card .tag{color:var(--mute);border-color:var(--line2)}
+
+/* ---------- about ---------- */
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,6vw,96px);align-items:center}
+.lensbtn{position:relative;display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line2);padding:22px 28px 22px 0;cursor:pointer}
+.lensbtn:last-of-type{border-bottom:1px solid var(--line2)}
+.lensbtn h3{font-size:clamp(1.7rem,3.6vw,2.8rem);line-height:1;font-weight:800;font-stretch:125%;letter-spacing:-.035em;color:var(--mute);transition:color .3s}
+.lensbtn:hover h3,.lensbtn[aria-pressed=true] h3{color:var(--alt)}
+.lensbtn .ex{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.lensbtn[aria-pressed=true] .ex{grid-template-rows:1fr}
+.lensbtn .ex>p{overflow:hidden;color:var(--mute);max-width:34rem}
+.lensbtn[aria-pressed=true] .ex>p{padding-top:12px}
+.lensbtn::after{content:"";position:absolute;right:2px;top:30px;width:12px;height:12px;background:var(--blue);transform:scale(0);transition:transform .35s var(--ease)}
+.lensbtn[aria-pressed=true]::after{transform:scale(1)}
+#st-about{height:min(50vh,430px)}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:clamp(40px,6vw,80px)}
+.strip>div{padding:6px 22px 6px 0}
+.strip>div+div{padding-left:22px;border-left:1px solid var(--pline)}
+.strip small{display:block;color:var(--pmute);font-size:.85rem}
+.strip b{display:block;font-size:1.1rem;line-height:1.25;font-weight:700;font-stretch:112%;margin:4px 0}
+
+/* ---------- stack ---------- */
+.stack{display:grid;border-top:1px solid var(--line2)}
+.stack>div{display:grid;grid-template-columns:minmax(0,14rem) 1fr;gap:20px;padding:24px 0;border-bottom:1px solid var(--line2)}
+.stack dt{font-size:1.1rem;font-weight:700;font-stretch:112%}
+.stack dd{display:flex;flex-wrap:wrap;gap:8px}
+.stack dd span{padding:7px 14px;border:1px solid var(--line2);border-radius:99px;font-weight:500;background:color-mix(in srgb,var(--base) 70%,transparent);transition:background .2s,color .2s,border-color .2s,transform .25s var(--ease)}
+.stack dd span:hover{transform:translateY(-2px);background:var(--alt);color:var(--base);border-color:var(--blue)}
+
+/* ---------- contact (30% band) + footer ---------- */
+.band{background:var(--alt);color:var(--base);padding:clamp(72px,10vw,130px) 0}
+.big{font-size:clamp(2.1rem,6vw,5.6rem);line-height:.94;font-weight:800;font-stretch:125%;letter-spacing:-.04em;margin-bottom:clamp(28px,4vw,48px)}
+.mail{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mail a.addr{font-size:clamp(1.2rem,3vw,1.9rem);font-weight:700;font-stretch:112%;text-decoration:underline;text-decoration-color:var(--blue);text-decoration-thickness:4px;text-underline-offset:7px;transition:text-decoration-thickness .25s}
+.mail a.addr:hover{text-decoration-thickness:8px}
+.btn{display:inline-flex;align-items:center;padding:12px 22px;border:1px solid currentColor;border-radius:99px;background:transparent;cursor:pointer;text-decoration:none;font-weight:600;transition:background .25s,color .25s,transform .25s var(--ease)}
+.band .btn:hover{background:var(--base);color:var(--alt);border-color:var(--base)}
+.btn:active{transform:scale(.97)}
+footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
+#st-sig{height:clamp(110px,20vw,280px)}
+.fbar{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;color:var(--mute);font-size:.92rem;border-top:1px solid var(--line2);padding-top:22px;margin-top:18px}
+.fbar .soc{display:flex;gap:20px}
+.fbar .soc a{text-decoration:none}
+.fbar .soc a:hover{color:var(--alt)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--alt);color:var(--base);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--ease);z-index:90}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .split,.res,.lab,.about,.stack>div{grid-template-columns:1fr}
+  .stagecol{position:static}
+  #st-proj{height:260px}
+  #st-about{height:300px}
+  .hero-foot{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:22px}
+  .strip>div:nth-child(3){padding-left:0;border-left:0}
+}
+@media (max-width:640px){
+  nav .links{display:none}
+  .cards{grid-template-columns:1fr}
+  .plot{grid-template-columns:minmax(0,7.5rem) minmax(0,1fr) 4.2rem}
+  .items{grid-template-columns:1fr}
+  #st-name{min-height:170px}
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .wipe{clip-path:none;transform:none}
+  .js .dim,.js .lead,.js .hint,.js .tblock{opacity:1;transform:none;clip-path:none}
+  .js nav.top{opacity:1;transform:translate(-50%,0)}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#work" data-t="sk">Skip to work</a>
+<div id="grid" aria-hidden="true"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="ruler" aria-hidden="true"><i></i><b></b></div>
+
+<nav class="top" aria-label="Main">
+  <a class="mark" href="#top" aria-label="angg4ra., back to top"><span class="box"></span><span>a<em>.</em></span></a>
+  <div class="links">
+    <a href="#work" data-t="n_work">Work</a><a href="#results" data-t="n_res">Results</a><a href="#lab" data-t="n_lab">Lab</a><a href="#about" data-t="n_about">About</a>
+  </div>
+  <button class="icon-btn" id="lang" aria-label="Switch language between English and Indonesian"><span id="langL"><b>EN</b> / ID</span></button>
+  <button class="icon-btn" id="theme" aria-label="Switch between dark and light theme"><i></i></button>
+  <a class="pill" href="#contact"><i></i><span data-t="n_hi">Say hi</span></a>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="wrap hero-in">
+      <h1 class="sr">angg4ra.</h1>
+      <div class="stage" id="st-name" aria-hidden="true"></div>
+      <div class="dim" aria-hidden="true"><i></i><span class="an" id="dimN"></span><i></i></div>
+      <div class="hero-foot">
+        <div>
+          <p class="lead" data-t="h_sub">Data analyst. I clean the data, find the answer, then build the app that shows it.</p>
+          <p class="hint an" data-t="h_hint">Move your cursor, then scroll.</p>
+        </div>
+        <dl class="tblock">
+          <dt data-t="tb_role_k">Role</dt><dd data-t="tb_role_v">Data analyst</dd>
+          <dt data-t="tb_also_k">Also</dt><dd data-t="tb_also_v">Web developer and educator</dd>
+          <dt data-t="tb_st_k">Status</dt><dd><i class="live"></i><span data-t="tb_st_v">Open for internships, freelance and work</span></dd>
+        </dl>
+      </div>
+    </div>
+  </header>
+
+  <!-- WORK -->
+  <section class="sec" id="work">
+    <div class="wrap">
+      <div class="sec-h"><h2 class="wipe" data-t="w_h">Selected work</h2></div>
+      <div class="split">
+        <div class="stagecol">
+          <div class="stage" id="st-proj" aria-hidden="true"></div>
+          <p class="figcap" id="cap-proj"></p>
+        </div>
+        <div class="panel crop">
+          <div class="chips" role="group" aria-label="Filter projects">
+            <button class="chip" data-f="all" aria-pressed="true"><span data-t="f_all">All</span><span class="n"></span></button>
+            <button class="chip" data-f="ai" aria-pressed="false"><span data-t="f_ai">AI and ML</span><span class="n"></span></button>
+            <button class="chip" data-f="data" aria-pressed="false"><span data-t="f_data">Data</span><span class="n"></span></button>
+            <button class="chip" data-f="web" aria-pressed="false"><span data-t="f_web">Web</span><span class="n"></span></button>
+            <button class="chip" data-f="teach" aria-pressed="false"><span data-t="f_teach">Teaching</span><span class="n"></span></button>
+          </div>
+          <ul class="rows">
+            <li class="row" data-i="0" data-cat="ai data">
+              <button class="row-h" aria-expanded="false" aria-controls="p1">
+                <span><span class="t" data-t="p1_t">Sorting waste with EfficientNet-B3</span><span class="tags"><span class="k-ai">Computer vision</span><span class="k-data">Pipeline</span></span></span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="row-b" id="p1"><div><div class="detail">
+                <p data-t="p1_a">A three-class image classifier for Recyclable, Electronic and Organic waste, built end to end with my team for BDC Satria Data 2026.</p>
+                <span class="fact" data-t="p1_f">Validation macro F1 around 0.97</span>
+                <ul>
+                  <li data-t="p1_1">Deduplicated with MD5 and pHash together after default pHash settings gave false positives.</li>
+                  <li data-t="p1_2">Fine-tuned in two stages with weighted sampling for the smaller Electronic class.</li>
+                  <li data-t="p1_3">Error analysis showed most mistakes were Recyclable versus Organic, which pointed at label ambiguity more than model failure.</li>
+                </ul>
+              </div></div></div>
+              <span class="box"></span>
+            </li>
+            <li class="row" data-i="1" data-cat="ai data">
+              <button class="row-h" aria-expanded="false" aria-controls="p2">
+                <span><span class="t" data-t="p2_t">Predicting student performance</span><span class="tags"><span class="k-ai">Machine learning</span><span class="k-data">Education data</span></span></span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="row-b" id="p2"><div><div class="detail">
+                <p data-t="p2_a">My thesis. It uses real class data from the coding school where I teach to see what actually predicts how a student does.</p>
+                <ul>
+                  <li data-t="p2_1">Starts from questions a teacher can act on, not from the model.</li>
+                  <li data-t="p2_2">Compares simple baselines first so every gain is earned.</li>
+                  <li data-t="p2_3">Keeps the write-up readable for people who do not code.</li>
+                </ul>
+              </div></div></div>
+              <span class="box"></span>
+            </li>
+            <li class="row" data-i="2" data-cat="data">
+              <button class="row-h" aria-expanded="false" aria-controls="p3">
+                <span><span class="t" data-t="p3_t">Olist warehouse and SQL analytics</span><span class="tags"><span class="k-data">PostgreSQL</span><span class="k-data">Star schema</span></span></span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="row-b" id="p3"><div><div class="detail">
+                <p data-t="p3_a">Business questions answered in SQL, then remodeled into a star schema on the Brazilian e-commerce dataset.</p>
+                <ul>
+                  <li data-t="p3_1">Analytical queries written to answer a question, one at a time.</li>
+                  <li data-t="p3_2">Fact and dimension tables designed for fast, readable reporting.</li>
+                  <li data-t="p3_3">Report written so a non-technical reader can follow the logic.</li>
+                </ul>
+                <a href="https://github.com/4RGY/olist-commerce-analysis" target="_blank" rel="noopener" data-t="lk_case">Baca studi kasus</a>
+              </div></div></div>
+              <span class="box"></span>
+            </li>
+            <li class="row" data-i="3" data-cat="ai web">
+              <button class="row-h" aria-expanded="false" aria-controls="p4">
+                <span><span class="t" data-t="p4_t">ALIO, a personal assistant</span><span class="tags"><span class="k-ai">AI assistant</span><span class="k-web">Interface</span></span></span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="row-b" id="p4"><div><div class="detail">
+                <p data-t="p4_a">A daily assistant that runs from Telegram and the desktop, built around an interface that shrinks into a small island when you do not need it.</p>
+                <ul>
+                  <li data-t="p4_1">One agent, three surfaces: chat, desktop panel and a notch-sized island.</li>
+                  <li data-t="p4_2">Tools for notes, scheduling and system checks, wired to the same core.</li>
+                  <li data-t="p4_3">Kept small enough to run all day on a laptop.</li>
+                </ul>
+              </div></div></div>
+              <span class="box"></span>
+            </li>
+            <li class="row" data-i="4" data-cat="web">
+              <button class="row-h" aria-expanded="false" aria-controls="p5">
+                <span><span class="t" data-t="p5_t">Client CRM for a coffee shop</span><span class="tags"><span class="k-web">Client work</span><span class="k-web">Next.js</span></span></span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="row-b" id="p5"><div><div class="detail">
+                <p data-t="p5_a">A customer and loyalty system for Kataloji Coffee and Eatery, from requirements to a working app. Built as my work placement project.</p>
+                <ul>
+                  <li data-t="p5_1">Next.js and Supabase, with auth and row level security.</li>
+                  <li data-t="p5_2">Points, vouchers and customer records in one place, replacing a paper log.</li>
+                  <li data-t="p5_3">Scrum sprints with the shop owner reviewing each increment.</li>
+                </ul>
+                <a href="https://kataloji-crm-gamma.vercel.app" target="_blank" rel="noopener" data-t="lk_sites">See the site</a>
+              </div></div></div>
+              <span class="box"></span>
+            </li>
+            <li class="row" data-i="5" data-cat="teach">
+              <button class="row-h" aria-expanded="false" aria-controls="p6">
+                <span><span class="t" data-t="p6_t">Teaching computational thinking</span><span class="tags"><span class="k-web" data-t="p6_g">Coding educator at DigiKidz Indonesia</span></span></span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="row-b" id="p6"><div><div class="detail">
+                <p data-t="p6_a">Project-based classes where kids build something instead of sitting through slides.</p>
+                <ul>
+                  <li data-t="p6_1">Lessons start from a small project and grow from there.</li>
+                  <li data-t="p6_2">Explaining ideas simply keeps my own code cleaner.</li>
+                  <li data-t="p6_3">The class data became the base of my thesis.</li>
+                </ul>
+              </div></div></div>
+              <span class="box"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="sec" id="results" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-h"><h2 class="wipe" data-t="res_h">What didn't work</h2></div>
+      <div class="res">
+        <div>
+          <p class="lead2" data-t="res_lead">I tried three ideas to beat my BDC baseline. None of them did, and the write-up says so.</p>
+          <p class="note" data-t="res_note">Takeaway: most errors were Recyclable versus Organic, which looks more like ambiguous labels than a weak model.</p>
+          <span class="fact2" data-t="res_fact">Validation macro F1 around 0.97, public leaderboard 93.78.</span>
+        </div>
+        <div>
+          <p class="axis an" data-t="res_axis">Change in validation macro F1 vs the baseline. Right of the dashed line means better.</p>
+          <div class="plot" id="plot">
+            <div class="c names">
+              <div><span data-t="res_r1">Test-time augmentation</span><small>0.9684 vs 0.9688</small></div>
+              <div><span data-t="res_r2">Ensemble of two checkpoints</span><small>0.9661 vs 0.9688</small></div>
+              <div><span data-t="res_r3">Ensemble plus TTA</span><small>0.9643 vs 0.9688</small></div>
+              <div><span data-t="res_r4">Retrain on cleaned labels</span><small>0.9673 vs 0.9690</small></div>
+            </div>
+            <div class="c" id="st-res" aria-hidden="true"><span class="better an" data-t="res_better">better</span></div>
+            <div class="c vals" id="vals">
+              <span data-d="-0.0004">0</span><span data-d="-0.0027">0</span><span data-d="-0.0045">0</span><span data-d="-0.0017">0</span>
+            </div>
+          </div>
+          <p class="figcap" data-t="res_cap">Each bubble is one experiment, placed by its change in validation macro F1.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAB -->
+  <section class="sec" id="lab" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-h"><h2 class="wipe" data-t="lab_h">Lab</h2><p class="muted" data-t="lab_sub">Small things I build to learn.</p></div>
+      <div class="lab">
+        <div class="panel crop">
+          <span class="tag" data-t="lab_try">Try it</span>
+          <h3 data-t="lab_t">Waste sorter</h3>
+          <p class="pm" data-t="lab_p">Pick an item and see how a three-class model might score it.</p>
+          <div class="items" id="items">
+            <button class="item" data-k="bottle" aria-pressed="true" data-t="it_bottle">Plastic bottle</button>
+            <button class="item" data-k="charger" aria-pressed="false" data-t="it_charger">Phone charger</button>
+            <button class="item" data-k="peel" aria-pressed="false" data-t="it_peel">Banana peel</button>
+            <button class="item" data-k="pizza" aria-pressed="false" data-t="it_pizza">Greasy pizza box</button>
+          </div>
+          <p class="verdict" id="verdict" aria-live="polite"></p>
+          <p class="note2" data-t="lab_note">Illustrative numbers, not live model output.</p>
+        </div>
+        <div>
+          <div class="stage" id="st-lab" aria-hidden="true"></div>
+          <div class="probs" id="probs">
+            <div><b>Recyclable</b><span>0%</span></div>
+            <div><b>Electronic</b><span>0%</span></div>
+            <div><b>Organic</b><span>0%</span></div>
+          </div>
+          <p class="figcap" data-t="lab_cap">Each dot is a vote for a class. Blue is the winner.</p>
+        </div>
+      </div>
+      <div class="cards">
+        <a class="card" href="https://pantau-dbd-seven.vercel.app" target="_blank" rel="noopener"><span class="box"></span><span class="tag" data-t="lab_open">Live</span><h3 data-t="lab_c1t">pantau-dbd</h3><p data-t="lab_c1p">Dengue case prediction for Jakarta from daily weather and health office reports, with a walk-forward evaluation that reports the honest result.</p></a>
+        <a class="card" href="https://github.com/4RGY/ihsg-idx-analytics" target="_blank" rel="noopener"><span class="box"></span><span class="tag" data-t="lab_repo">Repo</span><h3 data-t="lab_c2t">IHSG and IDX analytics</h3><p data-t="lab_c2p">Ten risk metrics for 22 liquid IDX stocks against the index: Sharpe, beta, drawdown, value at risk and seasonality.</p></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="sec" id="about" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-h"><h2 class="wipe" data-t="ab_h">About</h2></div>
+      <div class="about">
+        <div id="lenses">
+          <button class="lensbtn" data-l="0" aria-pressed="true"><h3 data-t="ab_a_t">Analyze</h3><div class="ex"><p data-t="ab_a_p">I start with the question, clean the data until I trust it, then doubt my own result.</p></div></button>
+          <button class="lensbtn" data-l="1" aria-pressed="false"><h3 data-t="ab_b_t">Build</h3><div class="ex"><p data-t="ab_b_p">FastAPI, Next.js and Astro to ship what the analysis finds, as something people can click.</p></div></button>
+          <button class="lensbtn" data-l="2" aria-pressed="false"><h3 data-t="ab_c_t">Teach</h3><div class="ex"><p data-t="ab_c_p">Teaching coding sharpens how I explain things. The class data became the base of my thesis.</p></div></button>
+        </div>
+        <div>
+          <div class="stage" id="st-about" aria-hidden="true"></div>
+          <p class="figcap" id="cap-about"></p>
+        </div>
+      </div>
+      <div class="panel crop strip">
+        <div><small data-t="j_now">Now</small><b data-t="j1_t">Information Systems, 6th semester</b><small>Universitas Indraprasta PGRI</small></div>
+        <div><small data-t="j_now">Now</small><b data-t="j2_t">Coding educator</b><small>DigiKidz Indonesia</small></div>
+        <div><small>2026</small><b>BDC Satria Data</b><small data-t="j3_s">Image classification competition</small></div>
+        <div><small data-t="j_next">Next</small><b data-t="j4_t">Data and AI engineering</b><small data-t="j4_s">Computer vision, MLOps, backend</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section class="sec" id="stack" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-h"><h2 class="wipe" data-t="st_h">Stack</h2></div>
+      <dl class="stack">
+        <div><dt data-t="st_1">Data and ML</dt><dd><span>Python</span><span>Pandas</span><span>NumPy</span><span>Scikit-learn</span><span>PyTorch</span><span>OpenCV</span><span>SQL</span></dd></div>
+        <div><dt data-t="st_2">Backend and ops</dt><dd><span>FastAPI</span><span>PostgreSQL</span><span>Docker</span><span>Linux</span><span>Git</span></dd></div>
+        <div><dt data-t="st_3">Web</dt><dd><span>React</span><span>Next.js</span><span>Astro</span><span>TypeScript</span><span>Tailwind CSS</span></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="band" id="contact">
+    <div class="wrap">
+      <h2 class="big wipe" data-t="ct_h">Got messy data? Let's talk.</h2>
+      <div class="mail">
+        <a class="addr" href="mailto:rgyanggara@gmail.com">rgyanggara@gmail.com</a>
+        <button class="btn" id="copy" data-t="ct_copy">Copy email</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="stage" id="st-sig" aria-hidden="true"></div>
+    <div class="fbar">
+      <span data-t="ft">&copy; 2026 angg4ra. All rights reserved. Designed and built by angg4ra.</span>
+      <div class="soc"><a href="https://github.com/4RGY" target="_blank" rel="noopener">GitHub</a><a href="https://www.linkedin.com/in/argy-anggara/" target="_blank" rel="noopener">LinkedIn</a><a href="mailto:rgyanggara@gmail.com">Email</a></div>
+    </div>
+  </div>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script is:inline>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const mulberry = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+
+  /* =============== i18n (English lives in the HTML, Indonesian here) =============== */
+  const ID = {
+    sk:'Lompat ke karya', n_work:'Karya', n_res:'Hasil', n_lab:'Lab', n_about:'Tentang', n_hi:'Sapa',
+    h_sub:'Data analyst. Saya membersihkan data, mencari jawabannya, lalu membangun aplikasi yang menampilkannya.',
+    h_hint:'Gerakkan kursor, lalu scroll.',
+    tb_role_k:'Peran', tb_role_v:'Data analyst', tb_also_k:'Juga', tb_also_v:'Pengembang web dan pengajar', tb_st_k:'Status', tb_st_v:'Terbuka untuk magang, freelance, dan work',
+    w_h:'Karya pilihan', f_all:'Semua', f_ai:'AI dan ML', f_data:'Data', f_web:'Web', f_teach:'Mengajar',
+    p1_t:'Memilah sampah dengan EfficientNet-B3',
+    p1_a:'Klasifikasi gambar tiga kelas untuk sampah Recyclable, Electronic, dan Organic, dikerjakan end to end bersama tim untuk BDC Satria Data 2026.',
+    p1_f:'Macro F1 validasi sekitar 0,97',
+    p1_1:'Deduplikasi memakai MD5 dan pHash sekaligus, setelah pengaturan default pHash menghasilkan false positive.',
+    p1_2:'Fine-tuning dua tahap dengan weighted sampling untuk kelas Electronic yang jumlahnya paling sedikit.',
+    p1_3:'Analisis error menunjukkan kesalahan terbanyak ada di pasangan Recyclable dan Organic, yang lebih mengarah ke label ambigu daripada model yang lemah.',
+    p2_t:'Memprediksi performa siswa',
+    p2_a:'Skripsi saya. Memakai data kelas dari sekolah coding tempat saya mengajar untuk mencari apa yang benar-benar memprediksi performa siswa.',
+    p2_1:'Dimulai dari pertanyaan yang bisa ditindaklanjuti guru, bukan dari modelnya.',
+    p2_2:'Baseline sederhana diuji lebih dulu, supaya setiap peningkatan punya bukti.',
+    p2_3:'Laporannya tetap bisa dibaca orang yang tidak coding.',
+    p3_t:'Warehouse dan analitik SQL Olist',
+    p3_a:'Pertanyaan bisnis dijawab dengan SQL, lalu dimodelkan ulang jadi star schema pada dataset e-commerce Brasil.',
+    p3_1:'Query analitik yang ditulis untuk menjawab satu pertanyaan per satu.',
+    p3_2:'Tabel fakta dan dimensi yang dirancang untuk pelaporan cepat dan mudah dibaca.',
+    p3_3:'Laporan ditulis agar pembaca non-teknis bisa mengikuti logikanya.',
+    p4_t:'ALIO, asisten pribadi',
+    p4_a:'Asisten harian yang jalan dari Telegram dan desktop, dibangun dengan antarmuka yang mengecil jadi pulau kecil saat tidak dibutuhkan.',
+    p4_1:'Satu agen, tiga permukaan: chat, panel desktop, dan island seukuran notch.',
+    p4_2:'Catatan, penjadwalan, dan pengecekan sistem tersambung ke inti yang sama.',
+    p4_3:'Dijaga tetap ringan supaya bisa jalan seharian di laptop.',
+    p5_t:'CRM klien untuk kedai kopi',
+    p5_a:'Sistem pelanggan dan loyalitas untuk Kataloji Coffee and Eatery, dari kebutuhan sampai aplikasi yang jalan. Dibuat sebagai proyek Kerja Praktek.',
+    p5_1:'Next.js dan Supabase, dengan autentikasi dan row level security.',
+    p5_2:'Poin, voucher, dan data pelanggan di satu tempat, menggantikan catatan manual.',
+    p5_3:'Sprint Scrum dengan pemilik kedai meninjau tiap penambahan.',
+    p6_t:'Mengajar computational thinking', p6_g:'Coding educator di DigiKidz Indonesia',
+    p6_a:'Kelas berbasis proyek tempat anak-anak membangun sesuatu, bukan cuma melihat slide.',
+    p6_1:'Pelajaran dimulai dari proyek kecil lalu berkembang.',
+    p6_2:'Menjelaskan ide dengan sederhana membuat kode saya sendiri lebih rapi.',
+    p6_3:'Data kelas menjadi dasar skripsi saya.',
+    lk_case:'Baca studi kasus', lk_sites:'Lihat websitenya', lk_more:'Baca selengkapnya',
+    lab_open:'Live', lab_repo:'Repo',
+    lab_c1t:'pantau-dbd', lab_c1p:'Prediksi kasus DBD DKI Jakarta dari cuaca harian dan laporan Dinkes, dengan evaluasi walk-forward dan angka yang jujur apa adanya.',
+    lab_c2t:'IHSG dan analitik IDX', lab_c2p:'Sepuluh metrik risiko untuk 22 saham likuid IDX dihadapkan ke IHSG: Sharpe, beta, drawdown, value at risk, dan pola musiman.',
+    ab_h:'Tentang',
+    ab_a_t:'Analisis', ab_a_p:'Saya mulai dari pertanyaannya, membersihkan data sampai saya percaya, lalu meragukan hasil saya sendiri.',
+    ab_b_t:'Bangun', ab_b_p:'FastAPI, Next.js, dan Astro untuk merilis temuan analisis jadi sesuatu yang bisa diklik orang.',
+    ab_c_t:'Ajar', ab_c_p:'Mengajar coding merapikan cara saya menjelaskan. Data kelas jadi dasar skripsi.',
+    c_p2:'Skor terhadap satu sinyal belajar, ilustrasi. Biru adalah tren.',
+    c_p3:'Star schema, ilustrasi. Biru adalah tabel fakta, sisanya dimensi.',
+    c_p4:'Island asisten dan widget-nya, ilustrasi. Biru adalah island yang diminimalkan.',
+    c_p5:'Wireframe halaman klien, ilustrasi. Biru adalah call to action.',
+    c_p6:'Balok bangunan, ilustrasi. Biru adalah balok yang baru dipasang murid.',
+    res_h:'Yang tidak berhasil',
+    res_lead:'Saya mencoba tiga ide untuk mengalahkan baseline BDC. Tidak ada yang berhasil, dan laporannya mengakui itu.',
+    res_note:'Kesimpulan: kebanyakan error adalah Recyclable versus Organic, yang tampak lebih seperti label ambigu daripada model yang lemah.',
+    res_fact:'Macro F1 validasi sekitar 0,97, skor leaderboard publik 93,78.',
+    res_axis:'Perubahan macro F1 validasi dibanding baseline. Di kanan garis putus-putus berarti lebih baik.',
+    res_r1:'Augmentasi saat tes (TTA)', res_r2:'Ensemble dua checkpoint', res_r3:'Ensemble plus TTA', res_r4:'Latih ulang dengan label bersih',
+    res_better:'lebih baik', res_cap:'Setiap gelembung adalah satu eksperimen, diletakkan menurut perubahan macro F1 validasi.',
+    lab_h:'Lab', lab_sub:'Hal kecil yang saya bangun untuk belajar.', lab_try:'Coba', lab_t:'Penyortir sampah',
+    lab_p:'Pilih satu benda dan lihat bagaimana model tiga kelas bisa menilainya.',
+    it_bottle:'Botol plastik', it_charger:'Charger HP', it_peel:'Kulit pisang', it_pizza:'Kotak pizza berminyak',
+    lab_note:'Angka ilustrasi, bukan keluaran model sungguhan.', lab_cap:'Setiap titik adalah satu suara untuk sebuah kelas. Biru adalah pemenangnya.',
+    ab_cap_0:'Analisis: titik menumpuk jadi grafik. Biru adalah jawabannya.',
+    ab_cap_1:'Bangun: titik yang sama jadi baris tabel. Biru adalah headernya.',
+    ab_cap_2:'Kreasi: titik yang sama tumbuh jadi spiral.',
+    j_now:'Sekarang', j_next:'Berikutnya', j1_t:'Sistem Informasi, semester 6', j2_t:'Pengajar coding', j3_s:'Kompetisi klasifikasi gambar',
+    j4_t:'Data dan AI engineering', j4_s:'Computer vision, MLOps, backend',
+    st_h:'Stack', st_1:'Data dan ML', st_2:'Backend dan ops', st_3:'Web',
+    ct_h:'Punya data berantakan? Ayo ngobrol.', ct_copy:'Salin email',
+    ft:'© 2026 angg4ra. Seluruh hak cipta dilindungi. Dirancang dan dibuat oleh angg4ra.',
+    dim_s:'sampel', toast_ok:'Email disalin', toast_fail:'Gagal menyalin. Pilih alamatnya secara manual.',
+    v_bottle:'Jelas. Bentuk plastik seperti ini yang paling sering dilihat model.',
+    v_charger:'Jelas. Kabel dan colokan sangat berbeda dari dua kelas lain.',
+    v_peel:'Jelas. Sampah organik dengan tekstur alami yang kentara.',
+    v_pizza:'Ragu. Kardus bernoda makanan ada di antara Recyclable dan Organic, pasangan yang paling sering tertukar di model asli saya.'
+  };
+  const EN = {
+    c_p1:'Confusion matrix, illustrative. Blue marks the Recyclable and Organic mix-up behind most errors.',
+    c_p2:'Scores against a study signal, illustrative. Blue is the trend.',
+    c_p3:'Star schema, illustrative. Blue is the fact table, the rest are dimensions.',
+    c_p4:'Assistant island and its widgets, illustrative. Blue is the minimized island.',
+    c_p5:'A client page wireframe, illustrative. Blue is the call to action.',
+    c_p6:'Building blocks, illustrative. Blue is the block a student just placed.',
+    ab_cap_0:'Analyze: dots stack into a chart. Blue is the answer.',
+    ab_cap_1:'Build: the same dots become rows of a table. Blue is the header.',
+    ab_cap_2:'Teach: the same dots grow into a lesson.',
+    dim_s:'samples', toast_ok:'Email copied', toast_fail:'Copy failed. Select the address instead.',
+    v_bottle:'Clear call. Plastic shapes like this are what the model sees most.',
+    v_charger:'Clear call. Cables and plugs are very distinct from the other two classes.',
+    v_peel:'Clear call. Organic waste with an obvious natural texture.',
+    v_pizza:'Unsure. Food-stained cardboard sits between Recyclable and Organic, the pair my real model mixed up most.'
+  };
+  let lang = 'id';
+  try { const sv = localStorage.getItem('a4-lang'); if (sv) lang = sv; } catch (e) {}
+  const tx = k => (lang === 'id' ? ID[k] : EN[k]);
+  const rawText = el => (el.dataset.raw || (el.dataset.raw = el.textContent));
+  $$('[data-t]').forEach(el => { const v = EN[el.dataset.t]; if (v) el.dataset.en = v; else el.dataset.en = rawText(el); });
+  let onLang = () => {};
+  const applyLang = () => {
+    $$('[data-t]').forEach(el => { el.textContent = (lang === 'id' && ID[el.dataset.t]) ? ID[el.dataset.t] : el.dataset.en; });
+    root.lang = lang;
+    $('#langL').innerHTML = lang === 'id' ? 'EN / <b>ID</b>' : '<b>EN</b> / ID';
+    onLang();
+  };
+  $('#lang').addEventListener('click', () => {
+    lang = lang === 'id' ? 'en' : 'id';
+    try { localStorage.setItem('a4-lang', lang); } catch (e) {}
+    applyLang();
+  });
+
+  /* =============== ruler, heading wipes, section spy =============== */
+  const rul = $('.ruler i'), mk = $('.ruler b'); let tk = false, lastScroll = 0;
+  const onScroll = () => {
+    lastScroll = performance.now();
+    if (tk) return; tk = true;
+    requestAnimationFrame(() => {
+      const y = scrollY, h = root.scrollHeight - innerHeight;
+      rul.style.transform = `translateY(${-(y % 50)}px)`;
+      mk.style.transform = `translateY(${(h > 0 ? y / h : 0) * (innerHeight - 64)}px)`; tk = false;
+    });
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* observe each heading's parent: a target hidden by its own clip-path has zero visible area and would never intersect */
+  const wmap = new Map();
+  $$('.wipe').forEach(el => { const p = el.parentElement; if (!wmap.has(p)) wmap.set(p, []); wmap.get(p).push(el); });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    wmap.get(e.target).forEach(el => el.classList.add('in')); io.unobserve(e.target);
+  }), { rootMargin: '0px 0px -12% 0px' });
+  wmap.forEach((_, p) => io.observe(p));
+
+  const links = $$('nav.top .links a');
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + e.target.id)));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  ['work', 'results', 'lab', 'about'].forEach(id => spy.observe(document.getElementById(id)));
+
+  /* =============== theme toggle with circle wipe =============== */
+  let onTheme = () => {};
+  const setTheme = (t, x, y) => {
+    const apply = () => { root.dataset.theme = t; try { localStorage.setItem('a4-theme', t); } catch (e) {} onTheme(); };
+    if (!document.startViewTransition || reduce) return apply();
+    const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    document.startViewTransition(apply).ready.then(() =>
+      root.animate({ clipPath: [`circle(0 at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+        { duration: 650, easing: 'cubic-bezier(.65,0,.35,1)', pseudoElement: '::view-transition-new(root)' }));
+  };
+  $('#theme').addEventListener('click', e => {
+    const b = e.currentTarget.getBoundingClientRect();
+    setTheme(root.dataset.theme === 'light' ? 'dark' : 'light', b.left + b.width / 2, b.top + b.height / 2);
+  });
+
+  /* =============== THE CANVAS: one dataset that reshapes itself for every section =============== */
+  const cv = $('#field'), ctx = cv.getContext('2d');
+  const hero = $('#top');
+  const rnd = mulberry(11);
+  const hex = s => { s = s.trim().replace('#', ''); return [0, 2, 4].map(i => parseInt(s.slice(i, i + 2), 16)); };
+  let altC = [217, 220, 225], blueC = [43, 91, 255], altCss = '', blueCss = '';
+  const readColors = () => {
+    const cs = getComputedStyle(root);
+    altC = hex(cs.getPropertyValue('--alt')); blueC = hex(cs.getPropertyValue('--blue'));
+    altCss = `rgb(${altC.join(',')})`; blueCss = `rgb(${blueC.join(',')})`;
+  };
+  readColors();
+
+  let W = 0, H = 0, dpr = 1, N = 0, dots = [], cache = {}, inited = false;
+  const stages = { name: $('#st-name'), proj: $('#st-proj'), res: $('#st-res'), lab: $('#st-lab'), about: $('#st-about'), sig: $('#st-sig') };
+  const KEY = { name: 0, proj: 0, res: 0, lab: 'bottle', about: 0, sig: 0 };
+  const rects = {};
+  const S = { r: 2.4, rT: 2.4, la: 0, laT: 0 };
+  const lens = { x: 0, y: 0, tx: 0, ty: 0, R: 118 };
+  let cur = 'ambient', needRetarget = false, hold = !reduce, introPending = true, lastMove = -1e9, seen = false, raf = 0, last = 0, tick2 = 0;
+
+  /* ---- sampling helpers: draw a shape in black (normal) or red (accent), read it back as dot positions ---- */
+  const oc = document.createElement('canvas'), octx = oc.getContext('2d', { willReadFrequently: true });
+  const FAM = 'Archivo, system-ui, sans-serif';
+  const setFont = (c, px) => {
+    c.font = `800 expanded ${px}px ${FAM}`;
+    if (!/Archivo/.test(c.font)) { c.font = `800 ${px}px ${FAM}`; if ('fontStretch' in c) c.fontStretch = 'expanded'; }
+  };
+  const rrect = (c, x, y, w, h, r) => {
+    r = Math.min(r, w / 2, h / 2); c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+  };
+  const trim = pts => {
+    if (pts.length <= N) return pts;
+    for (let i = pts.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = pts[i]; pts[i] = pts[j]; pts[j] = t; }
+    pts.length = N; return pts;
+  };
+  const raster = (w, h, draw, o = {}) => {
+    oc.width = Math.max(8, Math.ceil(w)); oc.height = Math.max(8, Math.ceil(h));
+    octx.clearRect(0, 0, oc.width, oc.height); octx.fillStyle = '#000'; octx.strokeStyle = '#000'; octx.textBaseline = 'alphabetic'; octx.textAlign = 'left';
+    draw(octx);
+    const data = octx.getImageData(0, 0, oc.width, oc.height).data, ow = oc.width, oh = oc.height;
+    const grab = g => {
+      const pts = [];
+      for (let y = g / 2; y < oh; y += g) for (let x = g / 2; x < ow; x += g) { const i = (((y | 0) * ow) + (x | 0)) * 4; if (data[i + 3] > 128) pts.push({ x, y, k: data[i] > 128 ? 1 : 0 }); }
+      return pts;
+    };
+    if (o.g) return { pts: trim(grab(o.g)), g: o.g };
+    let g = o.gmax || 10, pts = [];
+    for (; g >= (o.gmin || 2.5); g -= .25) { pts = grab(g); if (pts.length >= N) break; }
+    return { pts: trim(pts), g };
+  };
+
+  const nameLayout = (c, w, h) => {
+    setFont(c, 100); const w100 = c.measureText('angg4ra.').width;
+    const fs = Math.min(w * .985 / w100 * 100, h / .95);
+    setFont(c, fs);
+    const mw = c.measureText('angg4ra').width, pw = c.measureText('.').width, mm = c.measureText('angg4ra.');
+    const asc = mm.actualBoundingBoxAscent, desc = mm.actualBoundingBoxDescent;
+    return { fs, mw, x0: (w - (mw + pw)) / 2, y: (h - (asc + desc)) / 2 + asc };
+  };
+  const nameGen = (w, h) => raster(w, h, c => {
+    const L = nameLayout(c, w, h);
+    c.fillStyle = '#000'; c.fillText('angg4ra', L.x0, L.y);
+    c.fillStyle = '#f00'; c.fillText('.', L.x0 + L.mw, L.y);   /* the period is the blue signature */
+  });
+
+  const PROJ = [
+    /* 0 confusion matrix, blue is the Recyclable/Organic mix-up */
+    (w, h) => raster(w, h, c => {
+      const s = Math.min(w, h) * .9, x0 = (w - s) / 2, y0 = (h - s) / 2, gap = s * .04, cs = (s - 2 * gap) / 3;
+      const f = [[1, .16, .6], [.08, 1, .1], [.55, .14, 1]];
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
+        const z = cs * (i === j ? 1 : f[i][j]); c.fillStyle = (i !== j && f[i][j] > .5) ? '#f00' : '#000';
+        c.fillRect(x0 + j * (cs + gap) + (cs - z) / 2, y0 + i * (cs + gap) + (cs - z) / 2, z, z);
+      }
+    }),
+    /* 1 scatter with a trend line */
+    (w, h) => raster(w, h, c => {
+      const R = mulberry(5), n = 40;
+      for (let i = 0; i < n; i++) {
+        const x = w * .06 + w * .88 * (i / (n - 1)), base = h * .88 - h * .7 * (i / (n - 1));
+        c.beginPath(); c.arc(x, clamp(base + (R() - .5) * h * .34, h * .06, h * .94), Math.max(5, w * .014), 0, 6.2832); c.fill();
+      }
+      c.lineWidth = Math.max(6, w * .012); c.strokeStyle = '#f00'; c.beginPath(); c.moveTo(w * .04, h * .9); c.lineTo(w * .96, h * .16); c.stroke();
+    }, { gmin: 3 }),
+    /* 2 star schema, blue is the fact table */
+    (w, h) => raster(w, h, c => {
+      const bw = w * .26, bh = h * .17, D = [[.2, .16], [.8, .16], [.2, .84], [.8, .84]];
+      c.lineWidth = Math.max(5, w * .01); c.strokeStyle = '#000';
+      D.forEach(([dx, dy]) => { c.beginPath(); c.moveTo(w / 2, h / 2); c.lineTo(dx * w, dy * h); c.stroke(); });
+      c.fillStyle = '#000'; D.forEach(([dx, dy]) => c.fillRect(dx * w - bw / 2, dy * h - bh / 2, bw, bh));
+      c.fillStyle = '#f00'; c.fillRect(w / 2 - bw * .6, h / 2 - bh * .8, bw * 1.2, bh * 1.6);
+    }, { gmin: 3 }),
+    /* 3 assistant island and widgets */
+    (w, h) => raster(w, h, c => {
+      c.fillStyle = '#f00'; rrect(c, w * .27, h * .06, w * .46, h * .1, h * .05); c.fill();
+      c.lineWidth = Math.max(5, w * .01); c.strokeStyle = '#000'; rrect(c, w * .08, h * .26, w * .84, h * .68, h * .04); c.stroke();
+      c.fillStyle = '#000';
+      [[.14, .34, .34, .2], [.52, .34, .34, .2], [.14, .6, .72, .08], [.14, .74, .5, .08]].forEach(([x, y, ww, hh]) => { rrect(c, w * x, h * y, w * ww, h * hh, 6); c.fill(); });
+    }, { gmin: 3 }),
+    /* 4 client page wireframe */
+    (w, h) => raster(w, h, c => {
+      c.lineWidth = Math.max(5, w * .01); c.strokeStyle = '#000'; rrect(c, w * .06, h * .08, w * .88, h * .84, 10); c.stroke();
+      c.beginPath(); c.moveTo(w * .06, h * .2); c.lineTo(w * .94, h * .2); c.stroke();
+      c.fillStyle = '#000'; for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(w * (.1 + .045 * i), h * .14, 5, 0, 6.2832); c.fill(); }
+      c.fillRect(w * .12, h * .3, w * .5, h * .07); c.fillRect(w * .12, h * .42, w * .7, h * .035); c.fillRect(w * .12, h * .49, w * .6, h * .035);
+      c.fillRect(w * .12, h * .6, w * .34, h * .26);
+      c.fillStyle = '#f00'; rrect(c, w * .54, h * .66, w * .28, h * .1, 8); c.fill();
+    }, { gmin: 3 }),
+    /* 5 building blocks */
+    (w, h) => raster(w, h, c => {
+      const rows = 4, bs = Math.min(w / (rows + 1), h / (rows + .4)), gp = bs * .1;
+      for (let r = 0; r < rows; r++) { const n = rows - r, x0 = (w - n * bs) / 2, y = h - (r + 1) * bs;
+        for (let q = 0; q < n; q++) { c.fillStyle = (r === rows - 1) ? '#f00' : '#000'; c.fillRect(x0 + q * bs + gp / 2, y + gp / 2, bs - gp, bs - gp); } }
+    })
+  ];
+
+  const ABOUT = [
+    (w, h) => raster(w, h, c => {
+      const hs = [.38, .62, .5, .92, .7, .46], n = hs.length, gap = w * .04, bw = (w - gap * (n - 1)) / n;
+      hs.forEach((v, i) => { c.fillStyle = i === 3 ? '#f00' : '#000'; c.fillRect(i * (bw + gap), h - v * h * .95, bw, v * h * .95); });
+    }),
+    (w, h) => raster(w, h, c => {
+      const cols = 5, rows = 7, gap = Math.max(4, w * .015), cw = (w - gap * (cols - 1)) / cols, ch = (h - gap * (rows - 1)) / rows;
+      for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) { c.fillStyle = r === 0 ? '#f00' : '#000'; c.fillRect(q * (cw + gap), r * (ch + gap), cw, ch); }
+    }),
+    (w, h) => {
+      const n = N, R = Math.min(w, h) / 2 * .98, pts = [];
+      for (let i = 0; i < n; i++) { const r = R * Math.sqrt((i + .5) / n), a = i * 2.399963; pts.push({ x: w / 2 + r * Math.cos(a), y: h / 2 + r * Math.sin(a), k: i % 55 === 0 ? 1 : 0 }); }
+      return { pts, g: R * 1.77 / Math.sqrt(n) };
+    }
+  ];
+
+  const DELTAS = [-.0004, -.0027, -.0045, -.0017], LO = -.005, SPAN = .006;
+  const resGen = (w, h) => {
+    const rh = h / 4, R = Math.min(26, rh * .34), g = clamp(Math.sqrt(4 * Math.PI * R * R / (N * .55)), 3, 7);
+    return raster(w, h, c => { DELTAS.forEach((d, i) => { c.beginPath(); c.arc((d - LO) / SPAN * w, rh * (i + .5), R, 0, 6.2832); c.fill(); }); }, { g });
+  };
+
+  const PROB = { bottle: [.96, .02, .02], charger: [.01, .98, .01], peel: [.02, .01, .97], pizza: [.52, .01, .47] };
+  const labGen = (w, h, key) => {
+    const p = PROB[key], g = Math.max(5, Math.sqrt((w / 3 * h) / (N * .62)));
+    const gap = Math.max(10, w * .04), cw = (w - 2 * gap) / 3, cols = Math.max(1, Math.floor(cw / g)), maxRows = Math.max(1, Math.floor(h / g));
+    const win = p.indexOf(Math.max(...p)), pts = [];
+    for (let c = 0; c < 3; c++) {
+      const rows = Math.max(1, Math.round(p[c] * maxRows)), x0 = c * (cw + gap) + (cw - cols * g) / 2;
+      for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) pts.push({ x: x0 + q * g + g / 2, y: h - r * g - g / 2, k: c === win ? 1 : 0 });
+    }
+    return { pts: trim(pts), g };
+  };
+
+  const GEN = {
+    name: nameGen, sig: nameGen, res: resGen, lab: labGen,
+    proj: (w, h, k) => PROJ[k](w, h),
+    about: (w, h, k) => ABOUT[k](w, h)
+  };
+  const getStage = name => {
+    const r = rects[name], k = KEY[name], ck = name + ':' + k, sig = `${N}|${r.width | 0}|${r.height | 0}`;
+    if (cache[ck] && cache[ck].sig === sig) return cache[ck];
+    const out = GEN[name](r.width, r.height, k); out.sig = sig; cache[ck] = out; return out;
+  };
+
+  /* ---- dots ---- */
+  const buildDots = () => {
+    N = W < 700 ? 650 : W < 1100 ? 1050 : 1500;
+    dots = [];
+    for (let i = 0; i < N; i++) dots.push({
+      x: rnd() * W, y: rnd() * H, vx: 0, vy: 0, tx: 0, ty: 0, lx: 0, ly: 0, t0: 0, ph: rnd() * 6.283, z: .5 + rnd(),
+      ax: rnd() * W, ay: rnd() * H, on: 0, a: .3, at: .3, sz: .6, am: 1, c: 0, cT: 0, cN: 0, cAt: 0, pend: false, pulse: 0, big: 0, dx: 0, dy: 0, dr: 0, inn: 0
+    });
+  };
+
+  const retarget = (now, first) => {
+    for (const d of dots) { d.on = 0; d.at = .2; d.t0 = now + rnd() * .25; d.cN = 0; d.cAt = now + .1; d.pend = true; }
+    if (cur === 'ambient') { S.rT = 2.1; return; }
+    const g = getStage(cur), r = rects[cur];
+    S.rT = clamp(g.g * .42, 1.3, 4.2);
+    const order = dots.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+    const pts = g.pts.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+    const P = pts.length, K = Math.min(P, N);
+    for (let i = 0; i < K; i++) {
+      const d = order[Math.floor(i * N / K)], p = pts[Math.floor(i * P / K)];
+      d.on = 1; d.at = .95; d.lx = p.x; d.ly = p.y; d.cN = p.k;
+      d.t0 = now + clamp(p.x / Math.max(1, r.width), 0, 1) * .45 + rnd() * .08;
+      d.cAt = d.t0 + .3 + (first ? 1.3 : 0);
+    }
+  };
+
+  const pick = () => {
+    const lo = H * .28, hi = H * .72; let best = 'ambient', bo = 0;
+    const ov = r => Math.max(0, Math.min(r.bottom, hi) - Math.max(r.top, lo));
+    for (const k in stages) { const o = ov(rects[k]); if (o > bo) { bo = o; best = k; } }
+    if (cur !== 'ambient' && ov(rects[cur]) > 16 && bo < ov(rects[cur]) * 1.25 + 30) return cur;
+    return bo > 40 ? best : 'ambient';
+  };
+
+  /* ---- one frame ---- */
+  const step = (dt, now) => {
+    for (const k in stages) rects[k] = stages[k].getBoundingClientRect();
+    const nx = hold ? 'ambient' : pick();
+    if (nx !== cur) { cur = nx; retarget(now, introPending && cur === 'name'); if (cur === 'name') introPending = false; needRetarget = false; }
+    else if (needRetarget) { needRetarget = false; retarget(now, false); }
+
+    /* lens: follows the pointer, drifts by itself over the name when nobody is moving */
+    const pnow = performance.now(), idle = pnow - lastMove > 2800;
+    if (idle) {
+      if (cur === 'name' && !reduce) {
+        const r = rects.name; lens.tx = r.left + r.width * (.5 + .36 * Math.sin(now * .5)); lens.ty = r.top + r.height * (.5 + .3 * Math.sin(now * .7 + 1)); S.laT = 1;
+      } else S.laT = 0;
+    } else S.laT = seen ? 1 : 0;
+    if (reduce) { S.la = S.laT; lens.x = lens.tx; lens.y = lens.ty; S.r = S.rT; }
+    else { S.la = S.la + (S.laT - S.la) * (1 - Math.exp(-4 * dt)); lens.x += (lens.tx - lens.x) * (1 - Math.exp(-12 * dt)); lens.y += (lens.ty - lens.y) * (1 - Math.exp(-12 * dt)); S.r += (S.rT - S.r) * (1 - Math.exp(-5 * dt)); }
+
+    const f = Math.min(2, dt * 60), R = lens.R, R2 = R * R, la = S.la, sr = rects[cur] || null;
+    const ox = sr ? sr.left : 0, oy = sr ? sr.top : 0, sy = scrollY, cnt = [0];
+    for (const d of dots) {
+      if (d.on) { d.tx = d.lx + ox; d.ty = d.ly + oy; } else { d.tx = d.ax; d.ty = d.ay + Math.sin(sy * .0015 + d.ph) * 28 * d.z; }
+      if (reduce) { d.x = d.tx; d.y = d.ty; }
+      else if (now >= d.t0) {
+        d.vx += (d.tx - d.x) * .08 * f; d.vy += (d.ty - d.y) * .08 * f;
+        const k = Math.pow(.8, f); d.vx *= k; d.vy *= k; d.x += d.vx * f; d.y += d.vy * f;
+      }
+      if (d.pend && now >= d.cAt) { d.pend = false; if (d.cN !== d.cT) { d.cT = d.cN; if (d.cT) d.pulse = 1; } }
+      const r1 = Math.min(1, dt * 7);
+      d.c += (d.cT - d.c) * r1; d.a += (d.at - d.a) * r1; d.sz += ((d.on ? 1 : .6) - d.sz) * r1; d.am += ((d.on ? 0 : 1) - d.am) * Math.min(1, dt * 3);
+      d.pulse = Math.max(0, d.pulse - dt * 2.2);
+      const amp = reduce ? 0 : .8 + 11 * d.am;
+      const px = d.x + Math.sin(now * .6 + d.ph) * amp, py = d.y + Math.cos(now * .5 + d.ph) * amp;
+      const lx = px - lens.x, ly = py - lens.y, q = lx * lx + ly * ly; let inside = 0;
+      if (la > .02 && q < R2) { const k = 1 + .5 * la * (1 - q / R2); d.dx = lens.x + lx * k; d.dy = lens.y + ly * k; inside = 1; cnt[0]++; }
+      else { d.dx = px; d.dy = py; }
+      d.big += (inside - d.big) * Math.min(1, reduce ? 1 : dt * 14);
+      d.dr = S.r * d.sz * (1 + .8 * d.big) * (1 + .9 * d.pulse * d.c); d.inn = d.big > .5 ? 1 : 0;
+    }
+
+    /* draw, batched by colour and opacity */
+    ctx.clearRect(0, 0, W, H);
+    const B = bufs; for (let i = 0; i < 8; i++) B[i].length = 0;
+    for (const d of dots) {
+      if (d.dx < -10 || d.dx > W + 10 || d.dy < -10 || d.dy > H + 10) continue;
+      const a = d.inn ? 1 : d.a;
+      B[(d.c > .5 ? 4 : 0) + (a < .25 ? 0 : a < .47 ? 1 : a < .75 ? 2 : 3)].push(d);
+    }
+    const lv = [.16, .34, .62, .95], rr = typeof ctx.roundRect === 'function';
+    for (let b = 0; b < 8; b++) {
+      const arr = B[b]; if (!arr.length) continue;
+      ctx.globalAlpha = b > 3 ? Math.max(.7, lv[b & 3]) : lv[b & 3]; ctx.fillStyle = b > 3 ? blueCss : altCss; ctx.beginPath();
+      for (const d of arr) { const r = d.dr; if (rr) ctx.roundRect(d.dx - r, d.dy - r, r * 2, r * 2, r * .55); else { ctx.moveTo(d.dx + r, d.dy); ctx.arc(d.dx, d.dy, r, 0, 6.2832); } }
+      ctx.fill();
+    }
+    /* the lens: crosshair, ring and a live readout */
+    if (la > .02) {
+      ctx.strokeStyle = blueCss; ctx.lineWidth = 1; ctx.setLineDash([4, 6]);
+      ctx.globalAlpha = la * .32; ctx.beginPath(); ctx.moveTo(0, lens.y); ctx.lineTo(W, lens.y); ctx.moveTo(lens.x, 0); ctx.lineTo(lens.x, H); ctx.stroke(); ctx.setLineDash([]);
+      ctx.globalAlpha = la * .06; ctx.fillStyle = blueCss; ctx.beginPath(); ctx.arc(lens.x, lens.y, R, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = la * .95; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(lens.x, lens.y, R, 0, 6.2832); ctx.stroke();
+      ctx.beginPath(); for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { ctx.moveTo(lens.x + a * (R - 6), lens.y + b * (R - 6)); ctx.lineTo(lens.x + a * (R + 9), lens.y + b * (R + 9)); } ctx.stroke();
+      ctx.globalAlpha = la * .9; ctx.fillStyle = altCss; ctx.font = `500 12px ${FAM}`;
+      const label = `x ${String(lens.x | 0).padStart(4, '0')}  y ${String((lens.y + sy) | 0).padStart(4, '0')}  ${cnt[0]} ${tx('dim_s') || ''}`;
+      const tw = ctx.measureText(label).width, side = lens.x + R + 14 + tw > W - 10 ? -1 : 1;
+      ctx.textAlign = side > 0 ? 'left' : 'right'; ctx.fillText(label, lens.x + side * (R + 14), lens.y - R * .15);
+    }
+    ctx.globalAlpha = 1;
+  };
+  const bufs = Array.from({ length: 8 }, () => []);
+
+  const loop = t => {
+    raf = 0; if (document.hidden) return;
+    const now = t / 1000, dt = Math.min(.05, now - (last || now - .016)); last = now;
+    const calm = !reduce && cur !== 'name' && performance.now() - lastMove > 6000 && performance.now() - lastScroll > 2500;
+    if (!(calm && (tick2++ & 1))) step(dt, now);
+    raf = requestAnimationFrame(loop);
+  };
+  const kick = () => { if (!raf && inited && !document.hidden) { last = 0; raf = requestAnimationFrame(loop); } };
+  document.addEventListener('visibilitychange', kick);
+
+  const measure = () => {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    const nW = innerWidth, nH = innerHeight, bucket = n => n < 700 ? 0 : n < 1100 ? 1 : 2, rebuild = !dots.length || bucket(nW) !== bucket(W);
+    W = nW; H = nH; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (rebuild) buildDots();
+    lens.R = W < 700 ? 78 : 118; cache = {};
+    $('#dimN').textContent = `${N.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US')} ${tx('dim_s')}`;
+  };
+  let rt = 0;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!inited) return; measure(); needRetarget = true; kick(); }, 150); });
+
+  const at = e => { lens.tx = e.clientX; lens.ty = e.clientY; lastMove = performance.now(); if (!seen) { seen = true; lens.x = lens.tx; lens.y = lens.ty; } };
+  addEventListener('pointermove', at, { passive: true }); addEventListener('pointerdown', at, { passive: true });
+  document.addEventListener('pointerleave', () => { lastMove = performance.now() - 1500; });
+  onTheme = () => { readColors(); };
+
+  /* =============== work: accordion, filter, project stage =============== */
+  const rows = $$('.row'), heads = $$('.row-h'), chips = $$('.chip');
+  const capProj = $('#cap-proj'), capAbout = $('#cap-about');
+  const setProj = i => {
+    if (KEY.proj === i && capProj.textContent) return;
+    KEY.proj = i; capProj.textContent = tx('c_p' + (i + 1));
+    rows.forEach((r, j) => r.classList.toggle('act', j === i));
+    if (cur === 'proj') needRetarget = true;
+  };
+  rows.forEach((r, i) => {
+    const h = $('.row-h', r);
+    h.addEventListener('pointerenter', () => setProj(i));
+    h.addEventListener('focus', () => setProj(i));
+    h.addEventListener('click', () => {
+      const open = h.getAttribute('aria-expanded') === 'true';
+      heads.forEach(x => x.setAttribute('aria-expanded', 'false'));
+      h.setAttribute('aria-expanded', String(!open)); setProj(i);
+    });
+  });
+  chips.forEach(c => {
+    const f = c.dataset.f;
+    $('.n', c).textContent = f === 'all' ? rows.length : rows.filter(r => r.dataset.cat.split(' ').includes(f)).length;
+    c.addEventListener('click', () => {
+      chips.forEach(x => x.setAttribute('aria-pressed', String(x === c)));
+      const change = () => {
+        rows.forEach(r => { r.hidden = !(f === 'all' || r.dataset.cat.split(' ').includes(f)); });
+        if (rows[KEY.proj].hidden) { const first = rows.findIndex(r => !r.hidden); if (first >= 0) { KEY.proj = -1; setProj(first); } }
+      };
+      if (document.startViewTransition && !reduce) {
+        rows.forEach((r, i) => r.style.viewTransitionName = 'row' + i);
+        document.startViewTransition(change).finished.finally(() => rows.forEach(r => r.style.viewTransitionName = ''));
+      } else change();
+    });
+  });
+
+  /* =============== results: numbers count up when the plot arrives =============== */
+  const vals = $$('#vals span');
+  new IntersectionObserver((es, ob) => {
+    if (!es[0].isIntersecting) return; ob.disconnect();
+    vals.forEach((el, i) => {
+      const target = parseFloat(el.dataset.d);
+      if (reduce) { el.textContent = target.toFixed(4); return; }
+      const t0 = performance.now() + i * 140, dur = 1000;
+      const stp = t => { const p = clamp((t - t0) / dur, 0, 1), e = 1 - Math.pow(1 - p, 3); el.textContent = (target * e).toFixed(4); if (p < 1) requestAnimationFrame(stp); };
+      requestAnimationFrame(stp);
+    });
+  }, { threshold: .4 }).observe($('#plot'));
+
+  /* =============== lab: waste sorter drives the dot columns =============== */
+  const items = $$('.item'), probs = $$('#probs > div'), verdict = $('#verdict');
+  const show = k => {
+    const p = PROB[k], max = Math.max(...p);
+    items.forEach(i => i.setAttribute('aria-pressed', String(i.dataset.k === k)));
+    probs.forEach((el, i) => { $('span', el).textContent = Math.round(p[i] * 100) + '%'; el.classList.toggle('win', p[i] === max); });
+    verdict.textContent = tx('v_' + k);
+    KEY.lab = k; if (cur === 'lab') needRetarget = true;
+  };
+  items.forEach(i => i.addEventListener('click', () => show(i.dataset.k)));
+
+  /* =============== about: three lenses, same dots =============== */
+  const lensBtns = $$('.lensbtn');
+  const setLens = i => {
+    lensBtns.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    KEY.about = i; capAbout.textContent = tx('ab_cap_' + i); if (cur === 'about') needRetarget = true;
+  };
+  lensBtns.forEach((b, i) => { b.addEventListener('pointerenter', () => setLens(i)); b.addEventListener('focus', () => setLens(i)); b.addEventListener('click', () => setLens(i)); });
+
+  /* =============== contact: copy =============== */
+  const toast = $('#toast'); let tt;
+  const say = m => { toast.textContent = m; toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 1800); };
+  $('#copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText('rgyanggara@gmail.com'); say(tx('toast_ok')); }
+    catch (e) { say(tx('toast_fail')); }
+  });
+
+  onLang = () => {
+    capProj.textContent = tx('c_p' + (KEY.proj + 1)); capAbout.textContent = tx('ab_cap_' + KEY.about);
+    verdict.textContent = tx('v_' + KEY.lab);
+    if (inited) $('#dimN').textContent = `${N.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US')} ${tx('dim_s')}`;
+  };
+  applyLang(); setProj(0); show('bottle'); setLens(0);
+
+  /* =============== intro: scatter, then the name assembles and the period lands in blue =============== */
+  const start = () => {
+    for (const k in stages) rects[k] = stages[k].getBoundingClientRect();
+    measure(); inited = true;
+    dots.forEach(d => { d.x = d.ax; d.y = d.ay; });
+    if (reduce) { hold = false; root.classList.add('ready'); hero.classList.add('go'); }
+    else {
+      setTimeout(() => { hold = false; }, 450);
+      setTimeout(() => hero.classList.add('go'), 1500);
+      setTimeout(() => root.classList.add('ready'), 2100);
+    }
+    kick();
+  };
+  const fontsReady = document.fonts
+    ? Promise.race([document.fonts.load('800 100px Archivo').catch(() => 0), new Promise(r => setTimeout(r, 1500))]) : Promise.resolve();
+  fontsReady.then(start);
+  if (document.fonts) document.fonts.ready.then(() => { if (inited) { cache = {}; needRetarget = true; } });
+
+  console.log('%cangg4ra.%c designed and built this.', 'background:#2b5bff;color:#d9dce1;padding:3px 8px;font-weight:700', '');
+})();
+</script>
+</body>
+</html>
