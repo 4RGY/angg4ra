@@ -1,0 +1,49 @@
+---
+// 404. Halaman ini dipakai kalau Cloudflare Pages di-set ke "404-page"
+// (Workers & Pages > angg4ra > Settings > not_found_handling).
+const title = "Halaman tidak ditemukan | Argy Anggara";
+---
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title>
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#121417">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style is:inline>
+:root{--base:#121417;--alt:#d9dce1;--blue:#2b5bff;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--base);color:var(--alt);
+  font:400 1.0625rem/1.6 "Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  display:grid;place-items:center;padding:2rem;-webkit-font-smoothing:antialiased}
+main{width:100%;max-width:34rem}
+.code{font-size:.8125rem;letter-spacing:.16em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--alt) 55%,var(--base));margin:0 0 1.25rem}
+h1{margin:0 0 1rem;font-size:clamp(2rem,6vw,3rem);font-weight:800;line-height:1.05;letter-spacing:-.02em}
+p{margin:0 0 2rem;color:color-mix(in srgb,var(--alt) 72%,var(--base));max-width:32rem}
+a.back{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.4rem;
+  border:1px solid color-mix(in srgb,var(--alt) 28%,transparent);border-radius:999px;
+  color:var(--alt);text-decoration:none;font-size:.9375rem;transition:border-color .25s,background .25s}
+a.back:hover{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+a.back i{width:.5rem;height:.5rem;border-radius:50%;background:var(--blue)}
+.plain{margin-top:2.5rem;font-size:.8125rem;color:color-mix(in srgb,var(--alt) 45%,var(--base))}
+.plain a{color:color-mix(in srgb,var(--alt) 70%,var(--base));text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--alt) 25%,transparent)}
+.plain a:hover{color:var(--alt)}
+</style>
+</head>
+<body>
+<main>
+  <p class="code">Error 404</p>
+  <h1>Halaman ini tidak ada.</h1>
+  <p>Alamat yang kamu buka mungkin salah ketik, sudah dipindahkan, atau tidak pernah ada. Tidak ada yang rusak, cuma tidak ketemu.</p>
+  <a class="back" href="/"><i></i>Kembali ke beranda</a>
+  <p class="plain">Mencari sesuatu yang spesifik? Kirim email ke <a href="mailto:rgyanggara@gmail.com">rgyanggara@gmail.com</a>.</p>
+</main>
+</body>
+</html>
