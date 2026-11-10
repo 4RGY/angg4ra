@@ -26,4 +26,4 @@ pnpm-debug.log*
 # folder kerja lokal (backup model, log preview, skrip probe)
 tmp/
 .scratch/
-public/*.orig
+*.pdf.tmp
