@@ -111,3 +111,15 @@ test("robots.txt + sitemap valid", () => {
   assert.ok(!/^ $/m.test(r), "robots.txt masih ada baris spasi anyep");
   assert.ok(existsSync(join(DIST, "sitemap-index.xml")), "sitemap tidak ter-generate");
 });
+
+test("favicon custom (bukan logo framework), multi-size", () => {
+  // favicon.svg: harus SVG 'a' + dot biru, bukan path Astro default.
+  const svg = read("favicon.svg");
+  assert.match(svg, /fill="#FFFFFF"/, "favicon.svg tidak punya path 'a' putih");
+  assert.match(svg, /#4F8EF7/, "favicon.svg tidak punya dot biru");
+  assert.ok(!svg.includes("M50.4 78.5"), "favicon.svg masih pakai path Astro default");
+  assert.ok(!/<text/i.test(svg), "favicon.svg pakai <text> (font-dependent), harusnya <path>");
+  // favicon.ico: multi-size 16/32/48
+  const ico = raw("favicon.ico");
+  assert.ok(ico.length > 1000, "favicon.ico kekecilan, kemungkinan single-size");
+});
