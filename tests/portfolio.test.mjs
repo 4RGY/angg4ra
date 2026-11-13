@@ -21,6 +21,20 @@ test("tanpa em-dash di seluruh HTML ter-deploy", () => {
   }
 });
 
+test("github: kartu repo cocok dengan manifest dan shot-nya ada", () => {
+  const src = JSON.parse(readFileSync(join(DIST, "..", "src", "data", "github.json"), "utf8"));
+  for (const f of ["index.html"]) {
+    const html = read(f);
+    assert.equal((html.match(/class="ghcard"/g) ?? []).length, src.featured.length, "jumlah kartu != featured");
+    for (const r of src.featured) {
+      assert.ok(html.includes(`/shots/${r.name}.webp`), `shot ${r.name} tidak direferensikan`);
+      assert.ok(existsSync(join(DIST, "shots", `${r.name}.webp`)), `file shots/${r.name}.webp hilang`);
+      assert.ok(html.includes(r.url), `URL ${r.name} tidak terpasang`);
+    }
+    assert.ok(!/hello@example\.com/.test(html), "placeholder email bocor ke build");
+  }
+});
+
 test("tanpa dead link href=\"#\"", () => {
   const dead = index.match(/href="#"/g) ?? [];
   assert.equal(dead.length, 0, `ada ${dead.length} href="#" mati`);

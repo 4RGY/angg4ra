@@ -1,0 +1,86 @@
+{
+  "synced": "2026-11-13",
+  "login": "4RGY",
+  "repos": 25,
+  "followers": 3,
+  "since": "2024",
+  "active": 16,
+  "langs": [
+    {
+      "name": "Python",
+      "pct": 88.6
+    },
+    {
+      "name": "Cython",
+      "pct": 2.9
+    },
+    {
+      "name": "Jupyter Notebook",
+      "pct": 2.8
+    },
+    {
+      "name": "TypeScript",
+      "pct": 1.2
+    },
+    {
+      "name": "PHP",
+      "pct": 1.2
+    }
+  ],
+  "featured": [
+    {
+      "name": "pantau-dbd",
+      "desc": "Pipeline prediksi kasus DBD DKI Jakarta dari cuaca harian dan laporan Dinkes: LightGBM, GLM rasio, baseline naive, evaluasi walk-forward, dashboard Astro",
+      "lang": "Python",
+      "stars": 0,
+      "pushed": "2026-09-30",
+      "url": "https://github.com/4RGY/pantau-dbd",
+      "home": ""
+    },
+    {
+      "name": "ihsg-idx-analytics",
+      "desc": "Risiko dan imbal hasil IHSG + 22 saham likuid IDX: Sharpe, beta, drawdown, VaR, musiman",
+      "lang": "Python",
+      "stars": 0,
+      "pushed": "2026-11-12",
+      "url": "https://github.com/4RGY/ihsg-idx-analytics",
+      "home": ""
+    },
+    {
+      "name": "cuaca-indonesia",
+      "desc": "Analisis prakiraan cuaca BMKG untuk 19 kota Indonesia: curah hujan, suhu terasa, peringatan dini",
+      "lang": "Python",
+      "stars": 0,
+      "pushed": "2026-11-13",
+      "url": "https://github.com/4RGY/cuaca-indonesia",
+      "home": ""
+    },
+    {
+      "name": "kataloji-crm",
+      "desc": "",
+      "lang": "TypeScript",
+      "stars": 0,
+      "pushed": "2026-11-12",
+      "url": "https://github.com/4RGY/kataloji-crm",
+      "home": ""
+    },
+    {
+      "name": "analisis-gempa-indonesia",
+      "desc": "Proyek analisis data sederhana memproses info gempa bumi terkini dari open data BMKG",
+      "lang": "Python",
+      "stars": 0,
+      "pushed": "2026-11-10",
+      "url": "https://github.com/4RGY/analisis-gempa-indonesia",
+      "home": ""
+    },
+    {
+      "name": "olist-commerce-analysis",
+      "desc": "Decision-oriented analysis of Olist e-commerce data with reproducible marts, EDA, tests, and executive insights",
+      "lang": "Jupyter Notebook",
+      "stars": 0,
+      "pushed": "2026-07-19",
+      "url": "https://github.com/4RGY/olist-commerce-analysis",
+      "home": ""
+    }
+  ]
+}

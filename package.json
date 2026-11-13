@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "gh:sync": "node scripts/fetch-github.mjs",
     "build": "astro build",
     "test": "npm run build && node --test tests/portfolio.test.mjs",
     "preview": "astro preview",

@@ -1,3 +1,16 @@
+---
+import gh from "../data/github.json";
+// Data GitHub di-commit (src/data/github.json), refresh manual: npm run gh:sync.
+// Build statis tidak boleh nembak jaringan.
+const tagline = {
+  "pantau-dbd": { id: "Prediksi DBD Jakarta", en: "Jakarta dengue forecast" },
+  "ihsg-idx-analytics": { id: "Risiko dan imbal hasil IHSG", en: "IHSG risk and return" },
+  "cuaca-indonesia": { id: "Prakiraan BMKG 19 kota", en: "BMKG forecast, 19 cities" },
+  "kataloji-crm": { id: "CRM dan POS kedai kopi", en: "Coffee shop CRM and POS" },
+  "analisis-gempa-indonesia": { id: "Katalog gempa BMKG", en: "BMKG earthquake catalogue" },
+  "olist-commerce-analysis": { id: "Warehouse SQL e-commerce", en: "E-commerce SQL warehouse" },
+};
+---
 <!doctype html>
 <html lang="id">
 <head>
@@ -80,6 +93,9 @@ try{var t=localStorage.getItem('a4-theme');if(t)document.documentElement.dataset
   --pline:color-mix(in srgb,var(--base) 18%,transparent);
   --pmute:color-mix(in srgb,var(--base) 62%,var(--alt));
   --ease:cubic-bezier(.2,.8,.2,1);
+  --ease-in:cubic-bezier(.3,1.6,.5,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-wipe:cubic-bezier(.65,0,.35,1);
   --f:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:dark;
 }
@@ -87,7 +103,7 @@ try{var t=localStorage.getItem('a4-theme');if(t)document.documentElement.dataset
 
 /* ---------- base ---------- */
 *,*::before,*::after{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:90px}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
 body{margin:0;background:var(--base);color:var(--alt);font:400 1.0625rem/1.6 var(--f);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 h1,h2,h3,p,ul,dl,dd,figure{margin:0}
 ul{padding:0;list-style:none}
@@ -190,6 +206,8 @@ nav .links a[aria-current=true]{color:var(--base);background:var(--alt)}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--blue) 70%,transparent)}70%,100%{box-shadow:0 0 0 9px transparent}}
 .js .dim,.js .lead,.js .hint,.js .tblock{opacity:0;transform:translateY(10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .js .tblock{transform:none;clip-path:inset(0 100% 0 0);transition:clip-path .9s var(--ease),opacity .4s}
+.js .hero.txt .dim,.js .hero.txt .lead,.js .hero.txt .hint{opacity:1;transform:none}
+.js .hero.txt .hint{transition-delay:.25s}
 .js .hero.go .dim,.js .hero.go .lead,.js .hero.go .hint{opacity:1;transform:none}
 .js .hero.go .hint{transition-delay:.25s}
 .js .hero.go .tblock{opacity:1;clip-path:inset(0)}
@@ -326,6 +344,53 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--alt);color:var(--base);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--ease);z-index:90}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* ---------- magnet and tilt: fine pointers only ---------- */
+.mg{will-change:transform}
+@media (prefers-reduced-motion:reduce){.mg{will-change:auto}}
+
+/* ---------- waffle: where the errors were, 85 of 100 ---------- */
+.waffle{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;max-width:34rem;margin-top:20px}
+.waffle i{aspect-ratio:1;background:var(--line2);opacity:.18;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.waffle.on i{opacity:1}
+.waffle i.e{background:var(--blue)}
+.waffle i:hover{transform:scale(1.35)}
+.wcap{margin-top:12px;color:var(--mute);font-size:.88rem;min-height:2.6em;max-width:34rem}
+
+/* ---------- pipeline stepper ---------- */
+#pipe{position:fixed;right:18px;bottom:18px;z-index:45;display:none;gap:0;padding:8px 12px;
+  background:color-mix(in srgb,var(--base) 80%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border:1px solid var(--line2);border-radius:99px}
+@media (min-width:1024px){#pipe{display:flex}}
+#pipe a{display:flex;align-items:center;gap:7px;padding:3px 9px;font-size:.78rem;color:var(--mute);text-decoration:none;
+  font-stretch:75%;font-weight:500;letter-spacing:.02em;transition:color .3s}
+#pipe a::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.4;transition:opacity .3s,transform .3s var(--ease-spring)}
+#pipe a.on{color:var(--alt)}
+#pipe a.on::before{background:var(--blue);opacity:1;transform:scale(1.5)}
+#pipe a+a{border-left:1px solid var(--line)}
+
+/* ---------- github cards ---------- */
+.ghgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:clamp(24px,3.5vw,36px)}
+.ghcard{display:flex;flex-direction:column;text-decoration:none;border:1px solid var(--line2);overflow:hidden;
+  transition:border-color .3s var(--ease),transform .35s var(--ease)}
+.ghcard:hover{border-color:var(--alt);transform:translateY(-3px)}
+.ghcard img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;border-bottom:1px solid var(--line2);
+  background:#16181c;opacity:.94;transition:opacity .35s var(--ease)}
+.ghcard:hover img{opacity:1}
+.ghcard .in{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.ghcard h4{margin:0;font-size:1rem;font-weight:700;font-stretch:112%;letter-spacing:-.01em}
+.ghcard p{margin:6px 0 12px;color:var(--mute);font-size:.9rem;line-height:1.5;flex:1}
+.ghmeta{display:flex;gap:12px;flex-wrap:wrap;color:var(--mute);font-size:.8rem;font-variant-numeric:tabular-nums}
+.ghmeta span{display:inline-flex;align-items:center;gap:5px}
+.ghmeta i{width:7px;height:7px;border-radius:50%;background:var(--blue);font-style:normal}
+.gbstat{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);gap:clamp(16px,3vw,36px);align-items:end;
+  margin-top:clamp(24px,3.5vw,36px);padding-top:20px;border-top:1px solid var(--pline)}
+.gbstat b{display:block;font-size:1.5rem;line-height:1.1;font-weight:800;font-stretch:112%;font-variant-numeric:tabular-nums}
+.gbstat small{display:block;color:var(--pmute);font-size:.8rem;margin-top:2px}
+.gbstat .bar{display:flex;height:6px;gap:2px;margin-bottom:9px}
+.gbstat .bar i{display:block;height:100%;background:var(--base);opacity:.7;font-style:normal}
+.gbstat .bar i:first-child{background:var(--blue);opacity:1}
+.lglist{display:flex;gap:10px;flex-wrap:wrap;color:var(--pmute);font-size:.78rem;font-variant-numeric:tabular-nums}
+
 /* ---------- responsive ---------- */
 @media (max-width:960px){
   .split,.res,.lab,.about,.stack>div{grid-template-columns:1fr}
@@ -336,8 +401,13 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   .strip{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:22px}
   .strip>div:nth-child(3){padding-left:0;border-left:0}
 }
+/* below-fold sections skip layout/paint work until near viewport */
+#results,#stack{content-visibility:auto;contain-intrinsic-size:auto 900px}
+
+@media (max-width:900px){.ghgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.gbstat{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){
   nav .links{display:none}
+  .ghgrid{grid-template-columns:1fr}
   .cards{grid-template-columns:1fr}
   .plot{grid-template-columns:minmax(0,7.5rem) minmax(0,1fr) 4.2rem}
   .items{grid-template-columns:1fr}
@@ -383,7 +453,7 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
           <p class="hint an" data-t="h_hint">Move your cursor, then scroll.</p>
         </div>
         <dl class="tblock">
-          <dt data-t="tb_role_k">Role</dt><dd data-t="tb_role_v">Data analyst</dd>
+          <dt data-t="tb_role_k">Role</dt><dd id="roleTxt" data-t="tb_role_v">Data analyst</dd>
           <dt data-t="tb_also_k">Also</dt><dd data-t="tb_also_v">Web developer and educator</dd>
           <dt data-t="tb_st_k">Status</dt><dd><i class="live"></i><span data-t="tb_st_v">Open for internships, freelance and work</span></dd>
         </dl>
@@ -417,6 +487,8 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
               <div class="row-b" id="p1"><div><div class="detail">
                 <p data-t="p1_a">A three-class image classifier for Recyclable, Electronic and Organic waste, built end to end with my team for BDC Satria Data 2026.</p>
                 <span class="fact" data-t="p1_f">Validation macro F1 around 0.97</span>
+                <div class="waffle" id="waffle" role="img" aria-label="85 of every 100 errors were Recyclable versus Organic"></div>
+                <p class="wcap" id="wcap"></p>
                 <ul>
                   <li data-t="p1_1">Deduplicated with MD5 and pHash together after default pHash settings gave false positives.</li>
                   <li data-t="p1_2">Fine-tuned in two stages with weighted sampling for the smaller Electronic class.</li>
@@ -504,6 +576,27 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
             </li>
           </ul>
         </div>
+      </div>
+
+      <div class="sec-h" style="margin-top:clamp(48px,7vw,88px);margin-bottom:0">
+        <h3 style="font-size:clamp(1.3rem,2.4vw,1.9rem);font-weight:800;font-stretch:112%;letter-spacing:-.025em;margin:0" data-t="gh_h">Straight from the repos</h3>
+        <p class="muted an" style="margin:0">github.com/4RGY · {gh.synced}</p>
+      </div>
+      <div class="ghgrid">
+        {gh.featured.map((r) => (
+          <a class="ghcard" href={r.url} target="_blank" rel="noopener">
+            <img src={`/shots/${r.name}.webp`} width="760" height="380" loading="lazy" decoding="async"
+                 alt={`GitHub social preview for ${r.name}`} />
+            <span class="in">
+              <h4>{r.name}</h4>
+              <p data-gh-id={tagline[r.name] ? tagline[r.name].id : r.desc} data-gh-en={tagline[r.name] ? tagline[r.name].en : r.desc}>{tagline[r.name] ? tagline[r.name].id : r.desc}</p>
+              <span class="ghmeta">
+                <span><i></i>{r.lang}</span>
+                <span>{r.pushed}</span>
+              </span>
+            </span>
+          </a>
+        ))}
       </div>
     </div>
   </section>
@@ -594,6 +687,17 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
         <div><small>2026</small><b>BDC Satria Data</b><small data-t="j3_s">Image classification competition</small></div>
         <div><small data-t="j_next">Next</small><b data-t="j4_t">Data and AI engineering</b><small data-t="j4_s">Computer vision, MLOps, backend</small></div>
       </div>
+      <div class="panel crop gbstat">
+        <div><b>{gh.repos}</b><small data-t="gb_repos">public repos</small></div>
+        <div><b>{gh.active}</b><small data-t="gb_active">touched in 120 days</small></div>
+        <div><b>{gh.since}</b><small data-t="gb_since">on GitHub since</small></div>
+        <div>
+          <div class="bar" aria-hidden="true">
+            {gh.langs.map((l) => <i style={`flex:${l.pct}`}></i>)}
+          </div>
+          <div class="lglist">{gh.langs.map((l) => <span>{l.name} {l.pct}%</span>)}</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -631,6 +735,12 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     </div>
   </div>
 </footer>
+<nav id="pipe" aria-label="Pipeline progress">
+  <a href="#top"><span data-t="pp_1">ingest</span></a>
+  <a href="#work"><span data-t="pp_2">clean</span></a>
+  <a href="#results"><span data-t="pp_3">model</span></a>
+  <a href="#contact"><span data-t="pp_4">ship</span></a>
+</nav>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script is:inline>
@@ -711,6 +821,11 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     st_h:'Stack', st_1:'Data dan ML', st_2:'Backend dan ops', st_3:'Web',
     ct_h:'Punya data berantakan? Ayo ngobrol.', ct_copy:'Salin email', ct_cv:'Unduh CV',
     ft:'© 2026 angg4ra. Seluruh hak cipta dilindungi. Dirancang dan dibuat oleh angg4ra.',
+    gh_h:'Langsung dari repo', gb_repos:'repo publik', gb_active:'disentuh 120 hari terakhir', gb_since:'di GitHub sejak',
+    pp_1:'ingest', pp_2:'clean', pp_3:'model', pp_4:'ship',
+    wf_d:'Arahkan kursor untuk menghitung. 85 dari setiap 100 error adalah Recyclable versus Organic.',
+    wf_a:'Recyclable vs Organic: 85 dari 100 error', wf_b:'Salah lain: 15 dari 100 error',
+    boot_raw:'baris, mentah', boot_clean:'membersihkan...',
     dim_s:'sampel', toast_ok:'Email disalin', toast_fail:'Gagal menyalin. Pilih alamatnya secara manual.',
     v_bottle:'Jelas. Bentuk plastik seperti ini yang paling sering dilihat model.',
     v_charger:'Jelas. Kabel dan colokan sangat berbeda dari dua kelas lain.',
@@ -727,6 +842,11 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     ab_cap_0:'Analyze: dots stack into a chart. Blue is the answer.',
     ab_cap_1:'Build: the same dots become rows of a table. Blue is the header.',
     ab_cap_2:'Teach: the same dots grow into a lesson.',
+    gh_h:'Straight from the repos', gb_repos:'public repos', gb_active:'touched in 120 days', gb_since:'on GitHub since',
+    pp_1:'ingest', pp_2:'clean', pp_3:'model', pp_4:'ship',
+    wf_d:'Hover to count. 85 of every 100 errors were Recyclable versus Organic.',
+    wf_a:'Recyclable vs Organic: 85 of 100 errors', wf_b:'Every other mistake: 15 of 100 errors',
+    boot_raw:'rows, raw', boot_clean:'cleaning...',
     dim_s:'samples', toast_ok:'Email copied', toast_fail:'Copy failed. Select the address instead.',
     v_bottle:'Clear call. Plastic shapes like this are what the model sees most.',
     v_charger:'Clear call. Cables and plugs are very distinct from the other two classes.',
@@ -738,9 +858,42 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   const tx = k => (lang === 'id' ? ID[k] : EN[k]);
   const rawText = el => (el.dataset.raw || (el.dataset.raw = el.textContent));
   $$('[data-t]').forEach(el => { const v = EN[el.dataset.t]; if (v) el.dataset.en = v; else el.dataset.en = rawText(el); });
+  /* ---------- text decode: language switch resolves left to right through glyphs ---------- */
+  const GL = '#/<>_{}[]|%$&*+=~^;:!?0123456789';
+  const decoding = new Set(); let decRaf = 0;
+  const decodeTick = t => {
+    decRaf = 0;
+    decoding.forEach(job => {
+      const p = Math.min(1, Math.max(0, (t - job.t0) / job.dur)), fin = job.to, n = Math.floor(p * fin.length);
+      if (p >= 1) { job.el.textContent = fin; decoding.delete(job); return; }
+      if (t - job.last > 45) {
+        job.last = t; let o = fin.slice(0, n);
+        for (let i = n; i < fin.length; i++) { const ch = fin[i]; o += /[ .,'’:;!?\-]/.test(ch) ? ch : GL[(Math.random() * GL.length) | 0]; }
+        job.el.textContent = o;
+      }
+    });
+    if (decoding.size) decRaf = requestAnimationFrame(decodeTick);
+  };
+  const decodeTo = (el, to, delay) => {
+    for (const j of decoding) if (j.el === el) decoding.delete(j);
+    decoding.add({ el, to, t0: performance.now() + delay, dur: Math.min(900, 380 + to.length * 7), last: 0 });
+    if (!decRaf) decRaf = requestAnimationFrame(decodeTick);
+  };
   let onLang = () => {};
-  const applyLang = () => {
-    $$('[data-t]').forEach(el => { el.textContent = (lang === 'id' && ID[el.dataset.t]) ? ID[el.dataset.t] : el.dataset.en; });
+  const applyLang = (anim) => {
+    const vis = [];
+    $$('[data-t]').forEach(el => {
+      const to = (lang === 'id' && ID[el.dataset.t]) ? ID[el.dataset.t] : el.dataset.en;
+      if (el.id === 'roleTxt') { el.dataset.roleBase = to; return; }   /* owned by the typewriter */
+      if (anim && !reduce) { const r = el.getBoundingClientRect(); if (r.bottom > -40 && r.top < innerHeight + 40 && r.width > 0 && to !== el.textContent) { vis.push([el, to, r.top]); return; } }
+      el.textContent = to;
+    });
+    vis.sort((a, b) => a[2] - b[2]).forEach(([el, to], i) => decodeTo(el, to, Math.min(420, i * 14)));
+    $$('[data-gh-id]').forEach(el => {
+      const to = lang === 'en' ? el.dataset.ghEn : el.dataset.ghId;
+      if (anim && !reduce && to !== el.textContent) { const r = el.getBoundingClientRect(); if (r.bottom > -40 && r.top < innerHeight + 40) { decodeTo(el, to, 0); return; } }
+      el.textContent = to;
+    });
     root.lang = lang;
     $('#langL').innerHTML = lang === 'id' ? 'EN / <b>ID</b>' : '<b>EN</b> / ID';
     onLang();
@@ -748,7 +901,8 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   $('#lang').addEventListener('click', () => {
     lang = lang === 'id' ? 'en' : 'id';
     try { localStorage.setItem('a4-lang', lang); } catch (e) {}
-    applyLang();
+    applyLang(true);
+    if (!reduce) { const b = $('#lang').getBoundingClientRect(); shock = { x: b.left + b.width / 2, y: b.top + b.height / 2, t: performance.now() / 1000, v: 1100, len: 900 }; kick(); }
   });
 
   /* =============== ruler, heading wipes, section spy =============== */
@@ -785,10 +939,29 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   const setTheme = (t, x, y) => {
     const apply = () => { root.dataset.theme = t; try { localStorage.setItem('a4-theme', t); } catch (e) {} onTheme(); };
     if (!document.startViewTransition || reduce) return apply();
-    const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    document.startViewTransition(apply).ready.then(() =>
-      root.animate({ clipPath: [`circle(0 at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-        { duration: 650, easing: 'cubic-bezier(.65,0,.35,1)', pseudoElement: '::view-transition-new(root)' }));
+    /* 90 rays, each with its own head start, so the front grows fingers instead of a clean circle */
+    const far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) * 1.08;
+    const RAYS = innerWidth < 760 ? 48 : 90, FR = innerWidth < 760 ? 22 : 34;
+    const ph = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
+    const delay = [], ease = u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    for (let i = 0; i < RAYS; i++) {
+      const a = i / RAYS * 6.2832;
+      delay.push((Math.sin(2 * a + ph[0]) * .5 + Math.sin(3 * a + ph[1]) * .3 + Math.sin(6 * a + ph[2]) * .2 + 1) / 2 * .3);
+    }
+    const frames = [];
+    for (let f = 0; f <= FR; f++) {
+      const p = f / FR, pts = [];
+      for (let i = 0; i < RAYS; i++) {
+        const a = i / RAYS * 6.2832, u = Math.min(1, Math.max(0, (p - delay[i]) / (1 - .3)));
+        const wob = 1 + .035 * Math.sin(a * 9 + p * 14 + ph[0]) * (1 - u);
+        const r = far * ease(u) * wob + 36 * Math.min(1, p * 8) + (f === FR ? 4 : 0);
+        pts.push(`${(x + Math.cos(a) * r).toFixed(1)}px ${(y + Math.sin(a) * r).toFixed(1)}px`);
+      }
+      frames.push({ clipPath: `polygon(${pts.join(',')})` });
+    }
+    shock = { x, y, t: performance.now() / 1000, v: far / .85, len: far * 1.1 }; kick();
+    document.startViewTransition(apply).ready.catch(() => {}).then(() =>
+      root.animate(frames, { duration: 1100, easing: 'linear', pseudoElement: '::view-transition-new(root)' }));
   };
   $('#theme').addEventListener('click', e => {
     const b = e.currentTarget.getBoundingClientRect();
@@ -812,7 +985,8 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   const stages = { name: $('#st-name'), proj: $('#st-proj'), res: $('#st-res'), lab: $('#st-lab'), about: $('#st-about'), sig: $('#st-sig') };
   const KEY = { name: 0, proj: 0, res: 0, lab: 'bottle', about: 0, sig: 0 };
   const rects = {};
-  const S = { r: 2.4, rT: 2.4, la: 0, laT: 0 };
+  const S = { r: 2.4, rT: 2.4, la: 0, laT: 0, sv: 0, ly: -1 };
+  let shock = null; const trail = [];
   const lens = { x: 0, y: 0, tx: 0, ty: 0, R: 118 };
   let cur = 'ambient', needRetarget = false, hold = !reduce, introPending = true, lastMove = -1e9, seen = false, raf = 0, last = 0, tick2 = 0;
 
@@ -963,7 +1137,7 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     dots = [];
     for (let i = 0; i < N; i++) dots.push({
       x: rnd() * W, y: rnd() * H, vx: 0, vy: 0, tx: 0, ty: 0, lx: 0, ly: 0, t0: 0, ph: rnd() * 6.283, z: .5 + rnd(),
-      ax: rnd() * W, ay: rnd() * H, on: 0, a: .3, at: .3, sz: .6, am: 1, c: 0, cT: 0, cN: 0, cAt: 0, pend: false, pulse: 0, big: 0, dx: 0, dy: 0, dr: 0, inn: 0
+      ax: rnd() * W, ay: rnd() * H, on: 0, a: .3, at: .3, sz: .6, am: 1, c: 0, cT: 0, cN: 0, cAt: 0, pend: false, pulse: 0, big: 0, dx: 0, dy: 0, dr: 0, inn: 0, ink: 0
     });
   };
 
@@ -1004,14 +1178,30 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
       if (cur === 'name' && !reduce) {
         const r = rects.name; lens.tx = r.left + r.width * (.5 + .36 * Math.sin(now * .5)); lens.ty = r.top + r.height * (.5 + .3 * Math.sin(now * .7 + 1)); S.laT = 1;
       } else S.laT = 0;
-    } else S.laT = seen ? 1 : 0;
+    } else {
+      let near = false;
+      for (const k in rects) { const r = rects[k]; if (r && lens.tx > r.left - 60 && lens.tx < r.right + 60 && lens.ty > r.top - 60 && lens.ty < r.bottom + 60) { near = true; break; } }
+      S.laT = seen && near ? 1 : 0;
+    }
     if (reduce) { S.la = S.laT; lens.x = lens.tx; lens.y = lens.ty; S.r = S.rT; }
     else { S.la = S.la + (S.laT - S.la) * (1 - Math.exp(-4 * dt)); lens.x += (lens.tx - lens.x) * (1 - Math.exp(-12 * dt)); lens.y += (lens.ty - lens.y) * (1 - Math.exp(-12 * dt)); S.r += (S.rT - S.r) * (1 - Math.exp(-5 * dt)); }
 
+    if (shock && (now - shock.t) * (shock.v || 620) > (shock.len || 520) + 120) shock = null;
+    /* scroll weight: fast scrolling stretches the field vertically, springs back when you stop */
+    if (S.ly < 0) S.ly = scrollY;
+    S.sv += ((reduce ? 0 : clamp((scrollY - S.ly) / Math.max(dt, .001), -4000, 4000)) - S.sv) * (1 - Math.exp(-9 * dt)); S.ly = scrollY;
+    const st = clamp(Math.abs(S.sv) / 4000, 0, 1);
+    const tn = performance.now();
+    while (trail.length && tn - trail[0].t > 700) trail.shift();
+    const inkOn = !reduce && trail.length && S.la < .3, tl = inkOn ? trail.slice(-9) : null;
     const f = Math.min(2, dt * 60), R = lens.R, R2 = R * R, la = S.la, sr = rects[cur] || null;
     const ox = sr ? sr.left : 0, oy = sr ? sr.top : 0, sy = scrollY, cnt = [0];
     for (const d of dots) {
       if (d.on) { d.tx = d.lx + ox; d.ty = d.ly + oy; } else { d.tx = d.ax; d.ty = d.ay + Math.sin(sy * .0015 + d.ph) * 28 * d.z; }
+      if (shock && !reduce) {   /* a ring expanding from the pointer shoves dots outward */
+        const sx = d.x - shock.x, sy2 = d.y - shock.y, sd = Math.sqrt(sx * sx + sy2 * sy2), ring = (now - shock.t) * (shock.v || 620);
+        if (Math.abs(sd - ring) < 46 && sd > 1) { const p = (1 - Math.abs(sd - ring) / 46) * 9 * Math.max(0, 1 - ring / (shock.len || 520)); d.vx += sx / sd * p; d.vy += sy2 / sd * p; }
+      }
       if (reduce) { d.x = d.tx; d.y = d.ty; }
       else if (now >= d.t0) {
         d.vx += (d.tx - d.x) * .08 * f; d.vy += (d.ty - d.y) * .08 * f;
@@ -1026,8 +1216,11 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
       const lx = px - lens.x, ly = py - lens.y, q = lx * lx + ly * ly; let inside = 0;
       if (la > .02 && q < R2) { const k = 1 + .5 * la * (1 - q / R2); d.dx = lens.x + lx * k; d.dy = lens.y + ly * k; inside = 1; cnt[0]++; }
       else { d.dx = px; d.dy = py; }
+      if (st > .01) d.dy = H / 2 + (d.dy - H / 2) * (1 + st * .1);
+      d.ink = Math.max(0, (d.ink || 0) - dt * 2.4);
+      if (tl) for (const q2 of tl) { if (tn - q2.t < 320) { const ex = d.dx - q2.x, ey = d.dy - q2.y; if (ex * ex + ey * ey < 576) { d.ink = 1; break; } } }
       d.big += (inside - d.big) * Math.min(1, reduce ? 1 : dt * 14);
-      d.dr = S.r * d.sz * (1 + .8 * d.big) * (1 + .9 * d.pulse * d.c); d.inn = d.big > .5 ? 1 : 0;
+      d.dr = S.r * d.sz * (1 + .4 * d.big) * (1 + .9 * d.pulse * d.c) * (1 + .7 * d.ink); d.inn = d.big > .5 ? 1 : 0;
     }
 
     /* draw, batched by colour and opacity */
@@ -1036,14 +1229,19 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     for (const d of dots) {
       if (d.dx < -10 || d.dx > W + 10 || d.dy < -10 || d.dy > H + 10) continue;
       const a = d.inn ? 1 : d.a;
-      B[(d.c > .5 ? 4 : 0) + (a < .25 ? 0 : a < .47 ? 1 : a < .75 ? 2 : 3)].push(d);
+      B[(d.c > .5 || d.ink > .3 ? 4 : 0) + (a < .25 ? 0 : a < .47 ? 1 : a < .75 ? 2 : 3)].push(d);
     }
     const lv = [.16, .34, .62, .95], rr = typeof ctx.roundRect === 'function';
     for (let b = 0; b < 8; b++) {
       const arr = B[b]; if (!arr.length) continue;
       ctx.globalAlpha = b > 3 ? Math.max(.7, lv[b & 3]) : lv[b & 3]; ctx.fillStyle = b > 3 ? blueCss : altCss; ctx.beginPath();
-      for (const d of arr) { const r = d.dr; if (rr) ctx.roundRect(d.dx - r, d.dy - r, r * 2, r * 2, r * .55); else { ctx.moveTo(d.dx + r, d.dy); ctx.arc(d.dx, d.dy, r, 0, 6.2832); } }
+      for (const d of arr) { const r = d.dr, hh = r * (1 + st * 2.4); if (rr) ctx.roundRect(d.dx - r, d.dy - hh, r * 2, hh * 2, r * .55); else { ctx.moveTo(d.dx + r, d.dy); ctx.arc(d.dx, d.dy, r, 0, 6.2832); } }
       ctx.fill();
+    }
+    /* ink: the pointer leaves a short blue trail that fades */
+    if (inkOn) {
+      ctx.fillStyle = blueCss;
+      for (const q2 of trail) { const a = 1 - (tn - q2.t) / 700; ctx.globalAlpha = a * .5; ctx.beginPath(); ctx.arc(q2.x, q2.y, 1.5 + a * 3.5, 0, 6.2832); ctx.fill(); }
     }
     /* the lens: crosshair, ring and a live readout */
     if (la > .02) {
@@ -1072,18 +1270,27 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   document.addEventListener('visibilitychange', kick);
 
   const measure = () => {
-    dpr = Math.min(devicePixelRatio || 1, 2);
+    dpr = Math.min(devicePixelRatio || 1, 1.5);
     const nW = innerWidth, nH = innerHeight, bucket = n => n < 700 ? 0 : n < 1100 ? 1 : 2, rebuild = !dots.length || bucket(nW) !== bucket(W);
     W = nW; H = nH; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     if (rebuild) buildDots();
     lens.R = W < 700 ? 78 : 118; cache = {};
-    $('#dimN').textContent = `${N.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US')} ${tx('dim_s')}`;
+    if (booted) $('#dimN').textContent = `${N.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US')} ${tx('dim_s')}`;
   };
   let rt = 0;
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!inited) return; measure(); needRetarget = true; kick(); }, 150); });
 
-  const at = e => { lens.tx = e.clientX; lens.ty = e.clientY; lastMove = performance.now(); if (!seen) { seen = true; lens.x = lens.tx; lens.y = lens.ty; } };
+  const finePtr = matchMedia('(pointer: fine)').matches;
+  const at = e => {
+    lens.tx = e.clientX; lens.ty = e.clientY; lastMove = performance.now();
+    if (finePtr && !reduce) {
+      const l = trail[trail.length - 1];
+      if (!l || Math.abs(l.x - e.clientX) + Math.abs(l.y - e.clientY) > 7) { trail.push({ x: e.clientX, y: e.clientY, t: lastMove }); if (trail.length > 60) trail.shift(); }
+    }
+    if (!seen) { seen = true; lens.x = lens.tx; lens.y = lens.ty; }
+  };
   addEventListener('pointermove', at, { passive: true }); addEventListener('pointerdown', at, { passive: true });
+  addEventListener('pointerdown', e => { if (!reduce) { shock = { x: e.clientX, y: e.clientY, t: performance.now() / 1000 }; kick(); } }, { passive: true });
   document.addEventListener('pointerleave', () => { lastMove = performance.now() - 1500; });
   onTheme = () => { readColors(); };
 
@@ -1165,15 +1372,103 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
   onLang = () => {
     capProj.textContent = tx('c_p' + (KEY.proj + 1)); capAbout.textContent = tx('ab_cap_' + KEY.about);
     verdict.textContent = tx('v_' + KEY.lab);
-    if (inited) $('#dimN').textContent = `${N.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US')} ${tx('dim_s')}`;
+    if (inited && booted) $('#dimN').textContent = `${nf(N)} ${tx('dim_s')}`;
+    if (wcap) wcap.textContent = tx('wf_d');
+    roleRun();
   };
-  applyLang(); setProj(0); show('bottle'); setLens(0);
+  /* role typewriter: data analyst leads, the other hats rotate in */
+  const roleEl = $('#roleTxt');
+  let roleTO = 0;
+  const ROLE = ['Data analyst', 'Web developer', 'Full-stack engineer', 'Creative technologist'];
+  const roleRun = () => {
+    clearTimeout(roleTO);
+    if (!roleEl || reduce) return;
+    /* start from the full word and erase first, so the role is never blank on screen */
+    let i = 0, n = ROLE[0].length, dir = -1, wait = 12;
+    const tickR = () => {
+      const w = ROLE[i];
+      if (wait > 0) wait--;
+      else {
+        n += dir; roleEl.textContent = w.slice(0, Math.max(0, n));
+        if (dir > 0 && n >= w.length) { dir = -1; wait = 22; }
+        else if (dir < 0 && n <= 0) { dir = 1; i = (i + 1) % ROLE.length; wait = 3; }
+      }
+      roleTO = setTimeout(tickR, dir > 0 ? 70 : 38);
+    };
+    roleTO = setTimeout(tickR, 4200);
+  };
+
+  /* magnet and tilt, fine pointers only */
+  if (matchMedia('(pointer: fine)').matches && !reduce) {
+    $$('.pill, #copy').forEach(el => {
+      el.classList.add('mg');
+      el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .22}px,${(e.clientY - r.top - r.height / 2) * .32}px)`; });
+      el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    });
+    $$('.ghcard, .card').forEach(el => {
+      el.classList.add('mg');
+      el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5; el.style.transform = `perspective(700px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg)`; });
+      el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  /* waffle: hover a cell to read where the errors were */
+  const waffle = $('#waffle'), wcap = $('#wcap');
+  if (waffle) {
+    for (let i = 0; i < 100; i++) { const c = document.createElement('i'); if (i < 85) c.className = 'e'; c.dataset.e = i < 85 ? 1 : 0; c.style.transitionDelay = (i * 8) + 'ms'; waffle.appendChild(c); }
+    waffle.addEventListener('pointerover', e => { const c = e.target.closest('i'); if (c) wcap.textContent = tx(c.dataset.e === '1' ? 'wf_a' : 'wf_b'); });
+    waffle.addEventListener('pointerleave', () => { wcap.textContent = tx('wf_d'); });
+    wcap.textContent = tx('wf_d');
+    const p1h = $('.row-h[aria-controls="p1"]');
+    new MutationObserver(() => waffle.classList.toggle('on', p1h.getAttribute('aria-expanded') === 'true'))
+      .observe(p1h, { attributes: true, attributeFilter: ['aria-expanded'] });
+    waffle.classList.toggle('on', p1h.getAttribute('aria-expanded') === 'true');
+  }
+
+  /* pipeline stepper: ingest, clean, model, ship */
+  const pipeA = $$('#pipe a');
+  const pipeMap = [['#top', 0], ['#work', 1], ['#results', 2], ['#lab', 2], ['#about', 3], ['#contact', 3]]
+    .map(([sel, i]) => [$(sel), i]);
+  let pipeI = -1, pipeBusy = false;
+  const pipeUpdate = () => {
+    pipeBusy = false; let idx = 0;
+    for (const [el, i] of pipeMap) if (el && el.getBoundingClientRect().top <= innerHeight * .45) idx = i;
+    if (idx !== pipeI) { pipeI = idx; pipeA.forEach((a, j) => a.classList.toggle('on', j === idx)); }
+  };
+  addEventListener('scroll', () => { if (!pipeBusy) { pipeBusy = true; requestAnimationFrame(pipeUpdate); } }, { passive: true });
+  pipeUpdate();
+
+  applyLang(); setProj(0); show('bottle'); setLens(0); roleRun();
+
+  /* =============== boot log: the counter climbs, cleans, then settles on the real count =============== */
+  let booted = false, bootRaf = 0;
+  const nf = n => n.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US');
+  const boot = () => {
+    const el = $('#dimN');
+    if (reduce) {
+      booted = true; el.textContent = `${nf(N)} ${tx('dim_s')}`; return;
+    }
+    const t0 = performance.now();
+    const raw = () => {
+      const p = clamp((performance.now() - t0) / 1500, 0, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = `${Math.round(N * e)} ${tx('boot_raw')}`;
+      if (p < 1) bootRaf = requestAnimationFrame(raw);
+      else {
+        el.textContent = tx('boot_clean');
+        setTimeout(() => { booted = true; el.textContent = `${nf(N)} ${tx('dim_s')}`; }, 600);
+      }
+    };
+    bootRaf = requestAnimationFrame(raw);
+  };
 
   /* =============== intro: scatter, then the name assembles and the period lands in blue =============== */
   const start = () => {
     for (const k in stages) rects[k] = stages[k].getBoundingClientRect();
     measure(); inited = true;
     dots.forEach(d => { d.x = d.ax; d.y = d.ay; });
+    /* the lead paragraph is the LCP element: reveal it now, keep the gate for nav + canvas */
+    hero.classList.add('txt');
+    boot();
     if (reduce) { hold = false; root.classList.add('ready'); hero.classList.add('go'); }
     else {
       setTimeout(() => { hold = false; }, 450);
