@@ -41,7 +41,7 @@ Bukan animasi tempelan. Semua dihitung ulang per frame dan berhenti kalau tab ti
 | Boot log | counter naik 1500ms lalu menggulir jadi angka asli. Paragraf LCP sengaja dibuka lebih awal supaya tidak ikut tertahan 2100ms |
 | Pipeline stepper | ingest, clean, model, ship. Fixed kanan bawah, ikut posisi scroll |
 | Waffle | 100 sel, 85 biru, disinkronkan ke `aria-expanded` lewat `MutationObserver` |
-| Magnet dan tilt | pill, tombol salin, dan kartu repo menarik ke arah kursor. Hanya `pointer: fine` |
+| Magnet dan tilt | pill, tombol salin, dan kartu proyek menarik ke arah kursor. Hanya `pointer: fine` |
 
 Semua di atas mati kalau `prefers-reduced-motion: reduce`. Loop berhenti sendiri saat tab tidak aktif atau tidak ada gerakan selama 6 detik.
 
@@ -59,7 +59,9 @@ Section **Langsung dari repo** mengambil profil dan repo publik dari [`4RGY`](ht
 npm run gh:sync     # tarik ulang profil, repo, bahasa -> src/data/github.json
 ```
 
-Tangkapan layar repo diambil dari kartu social preview resmi GitHub, dikonversi ke WebP. Enam gambar, total 84 KB, tanpa browser headless.
+Tangkapan layar repo diambil dari kartu social preview resmi GitHub lewat `scripts/gh-shots.py`, dipotong ke 1200x600 lalu dikonversi ke WebP. Enam gambar, total 144 KB, tanpa browser headless.
+
+Section-nya list baris, bukan grid kartu: `01`–`06` bisa dibuka satu per satu pakai `<details>` native, jadi nol JavaScript. Kartu preview GitHub itu putih; di tema gelap gambarnya dibalik lewat `filter: invert(1) hue-rotate(180deg)` supaya tidak jadi blok nyala, dan filter itu dimatikan di tema terang.
 
 ## Jalankan
 
@@ -92,7 +94,7 @@ npm test            # build dulu, baru uji artefak di dist/
 - security header lengkap di `_headers`
 - `robots.txt` dan sitemap valid
 - favicon custom, multi-ukuran
-- kartu repo cocok dengan manifest, file `public/shots/*.webp` ada, tidak ada placeholder email yang bocor
+- baris repo cocok dengan manifest, file `public/shots/*.webp` ada, tidak ada placeholder email yang bocor
 
 ## Struktur
 
@@ -110,7 +112,7 @@ scripts/
 └── gen-seo-assets.py    # og-image dan favicon
 
 public/
-├── shots/*.webp         # 6 social preview repo
+├── shots/*.webp         # 6 social preview repo, 1200x600
 ├── cv-anggara.pdf
 ├── _headers             # CSP-adjacent: XFO, nosniff, HSTS, Permissions-Policy
 └── robots.txt

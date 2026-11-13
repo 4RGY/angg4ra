@@ -368,20 +368,53 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
 #pipe a.on::before{background:var(--blue);opacity:1;transform:scale(1.5)}
 #pipe a+a{border-left:1px solid var(--line)}
 
-/* ---------- github cards ---------- */
-.ghgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:clamp(24px,3.5vw,36px)}
-.ghcard{display:flex;flex-direction:column;text-decoration:none;border:1px solid var(--line2);overflow:hidden;
-  transition:border-color .3s var(--ease),transform .35s var(--ease)}
-.ghcard:hover{border-color:var(--alt);transform:translateY(-3px)}
-.ghcard img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;border-bottom:1px solid var(--line2);
-  background:#16181c;opacity:.94;transition:opacity .35s var(--ease)}
-.ghcard:hover img{opacity:1}
-.ghcard .in{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
-.ghcard h4{margin:0;font-size:1rem;font-weight:700;font-stretch:112%;letter-spacing:-.01em}
-.ghcard p{margin:6px 0 12px;color:var(--mute);font-size:.9rem;line-height:1.5;flex:1}
-.ghmeta{display:flex;gap:12px;flex-wrap:wrap;color:var(--mute);font-size:.8rem;font-variant-numeric:tabular-nums}
-.ghmeta span{display:inline-flex;align-items:center;gap:5px}
-.ghmeta i{width:7px;height:7px;border-radius:50%;background:var(--blue);font-style:normal}
+/* ---------- github list: rows, not cards ---------- */
+.glist{margin-top:clamp(24px,3.5vw,40px);border-bottom:1px solid var(--line)}
+.gitem{border-top:1px solid var(--line);position:relative}
+.gitem>summary{display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto auto 18px;align-items:center;
+  gap:clamp(10px,2vw,26px);padding:clamp(15px,2.2vw,24px) 4px;cursor:pointer;list-style:none}
+.gitem>summary::-webkit-details-marker{display:none}
+.gitem>summary::marker{content:""}
+.gidx{color:var(--mute);font-stretch:75%;font-weight:500;font-size:.78rem;font-variant-numeric:tabular-nums;
+  transition:color .35s var(--ease)}
+.gitem[open] .gidx,.gitem:hover .gidx{color:var(--blue)}
+.gname{margin:0;font-size:clamp(1.05rem,1.9vw,1.45rem);line-height:1.1;font-weight:700;font-stretch:112%;
+  letter-spacing:-.02em;transition:transform .45s var(--ease)}
+.gitem>summary:hover .gname,.gitem[open] .gname{transform:translateX(8px)}
+.gtl{display:block;margin-top:5px;color:var(--mute);font-size:.88rem;line-height:1.45;
+  transition:transform .45s var(--ease)}
+.gitem>summary:hover .gtl,.gitem[open] .gtl{transform:translateX(8px)}
+.glang{display:inline-flex;align-items:center;gap:6px;color:var(--mute);font-size:.78rem;
+  font-stretch:75%;white-space:nowrap}
+.glang::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue)}
+.gdate{color:var(--mute);font-size:.78rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.gitem .plus{position:relative;width:16px;height:16px;transition:transform .45s var(--ease)}
+.gitem .plus::before,.gitem .plus::after{content:"";position:absolute;inset:50% 0 auto;height:1.5px;
+  background:var(--alt);margin-top:-.75px;opacity:.65;transition:opacity .3s,background .3s}
+.gitem .plus::after{transform:rotate(90deg)}
+.gitem[open] .plus{transform:rotate(135deg)}
+.gitem[open] .plus::before,.gitem[open] .plus::after{background:var(--blue);opacity:1}
+.gbody{animation:gopen .5s var(--ease) both}
+@keyframes gopen{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.gshot{display:block;overflow:hidden;border:1px solid var(--line2);background:#16181c}
+.gshot img{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;
+  transform:scale(1);transition:transform .6s var(--ease)}
+/* Kartu OG GitHub putih. Di tema gelap dibalik supaya tidak jadi blok nyala. */
+:root:not([data-theme="light"]) .gshot img{filter:invert(1) hue-rotate(180deg) saturate(1.12) contrast(1.04)}
+.gitem[open] .gshot img{transform:scale(1.015)}
+.gfoot{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:baseline;justify-content:space-between;
+  margin:14px 0 clamp(18px,3vw,30px);padding-bottom:2px}
+.gdesc{margin:0;max-width:62ch;color:var(--mute);font-size:.9rem;line-height:1.6}
+.gopen{display:inline-flex;align-items:center;gap:7px;color:var(--alt);text-decoration:none;font-size:.85rem;
+  font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line2);padding-bottom:2px;
+  transition:border-color .3s,gap .3s var(--ease)}
+.gopen:hover{border-color:var(--blue);gap:11px}
+.gopen::after{content:"\2197";font-size:.9em;line-height:1}
+@media (max-width:640px){
+  .gitem>summary{grid-template-columns:minmax(0,1fr) auto 16px;gap:10px}
+  .gidx,.gdate{display:none}
+  .gtl{font-size:.82rem}
+}
 .gbstat{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);gap:clamp(16px,3vw,36px);align-items:end;
   margin-top:clamp(24px,3.5vw,36px);padding-top:20px;border-top:1px solid var(--pline)}
 .gbstat b{display:block;font-size:1.5rem;line-height:1.1;font-weight:800;font-stretch:112%;font-variant-numeric:tabular-nums}
@@ -582,20 +615,30 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
         <h3 style="font-size:clamp(1.3rem,2.4vw,1.9rem);font-weight:800;font-stretch:112%;letter-spacing:-.025em;margin:0" data-t="gh_h">Straight from the repos</h3>
         <p class="muted an" style="margin:0">github.com/4RGY · {gh.synced}</p>
       </div>
-      <div class="ghgrid">
-        {gh.featured.map((r) => (
-          <a class="ghcard" href={r.url} target="_blank" rel="noopener">
-            <img src={`/shots/${r.name}.webp`} width="760" height="380" loading="lazy" decoding="async"
-                 alt={`GitHub social preview for ${r.name}`} />
-            <span class="in">
-              <h4>{r.name}</h4>
-              <p data-gh-id={tagline[r.name] ? tagline[r.name].id : r.desc} data-gh-en={tagline[r.name] ? tagline[r.name].en : r.desc}>{tagline[r.name] ? tagline[r.name].id : r.desc}</p>
-              <span class="ghmeta">
-                <span><i></i>{r.lang}</span>
-                <span>{r.pushed}</span>
+      <div class="glist">
+        {gh.featured.map((r, i) => (
+          <details class="gitem" name="ghlist">
+            <summary>
+              <span class="gidx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <span>
+                <h4 class="gname">{r.name}</h4>
+                <span class="gtl" data-gh-id={tagline[r.name]?.id ?? r.desc} data-gh-en={tagline[r.name]?.en ?? r.desc}>{tagline[r.name]?.id ?? r.desc}</span>
               </span>
-            </span>
-          </a>
+              <span class="glang">{r.lang}</span>
+              <span class="gdate">{r.pushed}</span>
+              <span class="plus" aria-hidden="true"></span>
+            </summary>
+            <div class="gbody">
+              <a class="gshot" href={r.url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+                <img src={`/shots/${r.name}.webp`} width="1200" height="600" loading="lazy" decoding="async"
+                     alt={`GitHub social preview for ${r.name}`} />
+              </a>
+              <div class="gfoot">
+                <p class="gdesc">{r.desc}</p>
+                <a class="gopen" href={r.url} target="_blank" rel="noopener" data-t="go_repo">Buka repo</a>
+              </div>
+            </div>
+          </details>
         ))}
       </div>
     </div>
@@ -822,6 +865,7 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     ct_h:'Punya data berantakan? Ayo ngobrol.', ct_copy:'Salin email', ct_cv:'Unduh CV',
     ft:'© 2026 angg4ra. Seluruh hak cipta dilindungi. Dirancang dan dibuat oleh angg4ra.',
     gh_h:'Langsung dari repo', gb_repos:'repo publik', gb_active:'disentuh 120 hari terakhir', gb_since:'di GitHub sejak',
+    go_repo:'Buka repo',
     pp_1:'ingest', pp_2:'clean', pp_3:'model', pp_4:'ship',
     wf_d:'Arahkan kursor untuk menghitung. 85 dari setiap 100 error adalah Recyclable versus Organic.',
     wf_a:'Recyclable vs Organic: 85 dari 100 error', wf_b:'Salah lain: 15 dari 100 error',
@@ -843,6 +887,7 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
     ab_cap_1:'Build: the same dots become rows of a table. Blue is the header.',
     ab_cap_2:'Teach: the same dots grow into a lesson.',
     gh_h:'Straight from the repos', gb_repos:'public repos', gb_active:'touched in 120 days', gb_since:'on GitHub since',
+    go_repo:'Open repo',
     pp_1:'ingest', pp_2:'clean', pp_3:'model', pp_4:'ship',
     wf_d:'Hover to count. 85 of every 100 errors were Recyclable versus Organic.',
     wf_a:'Recyclable vs Organic: 85 of 100 errors', wf_b:'Every other mistake: 15 of 100 errors',
@@ -1405,7 +1450,7 @@ footer{position:relative;z-index:2;padding:clamp(28px,5vw,56px) 0 36px}
       el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .22}px,${(e.clientY - r.top - r.height / 2) * .32}px)`; });
       el.addEventListener('pointerleave', () => { el.style.transform = ''; });
     });
-    $$('.ghcard, .card').forEach(el => {
+    $$('.card').forEach(el => {
       el.classList.add('mg');
       el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5; el.style.transform = `perspective(700px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg)`; });
       el.addEventListener('pointerleave', () => { el.style.transform = ''; });

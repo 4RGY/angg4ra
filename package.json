@@ -11,7 +11,8 @@
     "build": "astro build",
     "test": "npm run build && node --test tests/portfolio.test.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "gh:shots": "python scripts/gh-shots.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
