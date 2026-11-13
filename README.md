@@ -1,108 +1,156 @@
-<h1 align="center">angg4ra.my.id — Personal Portfolio ✨</h1>
+<h1 align="center">angg4ra.</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Astro-6.x-FF5D01?style=flat-square&logo=astro&logoColor=white" alt="Astro">
-  <img src="https://img.shields.io/badge/Tailwind-4.x-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/Deployed_on-Cloudflare_Pages-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare Pages">
-  <img src="https://img.shields.io/badge/License-Personal-6B2D3E?style=flat-square" alt="License">
+  <b>Portofolio Argy Anggara</b><br>
+  Data analyst yang membersihkan data, mencari jawabannya, lalu membangun aplikasi yang menampilkannya.
 </p>
 
-> Bilingual personal portfolio site built with Astro, deployed on Cloudflare Pages.
+<p align="center">
+  <a href="https://angg4ra.my.id"><img src="https://img.shields.io/badge/live-angg4ra.my.id-2b5bff?style=flat-square" alt="Live"></a>
+  <img src="https://img.shields.io/badge/Astro-6-FF5D01?style=flat-square&logo=astro&logoColor=white" alt="Astro 6">
+  <img src="https://img.shields.io/badge/Cloudflare-Pages-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare Pages">
+  <img src="https://img.shields.io/badge/tests-13%2F13-121417?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/runtime_JS-0_kB-121417?style=flat-square" alt="No JS bundles">
+</p>
+
+<p align="center">
+  <a href="https://angg4ra.my.id"><img src="public/og-image.png" alt="angg4ra.my.id" width="720"></a>
+</p>
 
 ---
 
-## 📖 Overview
+## Isi
 
-This is the source code for my personal portfolio at **[angg4ra.my.id](https://angg4ra.my.id)**. It showcases my projects, writing, and background as an Information Systems student and IT educator — built to be fast, minimal, and bilingual (Indonesian + English).
+Satu halaman, satu file. Tidak ada framework UI, tidak ada bundel JavaScript, tidak ada CMS.
+Semua HTML dirender saat build, semua interaksi ditulis tangan dalam satu `<script>` inline.
 
-The site is built file-first with Astro's Content Collections, meaning all projects and blog posts live as Markdown files and get rendered at build time — zero client-side JS overhead for content.
+Total unduhan halaman depan: **~91 KB HTML + 84 KB gambar repo + 101 KB PDF CV**. Build statis penuh, tidak ada server.
 
-## 🚀 Features
+## Mekanik
 
-- **Bilingual** — full Indonesian & English versions under `/id/` and `/en/` prefixes, with a language toggle in the navbar.
-- **Content Collections** — projects and blog posts are Markdown files validated by Zod schemas; no CMS needed.
-- **Bento Grid Layout** — card-based UI across homepage, projects, and blog pages.
-- **Animations** — animated hero with typed text effect and GSAP scroll animations.
-- **Static Build** — fully pre-rendered, no server needed.
+Bukan animasi tempelan. Semua dihitung ulang per frame dan berhenti kalau tab tidak aktif.
 
-## 🛠️ Tech Stack
-
-| Layer | Tech |
+| Mekanik | Detail |
 |---|---|
-| Framework | [Astro 6](https://astro.build) |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com) (via Vite plugin) |
-| Animations | [GSAP 3](https://greensock.com/gsap/) |
-| Content | Astro Content Collections (Markdown) |
-| i18n | Built-in Astro i18n routing (`/id/`, `/en/`) |
-| Deployment | [Cloudflare Pages](https://pages.cloudflare.com) |
+| Dot field | canvas 650 / 1050 / 1500 titik mengikuti lebar layar, `dpr` dipotong di 1.5 supaya laptop 4K tidak membakar fill-rate |
+| Shockwave | klik memicu ring yang mendorong titik keluar, pengaruhnya habis dalam 46px |
+| Ink trail | jejak biru di belakang kursor, pudar 700ms, hanya di `pointer: fine` |
+| Scroll weight | scroll cepat meregangkan field secara vertikal, spring balik, clamp ±4000 |
+| Theme wipe | 90 ray polygon bergerigi, bukan `circle()`. Turun ke 48 ray di layar sempit, dilewati total kalau `hardwareConcurrency <= 4` |
+| Decode glyph | teks i18n resolve huruf per huruf lewat `#/<>_{}[]\|%$&*+=~^` |
+| Boot log | counter naik 1500ms lalu menggulir jadi angka asli. Paragraf LCP sengaja dibuka lebih awal supaya tidak ikut tertahan 2100ms |
+| Pipeline stepper | ingest, clean, model, ship. Fixed kanan bawah, ikut posisi scroll |
+| Waffle | 100 sel, 85 biru, disinkronkan ke `aria-expanded` lewat `MutationObserver` |
+| Magnet dan tilt | pill, tombol salin, dan kartu repo menarik ke arah kursor. Hanya `pointer: fine` |
 
-## 📁 Project Structure
+Semua di atas mati kalau `prefers-reduced-motion: reduce`. Loop berhenti sendiri saat tab tidak aktif atau tidak ada gerakan selama 6 detik.
 
-<details>
-  <summary><b>Click to expand folder structure</b></summary>
-  
+## Bagian halaman
+
+`#work` karya pilihan · `#results` yang tidak berhasil · `#lab` eksperimen kecil · `#about` · `#stack` · `#contact`
+
+Filter proyek (Semua, AI dan ML, Data, Web, Mengajar), overlay studi kasus yang bisa ditutup dengan `Esc`, dan toggle bahasa ID/EN yang menyimpan pilihan di `localStorage`.
+
+## Data GitHub ikut build
+
+Section **Langsung dari repo** mengambil profil dan repo publik dari [`4RGY`](https://github.com/4RGY), lalu di-commit sebagai manifest. Build statis tidak pernah menembak jaringan.
+
+```bash
+npm run gh:sync     # tarik ulang profil, repo, bahasa -> src/data/github.json
+```
+
+Tangkapan layar repo diambil dari kartu social preview resmi GitHub, dikonversi ke WebP. Enam gambar, total 84 KB, tanpa browser headless.
+
+## Jalankan
+
+```bash
+npm install
+npm run dev         # http://localhost:4321
+```
+
+```bash
+npm run build       # -> dist/
+npm run preview     # cek hasil build
+```
+
+Butuh Node >= 22.12.
+
+## Test
+
+```bash
+npm test            # build dulu, baru uji artefak di dist/
+```
+
+13 assertion, semuanya membaca `dist/`, bukan sumber yang belum di-generate. Yang dijaga:
+
+- tidak ada em-dash atau en-dash di HTML ter-deploy
+- tidak ada `href="#"` mati
+- PDF CV ada, ikut ter-deploy, dan metadata Canva-nya sudah bersih
+- SEO lengkap: title, canonical, OG, Twitter card, JSON-LD `Person`
+- `h1` memuat nama dan peran
+- halaman 404 ada dan `noindex`
+- security header lengkap di `_headers`
+- `robots.txt` dan sitemap valid
+- favicon custom, multi-ukuran
+- kartu repo cocok dengan manifest, file `public/shots/*.webp` ada, tidak ada placeholder email yang bocor
+
+## Struktur
+
 ```text
 src/
-├── components/
-│   ├── charts/         # MiniLineChart
-│   ├── layout/         # BaseLayout, Navbar, Footer
-│   ├── sections/       # Hero, FeaturedProjects, About
-│   └── ui/             # BentoCard, StatusBadge, LanguageToggle, TypedText
-├── content/
-│   ├── projects/       # *.md and *-en.md (bilingual pairs)
-│   └── blog/           # *.md and *-en.md (bilingual pairs)
-├── i18n/
-│   ├── id/ui.json      # Indonesian UI strings
-│   └── en/ui.json      # English UI strings
 ├── pages/
-│   ├── id/             # Indonesian routes
-│   └── en/             # English routes
-├── scripts/            # GSAP animations, typed text, terminal effect
-├── styles/
-│   └── global.css      # CSS variables, base styles
-└── content.config.js   # Collection schemas (Zod)
-```
-</details>
+│   ├── index.astro      # seluruh situs: CSS, HTML, satu script inline
+│   └── 404.astro
+└── data/
+    └── github.json      # manifest repo, hasil npm run gh:sync
 
-## 🏁 Getting Started
+scripts/
+├── fetch-github.mjs     # tarik profil + repo + bahasa dari GitHub
+├── clean-cv-metadata.py # buang metadata Canva dari PDF
+└── gen-seo-assets.py    # og-image dan favicon
+
+public/
+├── shots/*.webp         # 6 social preview repo
+├── cv-anggara.pdf
+├── _headers             # CSP-adjacent: XFO, nosniff, HSTS, Permissions-Policy
+└── robots.txt
+
+tests/portfolio.test.mjs # 13 assertion terhadap dist/
+```
+
+## Token desain
+
+Rasio 60/30/10, dark-first, satu warna aksen.
+
+```
+--base #121417   latar, 60%
+--alt  #d9dce1   teks, 30%
+--blue #2b5bff   aksen, 10%
+```
+
+Kontras `--alt` di atas `--base` = 13.4:1. Biru hanya dipakai untuk bentuk, garis, dan titik, tidak pernah untuk teks kecil. Font Archivo variable, `wdth 62..125`, `wght 100..900`.
+
+Tema terang bukan inversi: `--base` dan `--alt` bertukar, `color-scheme` ikut berganti. Anti-FOUC dikerjakan di `<head>` sebelum paint pertama.
+
+## Deploy
+
+Cloudflare Pages, tersambung ke `main`. `git push` memicu build dan rilis dalam 30 detik sampai 2 menit.
 
 ```bash
-# 1. Clone
-git clone https://github.com/4RGY/angg4ra.git
-cd angg4ra
-
-# 2. Install dependencies
-npm install
-
-# 3. Start dev server
-npm run dev
-# → http://localhost:4321/id/
+git push origin main
 ```
 
-### Build & Preview
-```bash
-npm run build     # Output to ./dist/
-npm run preview   # Preview the production build locally
-```
+Verifikasi rilis bukan dari HTTP 200. Cara yang benar: judul halaman di `https://angg4ra.my.id` harus berubah, lalu buka dengan `browser_console` dan pastikan nol `js_errors`.
 
-## 📝 Adding Content
-<details>
-  <summary><b>How to add projects & blog posts</b></summary>
+## Lisensi
 
-### New project
-1. Create `src/content/projects/my-project.md` (Indonesian version)
-2. Create `src/content/projects/my-project-en.md` (English version)
-3. Set `featured: true` on one project per language to highlight it on the homepage.
-
-### New blog post
-1. Create `src/content/blog/my-post.md` with `language: "id"`
-2. Create `src/content/blog/my-post-en.md` with `language: "en"`
-</details>
-
-## 📜 License
-
-Personal project — not open for redistribution or reuse without permission.  
-Feel free to use it as inspiration, but please don't clone it wholesale.
+Proyek personal. Silakan dijadikan referensi, tapi jangan dijiplak utuh lalu diaku karya sendiri.
 
 ---
-*Built by [Argy Anggara](https://angg4ra.my.id) — Information Systems student, IT educator, and weekend data scientist.*
+
+<p align="center">
+  <a href="https://angg4ra.my.id">angg4ra.my.id</a> ·
+  <a href="https://github.com/4RGY">GitHub</a> ·
+  <a href="https://www.linkedin.com/in/argy-anggara/">LinkedIn</a> ·
+  <a href="mailto:rgyanggara@gmail.com">rgyanggara@gmail.com</a>
+</p>
